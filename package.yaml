@@ -27,9 +27,10 @@ library:
     - servant-server
     - wai
     - warp
+    - open-browser
 
 executables:
-  planning-scenario-viewer-exe:
+  planning-scenario-viewer:
     main:                Main.hs
     source-dirs:         app
     ghc-options:

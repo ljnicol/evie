@@ -22,6 +22,7 @@ import           Network.Wai
 import           Network.Wai.Handler.Warp       ( run )
 import           Servant
 import qualified Data.Proxy as Proxy
+import qualified Web.Browser as Browser
 
 server
   :: Server API
@@ -43,4 +44,8 @@ debug app req resp = do
 
 startApp :: IO ()
 startApp = do
-  run 7249 $ debug $ serve cookieApi server
+  b <- Browser.openBrowser "http://localhost:7249/"
+  if b then
+    run 7249 $ debug $ serve cookieApi server
+  else
+    print "Failed to start browser"
