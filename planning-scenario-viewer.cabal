@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 5780d8ad85081d7b7a5782f2e36aee7485c98230f2e55d28bb3ff1290c2c8605
+-- hash: 8444ca360e4f5d0b3525ba440148df396283f6b2779e361bc011fbc7981bb2c7
 
 name:           planning-scenario-viewer
 version:        0.1.0.0
@@ -26,15 +26,24 @@ source-repository head
 
 library
   exposed-modules:
+      Config
       Lib
+      Types.Config
   other-modules:
       Paths_planning_scenario_viewer
   hs-source-dirs:
       src
   build-depends:
-      base >=4.7 && <5
+      aeson
+    , base >=4.7 && <5
+    , bytestring
+    , mtl
     , open-browser
+    , optparse-generic
+    , postgresql-simple
+    , resource-pool
     , servant-server
+    , text
     , wai
     , warp
   default-language: Haskell2010
@@ -48,5 +57,6 @@ executable planning-scenario-viewer
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , optparse-generic
     , planning-scenario-viewer
   default-language: Haskell2010

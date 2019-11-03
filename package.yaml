@@ -28,6 +28,13 @@ library:
     - wai
     - warp
     - open-browser
+    - optparse-generic
+    - bytestring
+    - text
+    - aeson
+    - mtl
+    - resource-pool
+    - postgresql-simple
 
 executables:
   planning-scenario-viewer:
@@ -39,3 +46,4 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - planning-scenario-viewer
+    - optparse-generic
