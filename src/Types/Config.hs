@@ -34,6 +34,7 @@ instance Aeson.FromJSON InputConfig where
 data Config
   = Config
       { _configApplicationDomain :: Text.Text,
+        _configDirectory :: FilePath,
         _configPG :: PGConnectionConfig
       }
 

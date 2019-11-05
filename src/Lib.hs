@@ -40,7 +40,7 @@ import qualified Web.Browser as Browser
 
 server ::
   Config.Config -> Pool.Pool PGSimple.Connection -> Server API
-server config conns = testDB conns :<|> Servant.serveDirectoryFileServer "static"
+server config@Config.Config {..} conns = testDB conns :<|> Servant.serveDirectoryFileServer (_configDirectory ++ "/" ++ "static")
 
 testDB ::
   Pool.Pool PGSimple.Connection ->
@@ -73,7 +73,7 @@ startApp config@Config.Config {..} = do
             PGSimple.connectPassword = Config._password _configPG
           }
   conns <- initConnectionPool (PGSimple.postgreSQLConnectionString connStr)
-  b <- Browser.openBrowser "http://localhost:7249/test"
+  b <- Browser.openBrowser $ Text.unpack _configApplicationDomain
   if b
     then run 7249 $ debug $ serve cookieApi (server config conns)
     else print "Failed to start browser"
