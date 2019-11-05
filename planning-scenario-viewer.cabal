@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 8444ca360e4f5d0b3525ba440148df396283f6b2779e361bc011fbc7981bb2c7
+-- hash: 178418705991cb1611246c0c15806e68ba07487470cb7625b7827e2651c1ba28
 
 name:           planning-scenario-viewer
 version:        0.1.0.0
@@ -29,6 +29,7 @@ library
       Config
       Lib
       Types.Config
+      Types.Scenario
   other-modules:
       Paths_planning_scenario_viewer
   hs-source-dirs:
@@ -46,6 +47,26 @@ library
     , text
     , wai
     , warp
+  default-language: Haskell2010
+
+executable migrate
+  main-is: Main.hs
+  other-modules:
+      Paths_planning_scenario_viewer
+  hs-source-dirs:
+      app/migrate
+  default-extensions: OverloadedStrings CPP LambdaCase
+  ghc-options: -Wall -fwarn-tabs -fwarn-incomplete-uni-patterns
+  build-depends:
+      base >=4.7 && <5
+    , base64-bytestring
+    , bytestring
+    , cryptohash
+    , directory
+    , postgresql-simple
+    , postgresql-simple-migration
+    , text
+    , time
   default-language: Haskell2010
 
 executable planning-scenario-viewer

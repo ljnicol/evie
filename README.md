@@ -23,3 +23,27 @@ yarn run parcel build assets/elm/index.html -d dist/static
 
 ## Code formating
 Use Ormolu: <https://github.com/tweag/ormolu>
+
+## Building
+
+```bash
+stack build
+```
+
+## Run migrations
+Create the database with the `migration` tool :  
+  `./db/migration createdb db_name dba`
+* Initialize the DB :  
+  `./db/migration init "postgresql://db_user:password@db_server:db_port/db_name"`
+* Run the migrations :  
+  `./db/migration migrate "postgresql://db_user:password@db_server:db_port/db_name"`
+* Use the `migration` tool for migrations :  
+  `./db/migration --help` 
+
+### Upload the test data:
+  `ogr2ogr -f PostgreSQL "{POSTGRESQL CONNECTION STRING}'" data/test_data.csv -progress`
+  
+
+
+
+

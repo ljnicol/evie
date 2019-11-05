@@ -47,3 +47,23 @@ executables:
     dependencies:
     - planning-scenario-viewer
     - optparse-generic
+  migrate:
+    main: Main.hs
+    source-dirs: app/migrate
+    ghc-options: 
+    - -Wall 
+    - -fwarn-tabs 
+    - -fwarn-incomplete-uni-patterns
+    default-extensions:     
+    - OverloadedStrings
+    - CPP
+    - LambdaCase
+    dependencies:
+    - base64-bytestring
+    - bytestring
+    - cryptohash
+    - directory
+    - postgresql-simple
+    - postgresql-simple-migration
+    - time
+    - text
