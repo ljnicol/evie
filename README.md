@@ -1,6 +1,6 @@
 # Getting Started
 
-Download a pre-built package from the releases page (<https://github.com/state-machine-io/planning-scenario-viewer/releases>). 
+Download a pre-built package from the [releases page](https://github.com/state-machine-io/planning-scenario-viewer/releases). 
 
 Unzip this and enter your PostgreSQL connection settings into the "config.json" file.
 
