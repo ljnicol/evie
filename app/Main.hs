@@ -9,7 +9,7 @@ import qualified Options.Generic as OptionsGeneric
 main :: IO ()
 main = OptionsGeneric.getRecord "servant-auth0" >>= doIt
 
-doIt :: FilePath -> IO ()
-doIt appDirectory = do
-  config <- Config.getConfig appDirectory
+doIt :: Maybe FilePath -> IO ()
+doIt cmdLineAppDirectory = do
+  config <- Config.getConfig cmdLineAppDirectory
   Lib.startApp config

@@ -73,9 +73,9 @@ startApp config@Config.Config {..} = do
             PGSimple.connectPassword = Config._password _configPG
           }
   conns <- initConnectionPool (PGSimple.postgreSQLConnectionString connStr)
-  b <- Browser.openBrowser $ Text.unpack _configApplicationDomain
+  b <- Browser.openBrowser $ Text.unpack _configApplicationDomain ++ ":" ++ (show _configApplicationPort) 
   if b
-    then run 7249 $ debug $ serve cookieApi (server config conns)
+    then run _configApplicationPort $ debug $ serve cookieApi (server config conns)
     else print "Failed to start browser"
 
 initConnectionPool :: BS.ByteString -> IO (Pool.Pool PGSimple.Connection)
