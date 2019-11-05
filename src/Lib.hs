@@ -35,14 +35,8 @@ import Options.Generic
   )
 import Servant
 import qualified Types.Config as Config
+import qualified Types.Scenario as ScenarioTypes
 import qualified Web.Browser as Browser
-
-data DbResult
-  = DbResult
-      { result1 :: Text.Text,
-        result2 :: Text.Text
-      }
-  deriving (Eq, Generic, Aeson.ToJSON, PGSimple.FromRow)
 
 server ::
   Config.Config -> Pool.Pool PGSimple.Connection -> Server API
@@ -50,18 +44,18 @@ server config conns = testDB conns :<|> Servant.serveDirectoryFileServer "static
 
 testDB ::
   Pool.Pool PGSimple.Connection ->
-  Handler [DbResult]
+  Handler [ScenarioTypes.Scenario]
 testDB conns = liftIO $ Pool.withResource conns $ \conn ->
   PGSimple.query_
     conn
-    "SELECT result1, result2 from results"
+    "SELECT id, name, description, assumptions, sd.years from scenarios join (select json_agg(year) as years, scenario_id from scenario_detail group by scenario_id) as sd on scenarios.id = sd.scenario_id"
 
 cookieApi :: Proxy.Proxy API
 cookieApi = Proxy.Proxy
 
 type API = Unprotected
 
-type Unprotected = "test" :> Get '[JSON] [DbResult] :<|> Raw
+type Unprotected = "test" :> Get '[JSON] [ScenarioTypes.Scenario] :<|> Raw
 
 debug :: Middleware
 debug app req resp = do

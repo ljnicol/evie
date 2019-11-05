@@ -31,6 +31,8 @@ stack build
 ```
 
 ## Run migrations
+Note: On windows, you will need to do this from inside a bash on windows session (enter 'bash' in powershell)
+
 Create the database with the `migration` tool :  
   `./db/migration createdb db_name dba`
 * Initialize the DB :  
