@@ -1,7 +1,12 @@
-
-
-
 # Getting Started
+
+Download a pre-built package from the releases page. 
+
+Unzip this and enter your PostgreSQL connection settings into the "config.json" file.
+
+Run "planning-scenario-viewer.exe". This will open a browser window on the summary page.
+
+# Contributing
 
 Install the following windows programs:
  - Stack: <https://docs.haskellstack.org/en/stable/README/>
@@ -9,17 +14,6 @@ Install the following windows programs:
  - Node: <https://nodejs.org/en/blog/release/v8.9.3/>
  - Yarn: <https://yarnpkg.com/lang/en/docs/install/#windows-stable>
  - PostgreSQL: <https://www.postgresql.org/download/windows/>
-
-
-# Build for distribution
-This will generate files and binaries in dist directory for distribution.
-
-```bash
-stack build --copy-bins --local-bin-path dist\
-yarn run parcel build assets/elm/index.html -d dist/static
-```
-
-# Development
 
 ## Code formating
 Use Ormolu: <https://github.com/tweag/ormolu>
@@ -46,6 +40,10 @@ Create the database with the `migration` tool :
   `ogr2ogr -f PostgreSQL "{POSTGRESQL CONNECTION STRING}'" data/test_data.csv -progress`
   
 
+## Build for distribution
+This will generate files and binaries in dist directory for distribution.
 
-
-
+```bash
+stack build --copy-bins --local-bin-path dist\
+yarn run parcel build assets/elm/index.html -d dist/static
+```
