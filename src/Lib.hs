@@ -52,19 +52,27 @@ scenariosDB conns = liftIO $ Pool.withResource conns $ \conn ->
 
 metricsDB ::
   Pool.Pool PGSimple.Connection ->
+  Int ->
+  Int ->
   Handler [ScenarioTypes.MetricData]
-metricsDB conns = liftIO $ Pool.withResource conns $ \conn ->
+metricsDB conns scenarioId year = liftIO $ Pool.withResource conns $ \conn ->
   PGSimple.query
     conn
     "SELECT metric_data.id, scenario_id, metric_id, m.name, m.description, year, value, spatial_table_column from metric_data join (select id, name, description from metrics group by id) as m on metric_data.metric_id = m.id where scenario_id = ? and year = ? order by metric_id"
-    (1 :: Int, 2019 :: Int)
+    (scenarioId, year)
 
 cookieApi :: Proxy.Proxy API
 cookieApi = Proxy.Proxy
 
 type API = Unprotected
 
-type Unprotected = "scenarios" :> Get '[JSON] [ScenarioTypes.Scenario] :<|> "metrics" :> Get '[JSON] [ScenarioTypes.MetricData] :<|> Raw
+type Unprotected =
+  "scenarios"
+    :> Get '[JSON] [ScenarioTypes.Scenario]
+      :<|> "metrics"
+    :> Capture "scenario_id" Int
+    :> Capture "year" Int
+    :> Get '[JSON] [ScenarioTypes.MetricData] :<|> Raw
 
 debug :: Middleware
 debug app req resp = do
