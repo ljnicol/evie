@@ -29,7 +29,8 @@ data Scenario
         scenarioName :: Text.Text,
         scenarioDescription :: Text.Text,
         scenarioAssumptions :: Text.Text,
-        scenarioYears :: [Text.Text]
+        scenarioSpatialTable :: Text.Text,
+        scenarioYears :: [Integer]
       }
   deriving (Eq, Generic)
 
@@ -47,36 +48,41 @@ instance PGSimple.FromRow Scenario where
       <*> PGSimple.field
       <*> PGSimple.field
       <*> PGSimple.field
+      <*> PGSimple.field
 
 instance PGSimple.FromField [Text.Text] where
   fromField = PGSimple.fromJSONField
 
-data ScenarioDetail
-  = ScenarioDetail
-      { scenarioDetailId :: Integer,
-        scenarioDetailYear :: Text.Text,
-        metricData :: [Metric]
-      }
-  deriving (Eq, Generic)
+instance PGSimple.FromField [Integer] where
+  fromField = PGSimple.fromJSONField
 
-instance Aeson.ToJSON ScenarioDetail where
-
-  toJSON = Aeson.genericToJSON encodingOptions
-
-  toEncoding = Aeson.genericToEncoding encodingOptions
-
-data Metric
-  = Metric
-      { metricId :: Integer,
+data MetricData
+  = MetricData
+      { metricDataId :: Integer,
+        metricScenarioId :: Integer,
+        metricId :: Integer,
         metricName :: Text.Text,
         metricDescription :: Text.Text,
+        metricYear :: Integer,
         metricValue :: Double,
-        metricSpatialTable :: Text.Text
+        metricSpatialTableColumn :: Text.Text
       }
   deriving (Eq, Generic)
 
-instance Aeson.ToJSON Metric where
+instance Aeson.ToJSON MetricData where
 
   toJSON = Aeson.genericToJSON encodingOptions
 
   toEncoding = Aeson.genericToEncoding encodingOptions
+
+instance PGSimple.FromRow MetricData where
+  fromRow =
+    MetricData
+      <$> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field

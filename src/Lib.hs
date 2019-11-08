@@ -40,22 +40,31 @@ import qualified Web.Browser as Browser
 
 server ::
   Config.Config -> Pool.Pool PGSimple.Connection -> Server API
-server config@Config.Config {..} conns = testDB conns :<|> Servant.serveDirectoryFileServer (_configDirectory ++ "/" ++ "static")
+server config@Config.Config {..} conns = scenariosDB conns :<|> metricsDB conns :<|> Servant.serveDirectoryFileServer (_configDirectory ++ "/" ++ "static")
 
-testDB ::
+scenariosDB ::
   Pool.Pool PGSimple.Connection ->
   Handler [ScenarioTypes.Scenario]
-testDB conns = liftIO $ Pool.withResource conns $ \conn ->
+scenariosDB conns = liftIO $ Pool.withResource conns $ \conn ->
   PGSimple.query_
     conn
-    "SELECT id, name, description, assumptions, sd.years from scenarios join (select json_agg(year) as years, scenario_id from scenario_detail group by scenario_id) as sd on scenarios.id = sd.scenario_id"
+    "SELECT id, name, description, assumptions, spatial_table, md.years from scenarios join (select json_agg(year) as years, scenario_id from (select distinct year, scenario_id from metric_data order by year) as a group by scenario_id ) as md on scenarios.id = md.scenario_id"
+
+metricsDB ::
+  Pool.Pool PGSimple.Connection ->
+  Handler [ScenarioTypes.MetricData]
+metricsDB conns = liftIO $ Pool.withResource conns $ \conn ->
+  PGSimple.query
+    conn
+    "SELECT metric_data.id, scenario_id, metric_id, m.name, m.description, year, value, spatial_table_column from metric_data join (select id, name, description from metrics group by id) as m on metric_data.metric_id = m.id where scenario_id = ? and year = ? order by metric_id"
+    (1 :: Int, 2019 :: Int)
 
 cookieApi :: Proxy.Proxy API
 cookieApi = Proxy.Proxy
 
 type API = Unprotected
 
-type Unprotected = "test" :> Get '[JSON] [ScenarioTypes.Scenario] :<|> Raw
+type Unprotected = "scenarios" :> Get '[JSON] [ScenarioTypes.Scenario] :<|> "metrics" :> Get '[JSON] [ScenarioTypes.MetricData] :<|> Raw
 
 debug :: Middleware
 debug app req resp = do
@@ -73,7 +82,7 @@ startApp config@Config.Config {..} = do
             PGSimple.connectPassword = Config._password _configPG
           }
   conns <- initConnectionPool (PGSimple.postgreSQLConnectionString connStr)
-  b <- Browser.openBrowser $ Text.unpack _configApplicationDomain ++ ":" ++ (show _configApplicationPort) 
+  b <- Browser.openBrowser $ Text.unpack _configApplicationDomain ++ ":" ++ (show _configApplicationPort)
   if b
     then run _configApplicationPort $ debug $ serve cookieApi (server config conns)
     else print "Failed to start browser"
