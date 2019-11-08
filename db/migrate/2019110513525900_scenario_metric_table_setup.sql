@@ -2,7 +2,8 @@ CREATE TABLE "scenarios" (
   "id" integer PRIMARY KEY,
   "name" varchar UNIQUE NOT NULL,
   "description" varchar,
-  "assumptions" varchar
+  "assumptions" varchar,
+  "spatial_table" varchar UNIQUE NOT NULL
 );
 
 CREATE TABLE "metric_data" (
@@ -11,7 +12,7 @@ CREATE TABLE "metric_data" (
   "metric_id" integer NOT NULL,
   "year" integer NOT NULL,
   "value" double precision,
-  "spatial_table" varchar,
+  "spatial_table_column" varchar UNIQUE,
   unique ("scenario_id", "metric_id", "year")
 );
 
