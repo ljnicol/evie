@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 178418705991cb1611246c0c15806e68ba07487470cb7625b7827e2651c1ba28
+-- hash: 234197c249fd4818d021cef43b26239baf24177fc3bec334290995027a7cf698
 
 name:           planning-scenario-viewer
 version:        0.1.0.0
@@ -38,11 +38,13 @@ library
       aeson
     , base >=4.7 && <5
     , bytestring
+    , ede
     , mtl
     , open-browser
     , optparse-generic
     , postgresql-simple
     , resource-pool
+    , servant-ede
     , servant-server
     , text
     , wai
