@@ -48,13 +48,22 @@ server ::
 server config@Config.Config {..} conns = apiServer conns :<|> appServer conns :<|> Servant.serveDirectoryFileServer (_configDirectory ++ "/" ++ "static")
   where
     apiServer conns = scenariosDB conns :<|> metricsDB conns
-    appServer conns = scenariosDB conns :<|> metricDB conns
+    appServer conns = scenarioDataDB conns :<|> metricDB conns
 
 scenariosDB ::
   Pool.Pool PGSimple.Connection ->
-  Handler ScenarioTypes.Scenarios
+  Handler [ScenarioTypes.Scenario]
 scenariosDB conns =
-  liftIO $ fmap ScenarioTypes.Scenarios $ Pool.withResource conns $ \conn ->
+  liftIO $ Pool.withResource conns $ \conn ->
+    PGSimple.query_
+      conn
+      "SELECT id, name, description, assumptions, spatial_table, md.years from scenarios join (select json_agg(year) as years, scenario_id from (select distinct year, scenario_id from metric_data order by year) as a group by scenario_id ) as md on scenarios.id = md.scenario_id"
+
+scenarioDataDB ::
+  Pool.Pool PGSimple.Connection ->
+  Handler ScenarioTypes.Scenarios
+scenarioDataDB conns =
+  liftIO $ fmap (ScenarioTypes.Scenarios) $ Pool.withResource conns $ \conn ->
     PGSimple.query_
       conn
       "SELECT id, name, description, assumptions, spatial_table, md.years from scenarios join (select json_agg(year) as years, scenario_id from (select distinct year, scenario_id from metric_data order by year) as a group by scenario_id ) as md on scenarios.id = md.scenario_id"
@@ -95,7 +104,7 @@ type API = Unprotected
 type Unprotected =
   "api"
     :> ( "scenarios"
-           :> Get '[JSON] ScenarioTypes.Scenarios
+           :> Get '[JSON] [ScenarioTypes.Scenario]
              :<|> "metrics"
            :> Capture "scenario_id" Int
            :> Capture "year" Int

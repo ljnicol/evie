@@ -20,6 +20,7 @@ import qualified Database.PostgreSQL.Simple.FromRow as PGSimple
 import Options.Generic
 import qualified Servant.EDE as EDE
 
+
 data Scenarios
   = Scenarios
       { scenarios :: [Scenario]
