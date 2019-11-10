@@ -1,3 +1,11 @@
+# EViE
+
+Quickly build evaluation applications for strategic decisions.
+
+EViE provides a concise API for accessing scenario and metric data stored in a PostgreSQL database, and a set of templates for getting started with different use cases.
+
+Simply download the latest releast from the releases page to get started.
+
 # Getting Started
 
 Download a pre-built package from the [releases page](https://github.com/state-machine-io/evie/releases). 
