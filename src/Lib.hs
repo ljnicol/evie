@@ -8,17 +8,17 @@ import qualified Data.ByteString as BS
 import qualified Data.Pool as Pool
 import qualified Data.Text as Text
 import qualified Database.PostgreSQL.Simple as PGSimple
-import Network.Wai
-import Network.Wai.Handler.Warp (run)
+import qualified Network.Wai as Wai
+import qualified Network.Wai.Handler.Warp as Wai (run)
 import qualified Routes
-import Servant
+import qualified Servant
 import qualified Types.Config as Config
 import qualified Web.Browser as Browser
 
-debug :: Middleware
+debug :: Wai.Middleware
 debug app req resp = do
   putStrLn "Request headers:"
-  print (requestHeaders req)
+  print (Wai.requestHeaders req)
   app req resp
 
 startApp :: Config.Config -> IO ()
@@ -33,7 +33,7 @@ startApp config@Config.Config {..} = do
   conns <- initConnectionPool (PGSimple.postgreSQLConnectionString connStr)
   b <- Browser.openBrowser $ Text.unpack _configApplicationDomain ++ ":" ++ (show _configApplicationPort)
   if b
-    then run _configApplicationPort $ debug $ serve Routes.api (Controller.server config conns)
+    then Wai.run _configApplicationPort $ debug $ Servant.serve Routes.api (Controller.server config conns)
     else print "Failed to start browser"
 
 initConnectionPool :: BS.ByteString -> IO (Pool.Pool PGSimple.Connection)

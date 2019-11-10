@@ -8,6 +8,8 @@ import qualified Database.PostgreSQL.Simple as PGSimple
 import qualified Database.PostgreSQL.Simple.FromField as PGSimple
 import qualified Database.PostgreSQL.Simple.FromRow as PGSimple
 import Options.Generic
+  ( Generic,
+  )
 
 encodingOptions =
   Aeson.defaultOptions
