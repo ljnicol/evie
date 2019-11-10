@@ -23,6 +23,18 @@ dependencies:
 
 library:
   source-dirs: src
+  ghc-options:
+    - -fno-warn-deprecations
+    - -fprint-potential-instances
+    - -fwarn-unused-imports
+    - -fwarn-unused-binds
+    - -fwarn-tabs
+  default-extensions:
+    - OverloadedStrings
+    - TypeOperators
+    - DataKinds
+    - RecordWildCards
+    - DeriveGeneric
   dependencies:
     - servant-server
     - wai

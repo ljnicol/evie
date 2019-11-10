@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 2a2e04d51ac60a1be6069502d7d8d2f7d47f971609d2816713e0d0b2b98c25cf
+-- hash: f50fdff2361099bf1b405cdb7c15569a1a83ce762feb9afe67e0ad2522836547
 
 name:           evie
 version:        0.0.3
@@ -26,14 +26,19 @@ source-repository head
 
 library
   exposed-modules:
-      Config
+      Controller
+      DB
+      Init
       Lib
+      Routes
       Types.Config
       Types.Scenario
   other-modules:
       Paths_evie
   hs-source-dirs:
       src
+  default-extensions: OverloadedStrings TypeOperators DataKinds RecordWildCards DeriveGeneric
+  ghc-options: -fno-warn-deprecations -fprint-potential-instances -fwarn-unused-imports -fwarn-unused-binds -fwarn-tabs
   build-depends:
       aeson
     , base >=4.7 && <5
