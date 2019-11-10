@@ -34,36 +34,21 @@ import Options.Generic
     ParseRecord,
   )
 import Servant
-import qualified Servant.EDE as EDE
-import qualified Text.EDE.Filters as EDEFilters
-  ( (@:),
-    Term,
-  )
 import qualified Types.Config as Config
 import qualified Types.Scenario as ScenarioTypes
 import qualified Web.Browser as Browser
 
 server ::
   Config.Config -> Pool.Pool PGSimple.Connection -> Server API
-server config@Config.Config {..} conns = apiServer conns :<|> appServer conns :<|> Servant.serveDirectoryFileServer (_configDirectory ++ "/" ++ "static")
+server config@Config.Config {..} conns = apiServer conns :<|> Servant.serveDirectoryFileServer (_configDirectory ++ "/" ++ "static")
   where
     apiServer conns = scenariosDB conns :<|> metricsDB conns
-    appServer conns = scenarioDataDB conns :<|> metricDB conns
 
 scenariosDB ::
   Pool.Pool PGSimple.Connection ->
   Handler [ScenarioTypes.Scenario]
 scenariosDB conns =
   liftIO $ Pool.withResource conns $ \conn ->
-    PGSimple.query_
-      conn
-      "SELECT id, name, description, assumptions, spatial_table, md.years from scenarios join (select json_agg(year) as years, scenario_id from (select distinct year, scenario_id from metric_data order by year) as a group by scenario_id ) as md on scenarios.id = md.scenario_id"
-
-scenarioDataDB ::
-  Pool.Pool PGSimple.Connection ->
-  Handler ScenarioTypes.Scenarios
-scenarioDataDB conns =
-  liftIO $ fmap (ScenarioTypes.Scenarios) $ Pool.withResource conns $ \conn ->
     PGSimple.query_
       conn
       "SELECT id, name, description, assumptions, spatial_table, md.years from scenarios join (select json_agg(year) as years, scenario_id from (select distinct year, scenario_id from metric_data order by year) as a group by scenario_id ) as md on scenarios.id = md.scenario_id"
@@ -110,14 +95,6 @@ type Unprotected =
            :> Capture "year" Int
            :> Get '[JSON] [ScenarioTypes.MetricData]
        )
-    :<|> "app"
-      :> ( "scenarios"
-             :> Get '[EDE.HTML "scenarios.tpl.hbs"] ScenarioTypes.Scenarios
-             :<|> "metrics"
-               :> Capture "scenario_id" Int
-               :> Capture "year" Int
-               :> Get '[EDE.HTML "metrics.tpl.hbs"] ScenarioTypes.MetricData
-         )
     :<|> Raw
 
 debug :: Middleware
@@ -136,14 +113,10 @@ startApp config@Config.Config {..} = do
             PGSimple.connectPassword = Config._password _configPG
           }
   conns <- initConnectionPool (PGSimple.postgreSQLConnectionString connStr)
-  errors <- EDE.loadTemplates cookieApi filters (_configDirectory ++ "/templates")
-  case errors of
-    [] -> do
-      b <- Browser.openBrowser $ Text.unpack _configApplicationDomain ++ ":" ++ (show _configApplicationPort)
-      if b
-        then run _configApplicationPort $ debug $ serve cookieApi (server config conns)
-        else print "Failed to start browser"
-    e -> print e
+  b <- Browser.openBrowser $ Text.unpack _configApplicationDomain ++ ":" ++ (show _configApplicationPort)
+  if b
+    then run _configApplicationPort $ debug $ serve cookieApi (server config conns)
+    else print "Failed to start browser"
 
 initConnectionPool :: BS.ByteString -> IO (Pool.Pool PGSimple.Connection)
 initConnectionPool connStr =
@@ -153,6 +126,3 @@ initConnectionPool connStr =
     2 -- stripes
     60 -- unused connections are kept open for a minute
     10 -- max. 10 connections open per stripe
-
-filters :: [(Text.Text, EDEFilters.Term)]
-filters = ["toChars" EDEFilters.@: Text.chunksOf 1]

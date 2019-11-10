@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 5b969f091c6df136c136f74b3407cf1cacf0b231ecdaa7096fcc1a344ffb85fc
+-- hash: 2a2e04d51ac60a1be6069502d7d8d2f7d47f971609d2816713e0d0b2b98c25cf
 
 name:           evie
 version:        0.0.3
@@ -38,13 +38,11 @@ library
       aeson
     , base >=4.7 && <5
     , bytestring
-    , ede
     , mtl
     , open-browser
     , optparse-generic
     , postgresql-simple
     , resource-pool
-    , servant-ede
     , servant-server
     , text
     , wai

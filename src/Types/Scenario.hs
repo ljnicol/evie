@@ -18,16 +18,6 @@ import qualified Database.PostgreSQL.Simple as PGSimple
 import qualified Database.PostgreSQL.Simple.FromField as PGSimple
 import qualified Database.PostgreSQL.Simple.FromRow as PGSimple
 import Options.Generic
-import qualified Servant.EDE as EDE
-
-
-data Scenarios
-  = Scenarios
-      { scenarios :: [Scenario]
-      }
-  deriving (Eq, Generic, Aeson.ToJSON)
-
-instance EDE.ToObject Scenarios
 
 encodingOptions =
   Aeson.defaultOptions
@@ -44,8 +34,6 @@ data Scenario
         scenarioYears :: [Integer]
       }
   deriving (Eq, Generic)
-
-instance EDE.ToObject Scenario
 
 instance Aeson.ToJSON Scenario where
 
@@ -81,8 +69,6 @@ data MetricData
         metricSpatialTableColumn :: Text.Text
       }
   deriving (Eq, Generic)
-
-instance EDE.ToObject MetricData
 
 instance Aeson.ToJSON MetricData where
 

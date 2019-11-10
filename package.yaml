@@ -35,8 +35,6 @@ library:
     - mtl
     - resource-pool
     - postgresql-simple
-    - servant-ede
-    - ede
 
 executables:
   evie:

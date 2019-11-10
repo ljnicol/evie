@@ -3,21 +3,7 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages:
-- completed:
-    hackage: servant-ede-0.6@sha256:02c87edd93e0f148530c40c2da4265f9b92bc065bdd2f2aeabdd4c8ff297a6a1,1597
-    pantry-tree:
-      size: 616
-      sha256: 1e6d6979ccc6bdd2ea175d5a0408dd682a561a1a8cc765f6d565a3ca954fb571
-  original:
-    hackage: servant-ede-0.6
-- completed:
-    hackage: ede-0.2.9@sha256:062198b65a661f015bff53c15d53d0b63eac547d44b09d96b7fb8d27752dfc79,3561
-    pantry-tree:
-      size: 5392
-      sha256: ee8d76f8f1ca483f29233498833c7159774efc3c0cb14027703cefac79c41315
-  original:
-    hackage: ede-0.2.9
+packages: []
 snapshots:
 - completed:
     size: 495801
