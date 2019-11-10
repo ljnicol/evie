@@ -1,6 +1,6 @@
-name:                planning-scenario-viewer
-version:             0.1.0.0
-github:              "state-machine-io/planning-scenario-viewer"
+name:                evie
+version:             0.0.3
+github:              "state-machine-io/evie"
 license:             "GPL-3.0"
 author:              "State Machine Pty Ltd"
 maintainer:          "developers@statemachine.io"
@@ -16,7 +16,7 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/state-machine-io/planning-scenario-viewer#readme>
+description:         Please see the README on GitHub at <https://github.com/state-machine-io/evie#readme>
 
 dependencies:
 - base >= 4.7 && < 5
@@ -39,7 +39,7 @@ library:
     - ede
 
 executables:
-  planning-scenario-viewer:
+  evie:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
@@ -47,7 +47,7 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - planning-scenario-viewer
+    - evie
     - optparse-generic
   migrate:
     main: Main.hs

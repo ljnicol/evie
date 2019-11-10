@@ -1,8 +1,8 @@
 {
-  "name": "planning-scenario-viewer",
+  "name": "evie",
   "version": "0.1.0",
   "main": "index.js",
-  "repository": "https://github.com/state-machine-io/planning-scenario-viewer",
+  "repository": "https://github.com/state-machine-io/evie",
   "author": "developers@statemachine.io",
   "license": "GPL-3.0",
   "dependencies": {

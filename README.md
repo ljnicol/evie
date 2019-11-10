@@ -1,10 +1,10 @@
 # Getting Started
 
-Download a pre-built package from the [releases page](https://github.com/state-machine-io/planning-scenario-viewer/releases). 
+Download a pre-built package from the [releases page](https://github.com/state-machine-io/evie/releases). 
 
 Unzip this and enter your PostgreSQL connection settings into the "config.json" file.
 
-Run "planning-scenario-viewer.exe". This will open a browser window on the summary page.
+Run "evie.exe". This will open a browser window on the summary page.
 
 # Contributing
 
