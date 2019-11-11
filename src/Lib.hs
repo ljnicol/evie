@@ -31,7 +31,7 @@ startApp config@Config.Config {..} = do
             PGSimple.connectPassword = Config._password _configPG
           }
   conns <- initConnectionPool (PGSimple.postgreSQLConnectionString connStr)
-  b <- Browser.openBrowser $ Text.unpack _configApplicationDomain ++ ":" ++ (show _configApplicationPort)
+  b <- Browser.openBrowser $ Text.unpack _configApplicationDomain ++ ":" ++ (show _configApplicationPort) ++ "/app"
   if b
     then Wai.run _configApplicationPort $ debug $ Servant.serve Routes.api (Controller.server config conns)
     else print "Failed to start browser"

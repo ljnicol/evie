@@ -17,4 +17,4 @@ type API =
            :> Capture "year" Int
            :> Get '[JSON] [ScenarioTypes.MetricData]
        )
-    :<|> Raw
+    :<|> "app" :> Raw
