@@ -25,3 +25,5 @@ elm-stuff/
 .cache/
 .idea/
 release/
+release/*
+release/static/
