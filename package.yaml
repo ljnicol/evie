@@ -1,7 +1,7 @@
 name:                evie
 version:             0.0.3
 github:              "state-machine-io/evie"
-license:             "GPL-3.0"
+license:             "Apache-2.0"
 author:              "State Machine Pty Ltd"
 maintainer:          "developers@statemachine.io"
 copyright:           "2019 State Machine Pty Ltd"

@@ -4,7 +4,7 @@
   "main": "index.js",
   "repository": "https://github.com/state-machine-io/evie",
   "author": "developers@statemachine.io",
-  "license": "GPL-3.0",
+  "license": "Apache-2.0",
   "dependencies": {
     "elm": "^0.19.0-no-deps",
     "elm-format": "^0.8.2",
