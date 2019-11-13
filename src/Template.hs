@@ -3,20 +3,15 @@ module Template where
 import qualified Control.Monad.Trans as MonadTrans (liftIO)
 import qualified DB
 import qualified Data.Aeson as Aeson
-import Data.HashMap.Strict (HashMap, fromList)
-import qualified Data.HashMap.Strict as HashMap
 import qualified Data.Pool as Pool
 import qualified Data.Text as Text
 import qualified Database.PostgreSQL.Simple as PGSimple
 import qualified Servant
-import System.IO (IOMode (ReadMode), hGetContents, openFile)
-import System.IO.Error (tryIOError)
-import Text.Ginger (SourcePos, Template, VarName, easyRender, makeContextHtml, parseGingerFile, runGinger, toGVal)
-import Text.Ginger.GVal (GVal, ToGVal)
-import Text.Ginger.Html (htmlSource)
+import qualified System.IO as SystemIO (IOMode (ReadMode), hGetContents, openFile)
+import qualified System.IO.Error as IOError (tryIOError)
+import qualified Text.Ginger as Ginger
+import qualified Text.Ginger.Html as GingerHtml (htmlSource)
 import qualified Types.Scenario as ScenarioTypes
-
--- GINGER
 
 sampleContext :: Pool.Pool PGSimple.Connection -> Integer -> Servant.Handler ScenarioTypes.TemplateData
 sampleContext conns scenarioId = do
@@ -24,23 +19,22 @@ sampleContext conns scenarioId = do
   scenario <- DB.scenarioDB conns 1
   return $ ScenarioTypes.TemplateData metrics scenario
 
--- Given a Template and a HashMap of context, render the template to Text
-render :: Template SourcePos -> ScenarioTypes.TemplateData -> Text.Text
-render template context = htmlSource $ easyRender context template
+render :: Ginger.Template Ginger.SourcePos -> ScenarioTypes.TemplateData -> Text.Text
+render template context = GingerHtml.htmlSource $ Ginger.easyRender context template
 
 loadFileMay :: FilePath -> IO (Maybe String)
 loadFileMay fn =
-  tryIOError (loadFile fn) >>= \e ->
+  IOError.tryIOError (loadFile fn) >>= \e ->
     case e of
       Right contents -> return (Just contents)
       Left _ -> return Nothing
   where
     loadFile :: FilePath -> IO String
-    loadFile fn' = openFile fn' ReadMode >>= hGetContents
+    loadFile fn' = SystemIO.openFile fn' SystemIO.ReadMode >>= SystemIO.hGetContents
 
-renderTemplate :: Pool.Pool PGSimple.Connection -> Integer -> Servant.Handler Text.Text
-renderTemplate conns scenarioId = do
-  template <- MonadTrans.liftIO $ parseGingerFile loadFileMay "base.html"
+renderTemplate :: Pool.Pool PGSimple.Connection -> FilePath -> Integer -> Servant.Handler Text.Text
+renderTemplate conns templateDirectory scenarioId = do
+  template <- MonadTrans.liftIO $ Ginger.parseGingerFile loadFileMay (templateDirectory ++ "/" ++ "base.html")
   case template of
     Left err -> return $ Text.pack $ show err
     Right template' -> do
