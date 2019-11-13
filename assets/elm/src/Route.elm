@@ -13,7 +13,7 @@ parser : Parser.Parser (Model.Page -> a) a
 parser =
     Parser.oneOf
         [ Parser.map Model.ScenariosList (Parser.s "scenariosList")
-        , Parser.map Model.ScenarioDetail (Parser.s "scenarioDetail")
+        , Parser.map Model.MultiScenarioComparison (Parser.s "MultiScenarioComparison")
         ]
 
 
@@ -25,8 +25,8 @@ routeToString page =
                 Model.ScenariosList ->
                     [ "scenariosList" ]
 
-                Model.ScenarioDetail ->
-                    [ "scenarioDetail" ]
+                Model.MultiScenarioComparison ->
+                    [ "MultiScenarioComparison" ]
     in
     "app#" ++ String.join "/" pieces
 

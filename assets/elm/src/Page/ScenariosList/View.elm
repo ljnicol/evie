@@ -94,7 +94,7 @@ tableRow index scenario =
             ]
         , td []
             [ button
-                [ class "button is-link", onClick (Msg.OpenScenarioDetail scenario) ]
+                [ class "button is-link", onClick (Msg.OpenMultiScenarioComparison scenario) ]
                 [ text "View" ]
             ]
         ]

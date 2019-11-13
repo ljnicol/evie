@@ -6,5 +6,5 @@ import Types.Scenario as TypesScenario
 
 type Msg
     = LoadScenariosList
-    | OpenScenarioDetail TypesScenario.Scenario
+    | OpenMultiScenarioComparison TypesScenario.Scenario
     | HandleGetScenariosList (Result Http.Error (List TypesScenario.Scenario))

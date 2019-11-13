@@ -4,8 +4,8 @@ import Browser
 import Browser.Navigation as Navigation
 import Model
 import Msg
-import Page.ScenarioDetail.Msg as ScenarioDetailMsg
-import Page.ScenarioDetail.Update as ScenarioDetailUpdate
+import Page.MultiScenarioComparison.Msg as MultiScenarioComparisonMsg
+import Page.MultiScenarioComparison.Update as MultiScenarioComparisonUpdate
 import Page.ScenariosList.Msg as ScenariosListMsg
 import Page.ScenariosList.Update as ScenariosListUpdate
 import Route
@@ -42,9 +42,9 @@ update msg model =
             ScenariosListUpdate.update m model.scenariosList
                 |> updateWith (\s -> { model | scenariosList = s }) Msg.ScenariosList model
 
-        Msg.ScenarioDetail m ->
-            ScenarioDetailUpdate.update m model.scenario
-                |> updateWith (\s -> { model | scenario = s }) Msg.ScenarioDetail model
+        Msg.MultiScenarioComparison m ->
+            MultiScenarioComparisonUpdate.update m model.scenario
+                |> updateWith (\s -> { model | scenario = s }) Msg.MultiScenarioComparison model
 
 
 updateWith : (subModel -> Model.Model) -> (subMsg -> Msg.Msg) -> Model.Model -> ( subModel, Cmd subMsg ) -> ( Model.Model, Cmd Msg.Msg )
@@ -68,10 +68,10 @@ showScenario : Model.Model -> ( Model.Model, Cmd Msg.Msg )
 showScenario model =
     let
         newModel =
-            { model | page = Model.ScenarioDetail }
+            { model | page = Model.MultiScenarioComparison }
     in
-    ScenarioDetailUpdate.update ScenarioDetailMsg.LoadScenarioDetail model.scenario
-        |> updateWith (\s -> { newModel | scenario = s }) Msg.ScenarioDetail model
+    MultiScenarioComparisonUpdate.update MultiScenarioComparisonMsg.LoadMultiScenarioComparison model.scenario
+        |> updateWith (\s -> { newModel | scenario = s }) Msg.MultiScenarioComparison model
 
 
 changeToUrl : Url.Url -> Model.Model -> ( Model.Model, Cmd Msg.Msg )
@@ -83,5 +83,5 @@ changeToUrl url model =
         Just Model.ScenariosList ->
             showScenariosList model
 
-        Just Model.ScenarioDetail ->
+        Just Model.MultiScenarioComparison ->
             showScenario model

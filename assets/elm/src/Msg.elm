@@ -1,7 +1,7 @@
 module Msg exposing (..)
 
 import Browser
-import Page.ScenarioDetail.Msg as ScenarioDetailMsg
+import Page.MultiScenarioComparison.Msg as MultiScenarioComparisonMsg
 import Page.ScenariosList.Msg as ScenariosListMsg
 import Url
 
@@ -9,6 +9,6 @@ import Url
 type Msg
     = NoOp
     | ScenariosList ScenariosListMsg.Msg
-    | ScenarioDetail ScenarioDetailMsg.Msg
+    | MultiScenarioComparison MultiScenarioComparisonMsg.Msg
     | OnUrlChange Url.Url
     | OnUrlRequest Browser.UrlRequest

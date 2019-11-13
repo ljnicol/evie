@@ -30,15 +30,15 @@ decodeListScenario =
     Decode.list scenarioDecoder
 
 
-type alias ScenarioDetail =
+type alias MultiScenarioComparison =
     { scenario : Scenario
     , metrics : List MetricData
     }
 
 
-scenarioDetailDecoder : Decode.Decoder ScenarioDetail
-scenarioDetailDecoder =
-    Decode.succeed ScenarioDetail
+multiScenarioComparisonDecoder : Decode.Decoder MultiScenarioComparison
+multiScenarioComparisonDecoder =
+    Decode.succeed MultiScenarioComparison
         |> DecodePipeline.required "scenario" scenarioDecoder
         |> DecodePipeline.required "metrics" decodeListMetricData
 

@@ -5,7 +5,7 @@ import Bulma.CDN as CDN
 import Html exposing (Html, main_, text)
 import Model
 import Msg exposing (Msg)
-import Page.ScenarioDetail.View as ScenarioDetail
+import Page.MultiScenarioComparison.View as MultiScenarioComparison
 import Page.ScenariosList.View as ScenariosList
 import Views.Navbar as Navbar
 
@@ -29,5 +29,5 @@ viewPage model =
         Model.ScenariosList ->
             Html.map Msg.ScenariosList (ScenariosList.view model.scenariosList)
 
-        Model.ScenarioDetail ->
-            Html.map Msg.ScenarioDetail (ScenarioDetail.view model.scenario)
+        Model.MultiScenarioComparison ->
+            Html.map Msg.MultiScenarioComparison (MultiScenarioComparison.view model.scenario)

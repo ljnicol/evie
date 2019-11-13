@@ -13,7 +13,7 @@ update msg model =
         Msg.LoadScenariosList ->
             ( { model | scenariosList = RemoteData.Loading }, Api.getScenariosList )
 
-        Msg.OpenScenarioDetail scenario ->
+        Msg.OpenMultiScenarioComparison scenario ->
             ( model, Navigation.load ("/app/scenario_detail/" ++ String.fromInt scenario.scenario_id) )
 
         --++ String.fromInt scenario.scenario_id) )

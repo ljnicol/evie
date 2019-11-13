@@ -1,10 +1,10 @@
-module Page.ScenarioDetail.View exposing (view)
+module Page.MultiScenarioComparison.View exposing (view)
 
 import Html exposing (Html, a, button, div, section, table, tbody, td, text, th, thead, tr)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
-import Page.ScenarioDetail.Model as Model
-import Page.ScenarioDetail.Msg as Msg
+import Page.MultiScenarioComparison.Model as Model
+import Page.MultiScenarioComparison.Msg as Msg
 import RemoteData
 
 
