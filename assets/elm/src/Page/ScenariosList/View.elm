@@ -81,24 +81,20 @@ tableRow index scenario =
         [ td []
             [ text (String.fromInt <| scenario.scenario_id) ]
         , td []
-            [ a [ onClick (Msg.OpenScenario scenario) ]
-                [ text scenario.scenario_name ]
+            [ text scenario.scenario_name
             ]
         , td []
-            [ a [ onClick (Msg.OpenScenario scenario) ]
-                [ text scenario.scenario_description ]
+            [ text scenario.scenario_description
             ]
         , td []
-            [ a [ onClick (Msg.OpenScenario scenario) ]
-                [ text scenario.scenario_assumptions ]
+            [ text scenario.scenario_assumptions
             ]
         , td []
-            [ a [ onClick (Msg.OpenScenario scenario) ]
-                [ text <| String.join "," <| List.map String.fromInt scenario.scenario_years ]
+            [ text <| String.join "," <| List.map String.fromInt scenario.scenario_years
             ]
         , td []
             [ button
-                [ class "button is-link", onClick (Msg.OpenScenario scenario) ]
+                [ class "button is-link", onClick (Msg.OpenScenarioDetail scenario) ]
                 [ text "View" ]
             ]
         ]

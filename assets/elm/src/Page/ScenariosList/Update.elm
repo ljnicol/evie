@@ -13,8 +13,8 @@ update msg model =
         Msg.LoadScenariosList ->
             ( { model | scenariosList = RemoteData.Loading }, Api.getScenariosList )
 
-        Msg.OpenScenario scenario ->
-            ( model, Navigation.load ("/app/metric_detail/" ++ String.fromInt scenario.scenario_id) )
+        Msg.OpenScenarioDetail scenario ->
+            ( model, Navigation.load ("/app/scenario_detail/" ++ String.fromInt scenario.scenario_id) )
 
         --++ String.fromInt scenario.scenario_id) )
         Msg.HandleGetScenariosList (Ok reports) ->
