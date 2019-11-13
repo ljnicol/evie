@@ -13,4 +13,4 @@ server ::
 server config@Config.Config {..} conns = apiServer conns Servant.:<|> appServer conns
   where
     apiServer conns = DB.scenariosDB conns Servant.:<|> DB.metricsDB conns
-    appServer conns = Template.renderTemplate conns Servant.:<|> Servant.serveDirectoryFileServer (_configDirectory ++ "/" ++ "static")
+    appServer conns = Template.renderTemplate conns (_configDirectory ++ "/" ++ "templates") Servant.:<|> Servant.serveDirectoryFileServer (_configDirectory ++ "/" ++ "static")
