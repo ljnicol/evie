@@ -5,8 +5,8 @@ import Browser.Navigation as Navigation
 import Model
 import Msg
 import Page.ScenarioDetail.Msg as ScenarioDetailMsg
-import Page.ScenariosList.Msg as ScenariosListMsg
 import Page.ScenarioDetail.Update as ScenarioDetailUpdate
+import Page.ScenariosList.Msg as ScenariosListMsg
 import Page.ScenariosList.Update as ScenariosListUpdate
 import Route
 import Url
@@ -47,7 +47,6 @@ update msg model =
                 |> updateWith (\s -> { model | scenario = s }) Msg.ScenarioDetail model
 
 
-
 updateWith : (subModel -> Model.Model) -> (subMsg -> Msg.Msg) -> Model.Model -> ( subModel, Cmd subMsg ) -> ( Model.Model, Cmd Msg.Msg )
 updateWith toModel toMsg model ( subModel, subCmd ) =
     ( toModel subModel
@@ -58,11 +57,11 @@ updateWith toModel toMsg model ( subModel, subCmd ) =
 showScenariosList : Model.Model -> ( Model.Model, Cmd Msg.Msg )
 showScenariosList model =
     let
-            newModel =
-                { model | page = Model.ScenariosList }
-        in
-        ScenariosListUpdate.update ScenariosListMsg.LoadScenariosList model.scenariosList
-            |> updateWith (\s -> { newModel | scenariosList = s }) Msg.ScenariosList model
+        newModel =
+            { model | page = Model.ScenariosList }
+    in
+    ScenariosListUpdate.update ScenariosListMsg.LoadScenariosList model.scenariosList
+        |> updateWith (\s -> { newModel | scenariosList = s }) Msg.ScenariosList model
 
 
 showScenario : Model.Model -> ( Model.Model, Cmd Msg.Msg )

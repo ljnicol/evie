@@ -1,15 +1,15 @@
 module Page.ScenarioDetail.Model exposing (..)
 
-import Page.ScenarioDetail.Types as ScenarioDetailTypes
 import RemoteData
+import Types.Scenario as TypesScenario
 
 
 type alias Model =
-    { reportsScenarioDetail : RemoteData.WebData (List ScenarioDetailTypes.ReportScenarioDetail)
+    { scenarioDetail : RemoteData.WebData TypesScenario.ScenarioDetail
     }
 
 
 model : Model
 model =
-    { reportsScenarioDetail = RemoteData.NotAsked
+    { scenarioDetail = RemoteData.NotAsked
     }

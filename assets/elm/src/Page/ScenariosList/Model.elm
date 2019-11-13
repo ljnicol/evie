@@ -1,11 +1,11 @@
 module Page.ScenariosList.Model exposing (..)
 
-import Page.ScenariosList.Types as ScenariosListTypes
 import RemoteData
+import Types.Scenario as TypesScenario
 
 
 type alias Model =
-    { scenariosList : RemoteData.WebData (List ScenariosListTypes.Scenario)
+    { scenariosList : RemoteData.WebData (List TypesScenario.Scenario)
     }
 
 

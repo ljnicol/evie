@@ -14,8 +14,9 @@ update msg model =
             ( { model | scenariosList = RemoteData.Loading }, Api.getScenariosList )
 
         Msg.OpenScenario scenario ->
-            ( model, Navigation.load ("/app/search?lotAndPlan=" ++ scenario.scenario_name) )
+            ( model, Navigation.load "/app#scenarioDetail/1" )
 
+        --++ String.fromInt scenario.scenario_id) )
         Msg.HandleGetScenariosList (Ok reports) ->
             ( { model | scenariosList = RemoteData.Success reports }, Cmd.none )
 

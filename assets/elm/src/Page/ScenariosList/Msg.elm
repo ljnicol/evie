@@ -1,10 +1,10 @@
 module Page.ScenariosList.Msg exposing (..)
 
 import Http
-import Page.ScenariosList.Types as Types
+import Types.Scenario as TypesScenario
 
 
 type Msg
     = LoadScenariosList
-    | OpenScenario Types.Scenario
-    | HandleGetScenariosList (Result Http.Error (List Types.Scenario))
+    | OpenScenario TypesScenario.Scenario
+    | HandleGetScenariosList (Result Http.Error (List TypesScenario.Scenario))

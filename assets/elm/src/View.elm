@@ -16,8 +16,8 @@ view model =
     , body =
         [ main_ []
             [ CDN.stylesheet
-              , Navbar.view model False
-              , viewPage model
+            , Navbar.view model False
+            , viewPage model
             ]
         ]
     }

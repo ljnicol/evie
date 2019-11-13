@@ -5,8 +5,8 @@ import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Page.ScenariosList.Model as Model
 import Page.ScenariosList.Msg as Msg
-import Page.ScenariosList.Types as Types
 import RemoteData
+import Types.Scenario as TypesScenario
 
 
 view : Model.Model -> Html Msg.Msg
@@ -42,7 +42,7 @@ dummyTable model =
             div [] [ text "Loading" ]
 
 
-reportsTable : List Types.Scenario -> Html Msg.Msg
+reportsTable : List TypesScenario.Scenario -> Html Msg.Msg
 reportsTable reports =
     if List.length reports > 0 then
         div [ class "table-container" ]
@@ -75,7 +75,7 @@ reportsTable reports =
         div [] [ text "You have no scenarios. Contact your modeller to provision some." ]
 
 
-tableRow : Int -> Types.Scenario -> Html Msg.Msg
+tableRow : Int -> TypesScenario.Scenario -> Html Msg.Msg
 tableRow index scenario =
     tr []
         [ td []

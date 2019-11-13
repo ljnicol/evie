@@ -11,13 +11,10 @@ update : Msg.Msg -> Model.Model -> ( Model.Model, Cmd Msg.Msg )
 update msg model =
     case msg of
         Msg.LoadScenarioDetail ->
-            ( { model | reportsScenarioDetail = RemoteData.Loading }, Api.getScenarioDetail )
+            ( { model | scenarioDetail = RemoteData.Loading }, Cmd.none )
 
-        Msg.OpenReport report ->
-            ( model, Navigation.load ("/app/search?lotAndPlan=" ++ report.scenario_id) )
-
-        Msg.HandleGetScenarioDetail (Ok reports) ->
-            ( { model | reportsScenarioDetail = RemoteData.Success reports }, Cmd.none )
+        Msg.HandleGetScenarioDetail (Ok scenarioDetail) ->
+            ( { model | scenarioDetail = RemoteData.Success scenarioDetail }, Cmd.none )
 
         Msg.HandleGetScenarioDetail (Err error) ->
-            ( { model | reportsScenarioDetail = RemoteData.Failure error }, Cmd.none )
+            ( { model | scenarioDetail = RemoteData.Failure error }, Cmd.none )

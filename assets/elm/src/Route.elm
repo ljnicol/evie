@@ -5,7 +5,8 @@ import Html
 import Html.Attributes as HtmlAttributes
 import Model
 import Url exposing (Url)
-import Url.Parser as Parser exposing ((</>))
+import Url.Parser as Parser exposing ((</>), (<?>))
+import Url.Parser.Query as Query
 
 
 parser : Parser.Parser (Model.Page -> a) a

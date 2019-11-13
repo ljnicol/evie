@@ -1,10 +1,9 @@
 module Page.ScenarioDetail.Msg exposing (..)
 
 import Http
-import Page.ScenarioDetail.Types as Types
+import Types.Scenario as TypesScenario
 
 
 type Msg
     = LoadScenarioDetail
-    | OpenReport Types.ReportScenarioDetail
-    | HandleGetScenarioDetail (Result Http.Error (List Types.ReportScenarioDetail))
+    | HandleGetScenarioDetail (Result Http.Error TypesScenario.ScenarioDetail)

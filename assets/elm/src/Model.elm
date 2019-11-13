@@ -1,8 +1,8 @@
 module Model exposing (..)
 
 import Browser.Navigation as Navigation
-import Page.ScenariosList.Model as ScenariosListModel
 import Page.ScenarioDetail.Model as ScenarioDetailModel
+import Page.ScenariosList.Model as ScenariosListModel
 
 
 model : Navigation.Key -> Model
