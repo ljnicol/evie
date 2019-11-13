@@ -21,7 +21,25 @@ type API =
              :> Capture "scenario_id" Integer
              :> Get '[JSON] [ScenarioTypes.MetricData]
        )
-    :<|> "app" :> ("metric_detail" :> Capture "scenario_id" Integer :> Get '[Html] Text.Text :<|> Raw)
+    :<|> "app"
+      :> ( "scenario_detail"
+             :> Capture "scenario_id" Integer
+             :> Get '[Html] Text.Text
+             :<|> "scenario_comparison"
+               :> Capture "scenario_id_1" Integer
+               :> Capture "scenario_id_2" Integer
+               :> Get '[Html] Text.Text
+             :<|> "scenario_detail_map"
+               :> Capture "scenario_id" Integer
+               :> Capture "metric_id" Integer
+               :> Get '[Html] Text.Text
+             :<|> "scenario_comparison_map"
+               :> Capture "scenario_id_1" Integer
+               :> Capture "scenario_id_2" Integer
+               :> Capture "metric_id" Integer
+               :> Get '[Html] Text.Text
+             :<|> Raw
+         )
 
 -- HTML content type with mimeRender instance
 data Html
