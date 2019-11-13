@@ -18,9 +18,9 @@ import qualified Types.Scenario as ScenarioTypes
 
 -- GINGER
 
-sampleContext :: Pool.Pool PGSimple.Connection -> Servant.Handler ScenarioTypes.TemplateData
-sampleContext conns = do
-  metrics <- fmap ScenarioTypes.metricListToHashMap $ DB.metricsDB conns 1
+sampleContext :: Pool.Pool PGSimple.Connection -> Integer -> Servant.Handler ScenarioTypes.TemplateData
+sampleContext conns scenarioId = do
+  metrics <- fmap ScenarioTypes.metricListToHashMap $ DB.metricsDB conns scenarioId
   scenario <- DB.scenarioDB conns 1
   return $ ScenarioTypes.TemplateData metrics scenario
 
@@ -38,12 +38,12 @@ loadFileMay fn =
     loadFile :: FilePath -> IO String
     loadFile fn' = openFile fn' ReadMode >>= hGetContents
 
-renderTemplate :: Pool.Pool PGSimple.Connection -> Servant.Handler Text.Text
-renderTemplate conns = do
+renderTemplate :: Pool.Pool PGSimple.Connection -> Integer -> Servant.Handler Text.Text
+renderTemplate conns scenarioId = do
   template <- MonadTrans.liftIO $ parseGingerFile loadFileMay "base.html"
   case template of
     Left err -> return $ Text.pack $ show err
     Right template' -> do
-      context <- sampleContext conns
+      context <- sampleContext conns scenarioId
       MonadTrans.liftIO $ print (Aeson.encode context)
       return $ render template' context

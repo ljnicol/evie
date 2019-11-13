@@ -18,11 +18,10 @@ type API =
     :> ( "scenarios"
            :> Get '[JSON] [ScenarioTypes.Scenario]
            :<|> "metrics"
-             :> Capture "scenario_id" Int
+             :> Capture "scenario_id" Integer
              :> Get '[JSON] [ScenarioTypes.MetricData]
-           :<|> "template" :> Get '[Html] Text.Text
        )
-    :<|> "app" :> Raw
+    :<|> "app" :> ("metric_detail" :> Capture "scenario_id" Integer :> Get '[Html] Text.Text :<|> Raw)
 
 -- HTML content type with mimeRender instance
 data Html

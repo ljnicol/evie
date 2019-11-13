@@ -10,6 +10,7 @@ import qualified Types.Config as Config
 
 server ::
   Config.Config -> Pool.Pool PGSimple.Connection -> Servant.Server Routes.API
-server config@Config.Config {..} conns = apiServer conns Servant.:<|> Servant.serveDirectoryFileServer (_configDirectory ++ "/" ++ "static")
+server config@Config.Config {..} conns = apiServer conns Servant.:<|> appServer conns
   where
-    apiServer conns = DB.scenariosDB conns Servant.:<|> DB.metricsDB conns Servant.:<|> Template.renderTemplate conns
+    apiServer conns = DB.scenariosDB conns Servant.:<|> DB.metricsDB conns
+    appServer conns = Template.renderTemplate conns Servant.:<|> Servant.serveDirectoryFileServer (_configDirectory ++ "/" ++ "static")

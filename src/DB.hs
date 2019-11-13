@@ -8,7 +8,7 @@ import qualified Types.Scenario as ScenarioTypes
 
 scenarioDB ::
   Pool.Pool PGSimple.Connection ->
-  Int ->
+  Integer ->
   Servant.Handler ScenarioTypes.Scenario
 scenarioDB conns scenarioId = do
   res <- MonadTrans.liftIO $ Pool.withResource conns $ \conn ->
@@ -33,7 +33,7 @@ scenariosDB conns =
 
 metricsDB ::
   Pool.Pool PGSimple.Connection ->
-  Int ->
+  Integer ->
   Servant.Handler [ScenarioTypes.MetricData]
 metricsDB conns scenarioId = MonadTrans.liftIO $ Pool.withResource conns $ \conn ->
   PGSimple.query
@@ -43,8 +43,8 @@ metricsDB conns scenarioId = MonadTrans.liftIO $ Pool.withResource conns $ \conn
 
 metricsDBForYear ::
   Pool.Pool PGSimple.Connection ->
-  Int ->
-  Int ->
+  Integer ->
+  Integer ->
   Servant.Handler [ScenarioTypes.MetricData]
 metricsDBForYear conns scenarioId year = MonadTrans.liftIO $ Pool.withResource conns $ \conn ->
   PGSimple.query
@@ -54,8 +54,8 @@ metricsDBForYear conns scenarioId year = MonadTrans.liftIO $ Pool.withResource c
 
 metricDB ::
   Pool.Pool PGSimple.Connection ->
-  Int ->
-  Int ->
+  Integer ->
+  Integer ->
   Servant.Handler ScenarioTypes.MetricData
 metricDB conns scenarioId year = do
   res <- MonadTrans.liftIO $ Pool.withResource conns $ \conn ->
