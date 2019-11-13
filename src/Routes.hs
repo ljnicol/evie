@@ -1,8 +1,13 @@
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+
 module Routes where
 
+import qualified Data.ByteString.Lazy.Char8 as BS
 import qualified Data.Proxy as Proxy
+import qualified Data.Text as Text
+import Network.HTTP.Media ((//), (/:))
 import Servant
---
 import qualified Types.Scenario as ScenarioTypes
 
 api :: Proxy.Proxy API
@@ -12,9 +17,18 @@ type API =
   "api"
     :> ( "scenarios"
            :> Get '[JSON] [ScenarioTypes.Scenario]
-             :<|> "metrics"
-           :> Capture "scenario_id" Int
-           :> Capture "year" Int
-           :> Get '[JSON] [ScenarioTypes.MetricData]
+           :<|> "metrics"
+             :> Capture "scenario_id" Int
+             :> Get '[JSON] [ScenarioTypes.MetricData]
+           :<|> "template" :> Get '[Html] Text.Text
        )
     :<|> "app" :> Raw
+
+-- HTML content type with mimeRender instance
+data Html
+
+instance Accept Html where
+  contentType _ = "text" // "html" /: ("charset", "utf-8")
+
+instance MimeRender Html Text.Text where
+  mimeRender _ val = BS.pack $ Text.unpack val

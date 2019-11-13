@@ -47,6 +47,9 @@ library:
     - mtl
     - resource-pool
     - postgresql-simple
+    - ginger
+    - unordered-containers
+    - http-media
 
 executables:
   evie:
