@@ -24,4 +24,4 @@ type alias Model =
 
 type Page
     = ScenariosList
-    | MultiScenarioComparison
+    | MultiScenarioComparison (List Int)

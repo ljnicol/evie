@@ -64,18 +64,22 @@ showScenariosList model =
         |> updateWith (\s -> { newModel | scenariosList = s }) Msg.ScenariosList model
 
 
-showScenario : Model.Model -> ( Model.Model, Cmd Msg.Msg )
-showScenario model =
+showMultiScenarioComparison : Model.Model -> List Int -> ( Model.Model, Cmd Msg.Msg )
+showMultiScenarioComparison model scenarioIds =
     let
         newModel =
-            { model | page = Model.MultiScenarioComparison }
+            { model | page = Model.MultiScenarioComparison scenarioIds }
     in
-    MultiScenarioComparisonUpdate.update MultiScenarioComparisonMsg.LoadMultiScenarioComparison model.scenario
+    MultiScenarioComparisonUpdate.update (MultiScenarioComparisonMsg.LoadMultiScenarioComparison scenarioIds) model.scenario
         |> updateWith (\s -> { newModel | scenario = s }) Msg.MultiScenarioComparison model
 
 
 changeToUrl : Url.Url -> Model.Model -> ( Model.Model, Cmd Msg.Msg )
 changeToUrl url model =
+    let
+        _ =
+            Debug.log "url" (Route.fromUrl url)
+    in
     case Route.fromUrl url of
         Nothing ->
             ( model, Route.pushUrl model.key Model.ScenariosList )
@@ -83,5 +87,5 @@ changeToUrl url model =
         Just Model.ScenariosList ->
             showScenariosList model
 
-        Just Model.MultiScenarioComparison ->
-            showScenario model
+        Just (Model.MultiScenarioComparison scenarioIds) ->
+            showMultiScenarioComparison model scenarioIds

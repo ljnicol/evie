@@ -5,11 +5,13 @@ import Types.Scenario as TypesScenario
 
 
 type alias Model =
-    { multiScenarioComparison : RemoteData.WebData TypesScenario.MultiScenarioComparison
+    { scenarioIds : List Int
+    , multiScenarioComparison : RemoteData.WebData TypesScenario.MultiScenarioComparison
     }
 
 
 model : Model
 model =
-    { multiScenarioComparison = RemoteData.NotAsked
+    { scenarioIds = []
+    , multiScenarioComparison = RemoteData.NotAsked
     }

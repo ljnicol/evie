@@ -30,8 +30,7 @@ view model isMenuOpen =
             []
             [ Components.navbarStart []
                 [ Components.navbarItemLink False [ Route.href Model.ScenariosList ] [ text "Scenarios" ]
-
-                --                , Components.navbarItemLink False [ Route.href Model.MultiScenarioComparison ] [ text "Scenario" ]
+                , Components.navbarItemLink False [ Route.href <| Model.MultiScenarioComparison [ 1, 2 ] ] [ text "Scenario Comparison" ]
                 ]
             , Components.navbarEnd []
                 [ Components.navbarItem False

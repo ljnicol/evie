@@ -3,7 +3,10 @@ module Route exposing (..)
 import Browser.Navigation as Navigation
 import Html
 import Html.Attributes as HtmlAttributes
+import List
+import Maybe
 import Model
+import String
 import Url exposing (Url)
 import Url.Parser as Parser exposing ((</>), (<?>))
 import Url.Parser.Query as Query
@@ -12,23 +15,31 @@ import Url.Parser.Query as Query
 parser : Parser.Parser (Model.Page -> a) a
 parser =
     Parser.oneOf
-        [ Parser.map Model.ScenariosList (Parser.s "scenariosList")
-        , Parser.map Model.MultiScenarioComparison (Parser.s "MultiScenarioComparison")
+        [ Parser.map Model.ScenariosList (Parser.s "scenarios_list")
+        , Parser.map Model.MultiScenarioComparison (Parser.s "multi_scenario_comparison" <?> scenarioParser)
         ]
+
+
+scenarioParser : Query.Parser (List Int)
+scenarioParser =
+    Query.custom
+        "scenarioId"
+        (List.filterMap (\_ -> Just 1))
 
 
 routeToString : Model.Page -> String
 routeToString page =
-    let
-        pieces =
-            case page of
-                Model.ScenariosList ->
-                    [ "scenariosList" ]
+    case page of
+        Model.ScenariosList ->
+            "app#scenarios_list"
 
-                Model.MultiScenarioComparison ->
-                    [ "MultiScenarioComparison" ]
-    in
-    "app#" ++ String.join "/" pieces
+        Model.MultiScenarioComparison scenarioIds ->
+            case scenarioIds of
+                [] ->
+                    "app#multi_scenario_comparison"
+
+                _ ->
+                    "app#multi_scenario_comparison?" ++ String.join "&" (List.map (\s -> "scenarioId=" ++ String.fromInt s) scenarioIds)
 
 
 href : Model.Page -> Html.Attribute msg
@@ -43,8 +54,23 @@ pushUrl key route =
 
 fromUrl : Url -> Maybe Model.Page
 fromUrl url =
-    -- The RealWorld spec treats the fragment like a path.
-    -- This makes it *literally* the path, so we can proceed
-    -- with parsing as if it had been a normal path all along.
-    { url | path = Maybe.withDefault "" url.fragment, fragment = Nothing }
+    --    We have the path in the fragment to handle client-side routing.
+    --    We need to split the current fragment on '?' and then assign each section to the path
+    --    and the query as required.
+    let
+        oldFragmentSplit =
+            Maybe.withDefault "" url.fragment |> String.split "?"
+
+        ( newPath, newQuery ) =
+            case oldFragmentSplit of
+                path :: query :: _ ->
+                    ( path, Just query )
+
+                path :: [] ->
+                    ( path, Nothing )
+
+                _ ->
+                    ( "", Nothing )
+    in
+    { url | path = newPath, fragment = Nothing, query = newQuery }
         |> Parser.parse parser

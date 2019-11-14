@@ -29,5 +29,5 @@ viewPage model =
         Model.ScenariosList ->
             Html.map Msg.ScenariosList (ScenariosList.view model.scenariosList)
 
-        Model.MultiScenarioComparison ->
+        Model.MultiScenarioComparison _ ->
             Html.map Msg.MultiScenarioComparison (MultiScenarioComparison.view model.scenario)
