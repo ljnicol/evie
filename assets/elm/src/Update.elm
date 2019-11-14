@@ -76,10 +76,6 @@ showMultiScenarioComparison model scenarioIds =
 
 changeToUrl : Url.Url -> Model.Model -> ( Model.Model, Cmd Msg.Msg )
 changeToUrl url model =
-    let
-        _ =
-            Debug.log "url" (Route.fromUrl url)
-    in
     case Route.fromUrl url of
         Nothing ->
             ( model, Route.pushUrl model.key Model.ScenariosList )
