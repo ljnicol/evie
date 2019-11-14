@@ -13,7 +13,7 @@ update msg model =
         Msg.LoadScenariosList ->
             ( { model | scenariosList = RemoteData.Loading }, Api.getScenariosList )
 
-        Msg.OpenMultiScenarioComparison scenario ->
+        Msg.OpenScenarioDetail scenario ->
             let
                 year =
                     String.fromInt <| Maybe.withDefault 2019 <| List.head scenario.scenario_years
