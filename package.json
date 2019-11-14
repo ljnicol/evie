@@ -6,6 +6,7 @@
   "author": "developers@statemachine.io",
   "license": "Apache-2.0",
   "dependencies": {
+    "bulma": "^0.8.0",
     "elm": "^0.19.0-no-deps",
     "elm-format": "^0.8.2",
     "node-sass": "^4.13.0",
