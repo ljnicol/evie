@@ -28,3 +28,4 @@ release/
 release/*
 release/static/
 assets/static/
+assets/config.json
