@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+</head>
+
+<body>
+  <h1>Scenario Detail</h1>
+  <script>
+    let scenario = {{ raw(json(scenario)) }}
+    let metrics = {{ raw(json(metric_data)) }}
+    console.log(scenario);
+    console.log(metrics);
+  </script>
+  <h2>
+    {{ scenario.scenario_name }}
+  </h2>
+  <div>
+    {{ scenario.scenario_description }}
+  </div>
+  <h2>
+    Metrics
+  </h2>
+  <div>
+    <h2>
+      {{ metric_data[1].metric_name }}
+    </h2>
+    <p>
+      {{ metric_data[1].metric_description }}
+    </p>
+    {{ metric_data[1].metric_value }}
+  </div>
+
+  <div>
+    <h2>
+      {{ metric_data[2].metric_name }}
+    </h2>
+    <p>
+      {{ metric_data[2].metric_description }}
+    </p>
+    {{ metric_data[2].metric_value }}
+  </div>
+  <div>
+    <a href="/app/scenario_detail_map/{{scenario.scenario_id}}/1">map_link</a>
+  </div>
+  <div>
+    <a href="/app/scenario_comparison/{{scenario.scenario_id}}/{{scenario.scenario_id}}">comparison_link</a>
+  </div>
+</body>
+
+</html>

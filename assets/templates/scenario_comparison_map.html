@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+</head>
+
+<body>
+  <h1>Scenario Comparison Map</h1>
+  <script>
+    let scenario = {{ raw(json(scenario)) }}
+    let metrics = {{ raw(json(metric_data)) }}
+    console.log(scenario);
+    console.log(metrics);
+  </script>
+  <div>
+    {{ metric_data[1].metric_name }}
+    {{ metric_data[1].metric_description }}
+    {{ metric_data[1].metric_value }}
+  </div>
+</body>
+
+</html>
