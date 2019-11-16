@@ -15,8 +15,7 @@ view model =
     { title = "Evie"
     , body =
         [ main_ []
-            [ CDN.stylesheet
-            , Navbar.view model False
+            [ Navbar.view model False
             , viewPage model
             ]
         ]

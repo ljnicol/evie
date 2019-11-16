@@ -12,10 +12,10 @@ server ::
   Config.Config -> Pool.Pool PGSimple.Connection -> Servant.Server Routes.API
 server config@Config.Config {..} conns = apiServer conns Servant.:<|> appServer conns
   where
-    apiServer conns = DB.scenariosDB conns Servant.:<|> DB.metricsDB conns
+    apiServer conns = DB.scenariosDB conns Servant.:<|> DB.metricsDB conns Servant.:<|> DB.getScenarioComparisonListDB conns
     appServer conns =
-      Template.renderScenarioDetail conns (_configDirectory ++ "/" ++ "templates/scenario_detail.html")
-        Servant.:<|> Template.renderScenarioComparison conns (_configDirectory ++ "/" ++ "templates/scenario_comparison")
-        Servant.:<|> Template.renderScenarioDetailMap conns (_configDirectory ++ "/" ++ "templates/scenario_detail_map")
-        Servant.:<|> Template.renderScenarioComparisonMap conns (_configDirectory ++ "/" ++ "templates/scenario_comparison_map")
+      Template.scenarioDetail conns (_configDirectory ++ "/" ++ "templates/scenario_detail.html")
+        Servant.:<|> Template.scenarioComparison conns (_configDirectory ++ "/" ++ "templates/scenario_comparison.html")
+        Servant.:<|> Template.scenarioDetailMap conns (_configDirectory ++ "/" ++ "templates/scenario_detail_map.html")
+        Servant.:<|> Template.scenarioComparisonMap conns (_configDirectory ++ "/" ++ "templates/scenario_comparison_map.html")
         Servant.:<|> Servant.serveDirectoryFileServer (_configDirectory ++ "/" ++ "static")

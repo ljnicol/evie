@@ -12,6 +12,16 @@ import qualified Text.Ginger as Ginger
 import qualified Text.Ginger.Html as GingerHtml (htmlSource)
 import qualified Types.Scenario as ScenarioTypes
 
+-- Static File
+
+renderStatic :: FilePath -> Servant.Handler Text.Text
+renderStatic templateFile = do
+  template <- MonadTrans.liftIO $ Ginger.parseGingerFile loadFileMay templateFile
+  case template of
+    Left err -> return $ Text.pack $ show err
+    Right template' ->
+      return $ GingerHtml.htmlSource $ Ginger.easyRender () template'
+
 -- Common
 
 loadFileMay :: FilePath -> IO (Maybe String)
@@ -34,54 +44,40 @@ renderPage templateFile renderFn = do
 
 -- Scenario Detail Page
 
-renderScenarioDetail :: Pool.Pool PGSimple.Connection -> FilePath -> Integer -> Servant.Handler Text.Text
-renderScenarioDetail conns templateFile scenarioId = do
-  context <- getScenarioDetailDB conns scenarioId
-  renderPage templateFile (render context)
+scenarioDetail :: Pool.Pool PGSimple.Connection -> FilePath -> Integer -> Integer -> Servant.Handler Text.Text
+scenarioDetail conns templateFile scenarioId year = do
+  context <- DB.getScenarioDetailDB conns scenarioId year
+  renderPage templateFile (renderScenarioDetail context)
 
-getScenarioDetailDB :: Pool.Pool PGSimple.Connection -> Integer -> Servant.Handler ScenarioTypes.TemplateData
-getScenarioDetailDB conns scenarioId = do
-  metrics <- fmap ScenarioTypes.metricListToHashMap $ DB.metricsDB conns scenarioId
-  scenario <- DB.scenarioDB conns 1
-  return $ ScenarioTypes.TemplateData metrics scenario
-
-render :: ScenarioTypes.TemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
-render context template = GingerHtml.htmlSource $ Ginger.easyRender context template
+renderScenarioDetail :: ScenarioTypes.TemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
+renderScenarioDetail context template = GingerHtml.htmlSource $ Ginger.easyRender context template
 
 -- Scenario Comparison Page
-renderScenarioComparison :: Pool.Pool PGSimple.Connection -> FilePath -> Integer -> Integer -> Servant.Handler Text.Text
-renderScenarioComparison conns templateFile scenarioId1 scenarioId2 = do
-  context <- getScenarioDetailDB conns scenarioId1
-  renderPage templateFile (render context)
+scenarioComparison :: Pool.Pool PGSimple.Connection -> FilePath -> Integer -> Integer -> Integer -> Integer -> Servant.Handler Text.Text
+scenarioComparison conns templateFile scenarioId1 year1 scenarioId2 year2 = do
+  scenario1Context <- DB.getScenarioDetailDB conns scenarioId1 year1
+  scenario2Context <- DB.getScenarioDetailDB conns scenarioId2 year2
+  renderPage templateFile (renderScenarioComparison scenario1Context)
 
-getScenarioComparisonDB :: Pool.Pool PGSimple.Connection -> Integer -> Servant.Handler ScenarioTypes.TemplateData
-getScenarioComparisonDB conns scenarioId = do
-  metrics <- fmap ScenarioTypes.metricListToHashMap $ DB.metricsDB conns scenarioId
-  scenario <- DB.scenarioDB conns 1
-  return $ ScenarioTypes.TemplateData metrics scenario
+renderScenarioComparison :: ScenarioTypes.TemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
+renderScenarioComparison context template = GingerHtml.htmlSource $ Ginger.easyRender context template
 
--- Scenario Map Page
+-- -- Scenario Map Page
 
-renderScenarioDetailMap :: Pool.Pool PGSimple.Connection -> FilePath -> Integer -> Integer -> Servant.Handler Text.Text
-renderScenarioDetailMap conns templateFile scenarioId metricId = do
-  context <- getScenarioDetailMapDB conns scenarioId
-  renderPage templateFile (render context)
+scenarioDetailMap :: Pool.Pool PGSimple.Connection -> FilePath -> Integer -> Integer -> Integer -> Servant.Handler Text.Text
+scenarioDetailMap conns templateFile scenarioId metricId year = do
+  context <- DB.getScenarioMapDB conns scenarioId metricId year
+  renderPage templateFile (renderScenarioDetailMap context)
 
-getScenarioDetailMapDB :: Pool.Pool PGSimple.Connection -> Integer -> Servant.Handler ScenarioTypes.TemplateData
-getScenarioDetailMapDB conns scenarioId = do
-  metrics <- fmap ScenarioTypes.metricListToHashMap $ DB.metricsDB conns scenarioId
-  scenario <- DB.scenarioDB conns 1
-  return $ ScenarioTypes.TemplateData metrics scenario
+renderScenarioDetailMap :: ScenarioTypes.TemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
+renderScenarioDetailMap context template = GingerHtml.htmlSource $ Ginger.easyRender context template
 
 -- Scenario Comparison Map
 
-renderScenarioComparisonMap :: Pool.Pool PGSimple.Connection -> FilePath -> Integer -> Integer -> Integer -> Servant.Handler Text.Text
-renderScenarioComparisonMap conns templateFile scenarioId1 scenarioId2 metricId = do
-  context <- getScenarioDetailDB conns scenarioId1
-  renderPage templateFile (render context)
+scenarioComparisonMap :: Pool.Pool PGSimple.Connection -> FilePath -> Integer -> Integer -> Integer -> Integer -> Servant.Handler Text.Text
+scenarioComparisonMap conns templateFile scenarioId1 scenarioId2 metricId year = do
+  context <- DB.getScenarioMapDB conns scenarioId1 metricId year
+  renderPage templateFile (renderScenarioComparisonMap context)
 
-getScenarioComparisonMapDB :: Pool.Pool PGSimple.Connection -> Integer -> Servant.Handler ScenarioTypes.TemplateData
-getScenarioComparisonMapDB conns scenarioId = do
-  metrics <- fmap ScenarioTypes.metricListToHashMap $ DB.metricsDB conns scenarioId
-  scenario <- DB.scenarioDB conns 1
-  return $ ScenarioTypes.TemplateData metrics scenario
+renderScenarioComparisonMap :: ScenarioTypes.TemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
+renderScenarioComparisonMap context template = GingerHtml.htmlSource $ Ginger.easyRender context template
