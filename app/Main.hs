@@ -5,11 +5,14 @@ module Main where
 import qualified Init
 import qualified Lib
 import qualified Options.Generic as OptionsGeneric
+import qualified Types.Config as Config
 
 main :: IO ()
-main = OptionsGeneric.getRecord "servant-auth0" >>= doIt
+main = do
+  commandLineOpts <- OptionsGeneric.unwrapRecord "evie"
+  doIt commandLineOpts
 
-doIt :: Maybe FilePath -> IO ()
-doIt cmdLineAppDirectory = do
-  config <- Init.getConfig cmdLineAppDirectory
+doIt :: Config.CommandLine OptionsGeneric.Unwrapped -> IO ()
+doIt commandLine = do
+  config <- Init.getConfig commandLine
   Lib.startApp config

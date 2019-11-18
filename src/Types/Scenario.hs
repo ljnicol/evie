@@ -63,12 +63,6 @@ instance SQLiteSimple.FromRow Scenario where
       <*> SQLiteSimple.field
       <*> SQLiteSimple.field
 
--- instance SQLiteSimple.FromField [Text.Text] where
---   fromField = SQLiteSimple.fromJSONField
-
--- instance SQLiteSimple.FromField [Integer] where
---   fromField = SQLiteSimple.fromJSONField
-
 instance Ginger.ToGVal m Scenario where
   toGVal s = Ginger.rawJSONToGVal $ Aeson.toJSON s
 
