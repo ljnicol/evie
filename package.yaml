@@ -50,6 +50,7 @@ library:
     - ginger
     - unordered-containers
     - http-media
+    - sqlite-simple
 
 executables:
   evie:

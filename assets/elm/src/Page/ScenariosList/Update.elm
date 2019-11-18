@@ -16,7 +16,7 @@ update msg model =
         Msg.OpenScenarioDetail scenario ->
             let
                 year =
-                    String.fromInt <| Maybe.withDefault 2019 <| List.head scenario.scenario_years
+                    Maybe.withDefault "2019" <| List.head scenario.scenario_years
             in
             ( model, Navigation.load ("/app/scenario_detail/" ++ String.fromInt scenario.scenario_id ++ "/" ++ year) )
 

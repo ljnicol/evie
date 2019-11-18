@@ -4,7 +4,7 @@ import qualified Control.Monad.Trans as MonadTrans (liftIO)
 import qualified DB
 import qualified Data.Pool as Pool
 import qualified Data.Text as Text
-import qualified Database.PostgreSQL.Simple as PGSimple
+import qualified Database.SQLite.Simple as SQLiteSimple
 import qualified Servant
 import qualified System.IO as SystemIO (IOMode (ReadMode), hGetContents, openFile)
 import qualified System.IO.Error as IOError (tryIOError)
@@ -44,7 +44,7 @@ renderPage templateFile renderFn = do
 
 -- Scenario Detail Page
 
-scenarioDetail :: Pool.Pool PGSimple.Connection -> FilePath -> Integer -> Integer -> Servant.Handler Text.Text
+scenarioDetail :: Pool.Pool SQLiteSimple.Connection -> FilePath -> Integer -> Integer -> Servant.Handler Text.Text
 scenarioDetail conns templateFile scenarioId year = do
   context <- DB.getScenarioDetailDB conns scenarioId year
   renderPage templateFile (renderScenarioDetail context)
@@ -53,7 +53,7 @@ renderScenarioDetail :: ScenarioTypes.TemplateData -> Ginger.Template Ginger.Sou
 renderScenarioDetail context template = GingerHtml.htmlSource $ Ginger.easyRender context template
 
 -- Scenario Comparison Page
-scenarioComparison :: Pool.Pool PGSimple.Connection -> FilePath -> Integer -> Integer -> Integer -> Integer -> Servant.Handler Text.Text
+scenarioComparison :: Pool.Pool SQLiteSimple.Connection -> FilePath -> Integer -> Integer -> Integer -> Integer -> Servant.Handler Text.Text
 scenarioComparison conns templateFile scenarioId1 year1 scenarioId2 year2 = do
   scenario1Context <- DB.getScenarioDetailDB conns scenarioId1 year1
   scenario2Context <- DB.getScenarioDetailDB conns scenarioId2 year2
@@ -64,7 +64,7 @@ renderScenarioComparison context template = GingerHtml.htmlSource $ Ginger.easyR
 
 -- -- Scenario Map Page
 
-scenarioDetailMap :: Pool.Pool PGSimple.Connection -> FilePath -> Integer -> Integer -> Integer -> Servant.Handler Text.Text
+scenarioDetailMap :: Pool.Pool SQLiteSimple.Connection -> FilePath -> Integer -> Integer -> Integer -> Servant.Handler Text.Text
 scenarioDetailMap conns templateFile scenarioId metricId year = do
   context <- DB.getScenarioMapDB conns scenarioId metricId year
   renderPage templateFile (renderScenarioDetailMap context)
@@ -74,7 +74,7 @@ renderScenarioDetailMap context template = GingerHtml.htmlSource $ Ginger.easyRe
 
 -- Scenario Comparison Map
 
-scenarioComparisonMap :: Pool.Pool PGSimple.Connection -> FilePath -> Integer -> Integer -> Integer -> Integer -> Servant.Handler Text.Text
+scenarioComparisonMap :: Pool.Pool SQLiteSimple.Connection -> FilePath -> Integer -> Integer -> Integer -> Integer -> Servant.Handler Text.Text
 scenarioComparisonMap conns templateFile scenarioId1 scenarioId2 metricId year = do
   context <- DB.getScenarioMapDB conns scenarioId1 metricId year
   renderPage templateFile (renderScenarioComparisonMap context)

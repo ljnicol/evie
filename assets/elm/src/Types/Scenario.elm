@@ -10,7 +10,7 @@ type alias Scenario =
     , scenario_description : String
     , scenario_assumptions : String
     , scenario_spatial_table : String
-    , scenario_years : List Int
+    , scenario_years : List String
     }
 
 
@@ -22,7 +22,7 @@ scenarioDecoder =
         |> DecodePipeline.required "scenario_description" Decode.string
         |> DecodePipeline.required "scenario_assumptions" Decode.string
         |> DecodePipeline.required "scenario_spatial_table" Decode.string
-        |> DecodePipeline.required "scenario_years" (Decode.list Decode.int)
+        |> DecodePipeline.required "scenario_years" (Decode.list Decode.string)
 
 
 decodeListScenario : Decode.Decoder (List Scenario)

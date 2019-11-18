@@ -4,11 +4,14 @@
 module Types.Scenario where
 
 import qualified Data.Aeson as Aeson
+import Data.ByteString.Builder (toLazyByteString)
 import qualified Data.HashMap.Strict as HashMap
 import qualified Data.Text as Text
-import qualified Database.PostgreSQL.Simple as PGSimple
-import qualified Database.PostgreSQL.Simple.FromField as PGSimple
-import qualified Database.PostgreSQL.Simple.FromRow as PGSimple
+import Data.Text.Encoding (encodeUtf8Builder)
+import Data.Typeable (Typeable)
+import qualified Database.SQLite.Simple as SQLiteSimple
+import qualified Database.SQLite.Simple.FromField as SQLiteSimple
+import qualified Database.SQLite.Simple.Internal as SQSimple
 import Options.Generic
   ( Generic,
   )
@@ -26,9 +29,23 @@ data Scenario
         scenarioDescription :: Text.Text,
         scenarioAssumptions :: Text.Text,
         scenarioSpatialTable :: Text.Text,
-        scenarioYears :: [Integer]
+        scenarioYears :: [Text.Text]
       }
   deriving (Eq, Generic, Show)
+
+instance SQLiteSimple.FromField [Text.Text] where
+  fromField = fromJSONField
+
+fromJSONField :: (Aeson.FromJSON a, Typeable a) => SQLiteSimple.FieldParser a
+fromJSONField f@(SQSimple.Field (SQLiteSimple.SQLText blb) _) = do
+  case (Aeson.eitherDecode . toLazyByteString . encodeUtf8Builder) blb of
+    Left e ->
+      SQLiteSimple.returnError SQLiteSimple.ConversionFailed f $
+        "JSON decoding error: " ++ e
+    Right x -> pure x
+fromJSONField f =
+  SQLiteSimple.returnError SQLiteSimple.ConversionFailed f $
+    "expecting SQLBlob column type"
 
 instance Aeson.ToJSON Scenario where
 
@@ -36,21 +53,21 @@ instance Aeson.ToJSON Scenario where
 
   toEncoding = Aeson.genericToEncoding encodingOptions
 
-instance PGSimple.FromRow Scenario where
+instance SQLiteSimple.FromRow Scenario where
   fromRow =
     Scenario
-      <$> PGSimple.field
-      <*> PGSimple.field
-      <*> PGSimple.field
-      <*> PGSimple.field
-      <*> PGSimple.field
-      <*> PGSimple.field
+      <$> SQLiteSimple.field
+      <*> SQLiteSimple.field
+      <*> SQLiteSimple.field
+      <*> SQLiteSimple.field
+      <*> SQLiteSimple.field
+      <*> SQLiteSimple.field
 
-instance PGSimple.FromField [Text.Text] where
-  fromField = PGSimple.fromJSONField
+-- instance SQLiteSimple.FromField [Text.Text] where
+--   fromField = SQLiteSimple.fromJSONField
 
-instance PGSimple.FromField [Integer] where
-  fromField = PGSimple.fromJSONField
+-- instance SQLiteSimple.FromField [Integer] where
+--   fromField = SQLiteSimple.fromJSONField
 
 instance Ginger.ToGVal m Scenario where
   toGVal s = Ginger.rawJSONToGVal $ Aeson.toJSON s
@@ -62,7 +79,7 @@ data MetricData
         metricId :: Integer,
         metricName :: Text.Text,
         metricDescription :: Text.Text,
-        metricYear :: Integer,
+        metricYear :: Text.Text,
         metricValue :: Double,
         metricSpatialTableColumn :: Text.Text
       }
@@ -74,17 +91,17 @@ instance Aeson.ToJSON MetricData where
 
   toEncoding = Aeson.genericToEncoding encodingOptions
 
-instance PGSimple.FromRow MetricData where
+instance SQLiteSimple.FromRow MetricData where
   fromRow =
     MetricData
-      <$> PGSimple.field
-      <*> PGSimple.field
-      <*> PGSimple.field
-      <*> PGSimple.field
-      <*> PGSimple.field
-      <*> PGSimple.field
-      <*> PGSimple.field
-      <*> PGSimple.field
+      <$> SQLiteSimple.field
+      <*> SQLiteSimple.field
+      <*> SQLiteSimple.field
+      <*> SQLiteSimple.field
+      <*> SQLiteSimple.field
+      <*> SQLiteSimple.field
+      <*> SQLiteSimple.field
+      <*> SQLiteSimple.field
 
 instance Ginger.ToGVal m MetricData where
   toGVal md = Ginger.rawJSONToGVal $ Aeson.toJSON md

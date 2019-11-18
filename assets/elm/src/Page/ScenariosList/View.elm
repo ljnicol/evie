@@ -90,7 +90,7 @@ tableRow index scenario =
             [ text scenario.scenario_assumptions
             ]
         , td []
-            [ text <| String.join "," <| List.map String.fromInt scenario.scenario_years
+            [ text <| String.join "," scenario.scenario_years
             ]
         , td []
             [ button
