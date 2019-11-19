@@ -306,7 +306,7 @@ metricDB dbEngine scenarioId year = do
     x : xs ->
       return x
     _ ->
-      Servant.throwError Servant.err401 {Servant.errBody = "No results found"}
+      Servant.throwError Servant.err401 {Servant.errBody = Errors.errorString "401" "No results found" "Try a different metric or contact your support team."}
   where
     action =
       case dbEngine of
