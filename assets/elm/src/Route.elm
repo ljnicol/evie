@@ -24,7 +24,7 @@ scenarioParser : Query.Parser (List Int)
 scenarioParser =
     Query.custom
         "scenarioId"
-        (List.filterMap (\_ -> Just 1))
+        (List.filterMap (\s -> String.toInt s))
 
 
 routeToString : Model.Page -> String

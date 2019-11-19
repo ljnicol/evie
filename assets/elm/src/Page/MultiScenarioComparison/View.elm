@@ -1,18 +1,21 @@
 module Page.MultiScenarioComparison.View exposing (view)
 
+import Dict
 import Html exposing (Html, a, button, div, section, table, tbody, td, text, th, thead, tr)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Page.MultiScenarioComparison.Model as Model
 import Page.MultiScenarioComparison.Msg as Msg
 import RemoteData
+import Table as SortableTable
+import Tuple
 import Types.Scenario as TypesScenario
 
 
 view : Model.Model -> Html Msg.Msg
 view model =
     section
-        [ class "hero is-dark is-fullheight-with-navbar is-fullheight"
+        [ class "hero is-fullheight-with-navbar is-fullheight"
         ]
         [ div [ class "hero-body" ]
             [ div [ class "container" ]
@@ -30,7 +33,7 @@ dummyTable : Model.Model -> Html Msg.Msg
 dummyTable model =
     case model.multiScenarioComparison of
         RemoteData.Success scenarios ->
-            reportsTable scenarios
+            sortableTable model scenarios
 
         RemoteData.Failure err ->
             let
@@ -46,56 +49,61 @@ dummyTable model =
             div [] [ text "Loading" ]
 
 
-reportsTable : List TypesScenario.MultiScenarioComparison -> Html Msg.Msg
-reportsTable scenarios =
-    if List.length scenarios > 0 then
-        div [ class "table-container" ]
-            [ table [ class "table" ]
-                [ thead []
-                    [ tr []
-                        [ th [] [ text "ID" ]
-                        , th []
-                            [ text "Name"
-                            ]
-                        , th []
-                            [ text "Description"
-                            ]
-                        , th []
-                            [ text "Assumptions"
-                            ]
-                        , th []
-                            [ text "Years"
-                            ]
-                        ]
-                    ]
-                , tbody []
-                    (List.indexedMap tableRow scenarios)
-                ]
-            ]
-
-    else
-        div [] [ text "You have no scenarios. Contact your modeller to provision some." ]
-
-
-tableRow : Int -> TypesScenario.MultiScenarioComparison -> Html Msg.Msg
-tableRow index multiScenarioComparison =
+sortableTable : Model.Model -> List TypesScenario.MultiScenarioComparison -> Html Msg.Msg
+sortableTable model scenarios =
     let
-        scenario =
-            multiScenarioComparison.scenario
+        metricAccessors =
+            case scenarios of
+                x :: _ ->
+                    TypesScenario.toMetricAccessor x.metric_data
+
+                _ ->
+                    []
     in
-    tr []
-        [ td []
-            [ text (String.fromInt <| scenario.scenario_id) ]
-        , td []
-            [ text scenario.scenario_name
+    SortableTable.view (sortableTableConfig metricAccessors) model.tableState scenarios
+
+
+sortableTableConfig : List TypesScenario.MetricAccessor -> SortableTable.Config TypesScenario.MultiScenarioComparison Msg.Msg
+sortableTableConfig metricAccessors =
+    let
+        fToId a =
+            let
+                scenario =
+                    a.scenario
+            in
+            String.fromInt scenario.scenario_id
+
+        fToScenarioName a =
+            let
+                scenario =
+                    a.scenario
+            in
+            scenario.scenario_name
+
+        fToScenarioMetricData a =
+            a.metric_data
+    in
+    SortableTable.config
+        { toId = fToId
+        , toMsg = Msg.NewTableState
+        , columns =
+            [ SortableTable.stringColumn "Name" fToScenarioName
             ]
-        , td []
-            [ text scenario.scenario_description
-            ]
-        , td []
-            [ text scenario.scenario_assumptions
-            ]
-        , td []
-            [ text <| String.join "," scenario.scenario_years
-            ]
-        ]
+                ++ toCustomColumns metricAccessors
+        }
+
+
+toCustomColumns : List TypesScenario.MetricAccessor -> List (SortableTable.Column TypesScenario.MultiScenarioComparison Msg.Msg)
+toCustomColumns metricAccessors =
+    let
+        vd metricId a =
+            let
+                metric_data =
+                    a.metric_data
+
+                metric_1 =
+                    Maybe.withDefault (TypesScenario.MetricData 0 "Empty" "Empty" "Empty" 0 "Empty") <| Dict.get metricId metric_data
+            in
+            String.fromFloat metric_1.metric_value
+    in
+    List.map (\( k, v ) -> SortableTable.customColumn { name = v, viewData = vd k, sorter = SortableTable.increasingOrDecreasingBy (vd k) }) metricAccessors

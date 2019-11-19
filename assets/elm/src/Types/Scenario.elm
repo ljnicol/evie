@@ -73,3 +73,12 @@ metricDataDecoder =
 decodeListMetricData : Decode.Decoder (List MetricData)
 decodeListMetricData =
     Decode.list metricDataDecoder
+
+
+type alias MetricAccessor =
+    ( String, String )
+
+
+toMetricAccessor : Dict.Dict String MetricData -> List MetricAccessor
+toMetricAccessor d =
+    List.map (\( k, v ) -> ( k, v.metric_name )) (Dict.toList d)
