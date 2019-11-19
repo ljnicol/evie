@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7e7a1473ea3334187371f4ac5cb328a4dfc32704a1344f59aa3b7ce9f96d3179
+-- hash: 536999ba864b94d34d20c6a03120f68db892325772712a26c0f327b209b1dea2
 
 name:           evie
 version:        0.0.3
@@ -33,6 +33,7 @@ library
       Routes
       Template
       Types.Config
+      Types.DB
       Types.Scenario
   other-modules:
       Paths_evie
@@ -50,9 +51,11 @@ library
     , open-browser
     , optparse-generic
     , postgresql-simple
+    , raw-strings-qq
     , resource-pool
     , servant-server
     , sqlite-simple
+    , template-haskell
     , text
     , unordered-containers
     , wai

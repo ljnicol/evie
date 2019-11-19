@@ -10,7 +10,7 @@ import qualified Types.Config as Config
 getConfig :: Config.CommandLine OptionsGeneric.Unwrapped -> IO Config.Config
 getConfig (Config.CommandLine d df) = do
   let appDirectory = Maybe.fromMaybe ("." :: FilePath) $ d
-      dataFile = Maybe.fromMaybe ("data.sqlite" :: FilePath) $ df
+      dataFile = Maybe.fromMaybe (appDirectory ++ "/" ++ "data.sqlite" :: FilePath) $ df
   configBs <- ByteStringLazyChar8.readFile (appDirectory ++ "/" ++ "config.json")
   case Aeson.eitherDecode configBs of
     Left e -> do
@@ -25,3 +25,4 @@ addDefaults Config.InputConfig {..} appDirectory dataFile =
     _inputConfigApplicationPort
     appDirectory
     dataFile
+    _inputConfigPG

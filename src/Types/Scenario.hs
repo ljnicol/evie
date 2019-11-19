@@ -9,6 +9,9 @@ import qualified Data.HashMap.Strict as HashMap
 import qualified Data.Text as Text
 import Data.Text.Encoding (encodeUtf8Builder)
 import Data.Typeable (Typeable)
+import qualified Database.PostgreSQL.Simple as PGSimple
+import qualified Database.PostgreSQL.Simple.FromField as PGSimple
+import qualified Database.PostgreSQL.Simple.FromRow as PGSimple
 import qualified Database.SQLite.Simple as SQLiteSimple
 import qualified Database.SQLite.Simple.FromField as SQLiteSimple
 import qualified Database.SQLite.Simple.Internal as SQSimple
@@ -47,6 +50,9 @@ fromJSONField f =
   SQLiteSimple.returnError SQLiteSimple.ConversionFailed f $
     "expecting SQLBlob column type"
 
+instance PGSimple.FromField [Text.Text] where
+  fromField = PGSimple.fromJSONField
+
 instance Aeson.ToJSON Scenario where
 
   toJSON = Aeson.genericToJSON encodingOptions
@@ -62,6 +68,16 @@ instance SQLiteSimple.FromRow Scenario where
       <*> SQLiteSimple.field
       <*> SQLiteSimple.field
       <*> SQLiteSimple.field
+
+instance PGSimple.FromRow Scenario where
+  fromRow =
+    Scenario
+      <$> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
 
 instance Ginger.ToGVal m Scenario where
   toGVal s = Ginger.rawJSONToGVal $ Aeson.toJSON s
@@ -96,6 +112,18 @@ instance SQLiteSimple.FromRow MetricData where
       <*> SQLiteSimple.field
       <*> SQLiteSimple.field
       <*> SQLiteSimple.field
+
+instance PGSimple.FromRow MetricData where
+  fromRow =
+    MetricData
+      <$> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
 
 instance Ginger.ToGVal m MetricData where
   toGVal md = Ginger.rawJSONToGVal $ Aeson.toJSON md
