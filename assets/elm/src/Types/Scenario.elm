@@ -1,5 +1,6 @@
 module Types.Scenario exposing (..)
 
+import Dict
 import Json.Decode as Decode
 import Json.Decode.Pipeline as DecodePipeline
 
@@ -32,7 +33,7 @@ decodeListScenario =
 
 type alias MultiScenarioComparison =
     { scenario : Scenario
-    , metrics : List MetricData
+    , metric_data : Dict.Dict String MetricData
     }
 
 
@@ -40,14 +41,19 @@ multiScenarioComparisonDecoder : Decode.Decoder MultiScenarioComparison
 multiScenarioComparisonDecoder =
     Decode.succeed MultiScenarioComparison
         |> DecodePipeline.required "scenario" scenarioDecoder
-        |> DecodePipeline.required "metrics" decodeListMetricData
+        |> DecodePipeline.required "metric_data" (Decode.dict metricDataDecoder)
+
+
+decodeListMultiScenario : Decode.Decoder (List MultiScenarioComparison)
+decodeListMultiScenario =
+    Decode.list multiScenarioComparisonDecoder
 
 
 type alias MetricData =
     { metric_data_id : Int
     , metric_name : String
     , metric_description : String
-    , metric_year : Int
+    , metric_year : String
     , metric_value : Float
     , metric_spatial_table_column : String
     }
@@ -59,7 +65,7 @@ metricDataDecoder =
         |> DecodePipeline.required "metric_data_id" Decode.int
         |> DecodePipeline.required "metric_name" Decode.string
         |> DecodePipeline.required "metric_description" Decode.string
-        |> DecodePipeline.required "metric_year" Decode.int
+        |> DecodePipeline.required "metric_year" Decode.string
         |> DecodePipeline.required "metric_value" Decode.float
         |> DecodePipeline.required "metric_spatial_table_column" Decode.string
 

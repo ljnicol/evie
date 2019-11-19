@@ -6,6 +6,7 @@ import Html.Events exposing (onClick)
 import Page.MultiScenarioComparison.Model as Model
 import Page.MultiScenarioComparison.Msg as Msg
 import RemoteData
+import Types.Scenario as TypesScenario
 
 
 view : Model.Model -> Html Msg.Msg
@@ -17,9 +18,84 @@ view model =
             [ div [ class "container" ]
                 [ div [ class "columns" ]
                     [ div [ class "column is-half is-offset-one-quarter" ]
-                        [ text "Not yet implemented"
+                        [ dummyTable model
                         ]
                     ]
                 ]
+            ]
+        ]
+
+
+dummyTable : Model.Model -> Html Msg.Msg
+dummyTable model =
+    case model.multiScenarioComparison of
+        RemoteData.Success scenarios ->
+            reportsTable scenarios
+
+        RemoteData.Failure err ->
+            let
+                _ =
+                    Debug.log "Remote data failure" err
+            in
+            div [] [ text "Something went wrong" ]
+
+        RemoteData.Loading ->
+            div [] [ text "Loading" ]
+
+        RemoteData.NotAsked ->
+            div [] [ text "Loading" ]
+
+
+reportsTable : List TypesScenario.MultiScenarioComparison -> Html Msg.Msg
+reportsTable scenarios =
+    if List.length scenarios > 0 then
+        div [ class "table-container" ]
+            [ table [ class "table" ]
+                [ thead []
+                    [ tr []
+                        [ th [] [ text "ID" ]
+                        , th []
+                            [ text "Name"
+                            ]
+                        , th []
+                            [ text "Description"
+                            ]
+                        , th []
+                            [ text "Assumptions"
+                            ]
+                        , th []
+                            [ text "Years"
+                            ]
+                        ]
+                    ]
+                , tbody []
+                    (List.indexedMap tableRow scenarios)
+                ]
+            ]
+
+    else
+        div [] [ text "You have no scenarios. Contact your modeller to provision some." ]
+
+
+tableRow : Int -> TypesScenario.MultiScenarioComparison -> Html Msg.Msg
+tableRow index multiScenarioComparison =
+    let
+        scenario =
+            multiScenarioComparison.scenario
+    in
+    tr []
+        [ td []
+            [ text (String.fromInt <| scenario.scenario_id) ]
+        , td []
+            [ text scenario.scenario_name
+            ]
+        , td []
+            [ text scenario.scenario_description
+            ]
+        , td []
+            [ text scenario.scenario_assumptions
+            ]
+        , td []
+            [ text <| String.join "," scenario.scenario_years
             ]
         ]

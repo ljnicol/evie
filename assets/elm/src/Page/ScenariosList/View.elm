@@ -29,8 +29,8 @@ view model =
 dummyTable : Model.Model -> Html Msg.Msg
 dummyTable model =
     case model.scenariosList of
-        RemoteData.Success reports ->
-            reportsTable reports
+        RemoteData.Success scenarios ->
+            reportsTable scenarios
 
         RemoteData.Failure err ->
             div [] [ text "Something went wrong" ]
@@ -43,8 +43,8 @@ dummyTable model =
 
 
 reportsTable : List TypesScenario.Scenario -> Html Msg.Msg
-reportsTable reports =
-    if List.length reports > 0 then
+reportsTable scenarios =
+    if List.length scenarios > 0 then
         div [ class "table-container" ]
             [ table [ class "table" ]
                 [ thead []
@@ -67,7 +67,7 @@ reportsTable reports =
                         ]
                     ]
                 , tbody []
-                    (List.indexedMap tableRow reports)
+                    (List.indexedMap tableRow scenarios)
                 ]
             ]
 

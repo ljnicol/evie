@@ -6,7 +6,7 @@ import Types.Scenario as TypesScenario
 
 type alias Model =
     { scenarioIds : List Int
-    , multiScenarioComparison : RemoteData.WebData TypesScenario.MultiScenarioComparison
+    , multiScenarioComparison : RemoteData.WebData (List TypesScenario.MultiScenarioComparison)
     }
 
 

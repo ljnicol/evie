@@ -13,5 +13,5 @@ getMultiScenarioComparison scenarioIds =
         ++ "&year=2019"
         |> HttpBuilder.get
         |> HttpBuilder.withTimeout 10000
-        |> HttpBuilder.withExpect (Http.expectJson Msg.HandleGetMultiScenarioComparison TypesScenario.multiScenarioComparisonDecoder)
+        |> HttpBuilder.withExpect (Http.expectJson Msg.HandleGetMultiScenarioComparison TypesScenario.decodeListMultiScenario)
         |> HttpBuilder.request

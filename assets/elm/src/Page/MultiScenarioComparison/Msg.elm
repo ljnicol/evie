@@ -6,4 +6,4 @@ import Types.Scenario as TypesScenario
 
 type Msg
     = LoadMultiScenarioComparison (List Int)
-    | HandleGetMultiScenarioComparison (Result Http.Error TypesScenario.MultiScenarioComparison)
+    | HandleGetMultiScenarioComparison (Result Http.Error (List TypesScenario.MultiScenarioComparison))
