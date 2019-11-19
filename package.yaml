@@ -51,6 +51,7 @@ library:
     - unordered-containers
     - http-media
     - sqlite-simple
+    - neat-interpolation
 
 executables:
   evie:

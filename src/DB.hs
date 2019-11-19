@@ -10,6 +10,7 @@ import qualified Database.PostgreSQL.Simple as PGSimple
 import qualified Database.PostgreSQL.Simple.SqlQQ as PGQQ
 import qualified Database.SQLite.Simple as SQLiteSimple
 import qualified Database.SQLite.Simple.QQ as SQQQ
+import qualified Errors
 import qualified Servant
 import qualified Types.DB as DBTypes
 import qualified Types.Scenario as ScenarioTypes
@@ -50,7 +51,7 @@ scenarioDB dbEngine scenarioId = do
     x : xs ->
       return x
     _ ->
-      Servant.throwError Servant.err401 {Servant.errBody = "No results found"}
+      Servant.throwError Servant.err401 {Servant.errBody = Errors.errorString "401" "No results found" "Try a different scenario or contact your support team."}
   where
     action =
       case dbEngine of

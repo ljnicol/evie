@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 0ef8c100afec746df7a92abbbea0e95e060ad205c6b9cfa4f8c5d5c1a84bb3ab
+-- hash: 09100395ac44d03dface8d745d8d595d8c39d3205025938b58fb87d35054dd41
 
 name:           evie
 version:        0.0.3
@@ -28,6 +28,7 @@ library
   exposed-modules:
       Controller
       DB
+      Errors
       Init
       Lib
       Routes
@@ -48,6 +49,7 @@ library
     , ginger
     , http-media
     , mtl
+    , neat-interpolation
     , open-browser
     , optparse-generic
     , postgresql-simple
