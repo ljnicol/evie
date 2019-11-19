@@ -34,11 +34,11 @@ startApp config@Config.Config {..} = do
               PGSimple.connectUser = Config._user _configPG,
               PGSimple.connectPassword = Config._password _configPG
             }
-  -- conns <- initSQLiteConnectionPool dbFile
-  conns <- initPostgreSQLConnectionPool dbConnection
+  conns <- initSQLiteConnectionPool dbFile
+  -- conns <- initPostgreSQLConnectionPool dbConnection
   b <- Browser.openBrowser $ Text.unpack _configApplicationDomain ++ ":" ++ (show _configApplicationPort) ++ "/app"
   if b
-    then Wai.run _configApplicationPort $ debug $ Servant.serve Routes.api (Controller.server config $ DB.PostgreSQL conns)
+    then Wai.run _configApplicationPort $ debug $ Servant.serve Routes.api (Controller.server config $ DB.SQLite3 conns)
     else print "Failed to start browser"
 
 initSQLiteConnectionPool :: String -> IO (Pool.Pool SQLiteSimple.Connection)

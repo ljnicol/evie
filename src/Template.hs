@@ -43,7 +43,7 @@ renderPage templateFile renderFn = do
 
 -- Scenario Detail Page
 
-scenarioDetail :: DBTypes.DatabaseEngine a -> FilePath -> Integer -> Integer -> Servant.Handler Text.Text
+scenarioDetail :: DBTypes.DatabaseEngine a -> FilePath -> Integer -> ScenarioTypes.Year -> Servant.Handler Text.Text
 scenarioDetail conns templateFile scenarioId year = do
   context <- DB.getScenarioDetailDB conns scenarioId year
   renderPage templateFile (renderScenarioDetail context)
@@ -53,7 +53,7 @@ renderScenarioDetail context template = GingerHtml.htmlSource $ Ginger.easyRende
 
 -- Scenario Comparison Page
 
-scenarioComparison :: DBTypes.DatabaseEngine a -> FilePath -> Integer -> Integer -> Integer -> Integer -> Servant.Handler Text.Text
+scenarioComparison :: DBTypes.DatabaseEngine a -> FilePath -> Integer -> ScenarioTypes.Year -> Integer -> ScenarioTypes.Year -> Servant.Handler Text.Text
 scenarioComparison conns templateFile scenarioId1 year1 scenarioId2 year2 = do
   scenario1Context <- DB.getScenarioDetailDB conns scenarioId1 year1
   scenario2Context <- DB.getScenarioDetailDB conns scenarioId2 year2
@@ -64,7 +64,7 @@ renderScenarioComparison context template = GingerHtml.htmlSource $ Ginger.easyR
 
 -- -- Scenario Map Page
 
-scenarioDetailMap :: DBTypes.DatabaseEngine a -> FilePath -> Integer -> Integer -> Integer -> Servant.Handler Text.Text
+scenarioDetailMap :: DBTypes.DatabaseEngine a -> FilePath -> Integer -> Integer -> ScenarioTypes.Year -> Servant.Handler Text.Text
 scenarioDetailMap conns templateFile scenarioId metricId year = do
   context <- DB.getScenarioMapDB conns scenarioId metricId year
   renderPage templateFile (renderScenarioDetailMap context)
@@ -74,7 +74,7 @@ renderScenarioDetailMap context template = GingerHtml.htmlSource $ Ginger.easyRe
 
 -- Scenario Comparison Map
 
-scenarioComparisonMap :: DBTypes.DatabaseEngine a -> FilePath -> Integer -> Integer -> Integer -> Integer -> Servant.Handler Text.Text
+scenarioComparisonMap :: DBTypes.DatabaseEngine a -> FilePath -> Integer -> Integer -> Integer -> ScenarioTypes.Year -> Servant.Handler Text.Text
 scenarioComparisonMap conns templateFile scenarioId1 scenarioId2 metricId year = do
   context <- DB.getScenarioMapDB conns scenarioId1 metricId year
   renderPage templateFile (renderScenarioComparisonMap context)

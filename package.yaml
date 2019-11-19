@@ -51,8 +51,6 @@ library:
     - unordered-containers
     - http-media
     - sqlite-simple
-    - raw-strings-qq
-    - template-haskell
 
 executables:
   evie:

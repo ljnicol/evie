@@ -25,6 +25,8 @@ encodingOptions =
     { Aeson.fieldLabelModifier = Aeson.camelTo2 '_'
     }
 
+type Year = Text.Text
+
 data Scenario
   = Scenario
       { scenarioId :: Integer,

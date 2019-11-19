@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 536999ba864b94d34d20c6a03120f68db892325772712a26c0f327b209b1dea2
+-- hash: 0ef8c100afec746df7a92abbbea0e95e060ad205c6b9cfa4f8c5d5c1a84bb3ab
 
 name:           evie
 version:        0.0.3
@@ -51,11 +51,9 @@ library
     , open-browser
     , optparse-generic
     , postgresql-simple
-    , raw-strings-qq
     , resource-pool
     , servant-server
     , sqlite-simple
-    , template-haskell
     , text
     , unordered-containers
     , wai

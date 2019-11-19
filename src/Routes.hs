@@ -21,30 +21,30 @@ type API =
              :> Capture "scenario_id" Integer
              :> Get '[JSON] [ScenarioTypes.MetricData]
            :<|> "multi_scenario_comparison" :> QueryParams "scenarioId" Integer
-             :> QueryParam' '[Required, Strict] "year" Integer
+             :> QueryParam' '[Required, Strict] "year" ScenarioTypes.Year
              :> Get '[JSON] [ScenarioTypes.TemplateData]
        )
     :<|> "app"
       :> ( "scenario_detail"
              :> Capture "scenario_id" Integer
-             :> Capture "year" Integer
+             :> Capture "year" ScenarioTypes.Year
              :> Get '[Html] Text.Text
              :<|> "scenario_comparison"
                :> Capture "scenario_id_1" Integer
-               :> Capture "scenario_year_1" Integer
+               :> Capture "scenario_year_1" ScenarioTypes.Year
                :> Capture "scenario_id_2" Integer
-               :> Capture "scenario_year_2" Integer
+               :> Capture "scenario_year_2" ScenarioTypes.Year
                :> Get '[Html] Text.Text
              :<|> "scenario_detail_map"
                :> Capture "scenario_id" Integer
                :> Capture "metric_id" Integer
-               :> Capture "year" Integer
+               :> Capture "year" ScenarioTypes.Year
                :> Get '[Html] Text.Text
              :<|> "scenario_comparison_map"
                :> Capture "scenario_id_1" Integer
                :> Capture "scenario_id_2" Integer
                :> Capture "metric_id" Integer
-               :> Capture "year" Integer
+               :> Capture "year" ScenarioTypes.Year
                :> Get '[Html] Text.Text
              :<|> Raw
          )
