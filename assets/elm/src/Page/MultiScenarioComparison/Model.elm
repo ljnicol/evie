@@ -7,6 +7,7 @@ import Types.Scenario as TypesScenario
 
 type alias Model =
     { scenarioIds : List Int
+    , year : String
     , multiScenarioComparison : RemoteData.WebData (List TypesScenario.MultiScenarioComparison)
     , tableState : SortableTable.State
     }
@@ -15,6 +16,7 @@ type alias Model =
 model : Model
 model =
     { scenarioIds = []
+    , year = ""
     , multiScenarioComparison = RemoteData.NotAsked
     , tableState = SortableTable.initialSort "scenarioId"
     }

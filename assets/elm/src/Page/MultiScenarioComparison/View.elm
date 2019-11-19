@@ -7,46 +7,65 @@ import Html.Events exposing (onClick)
 import Page.MultiScenarioComparison.Model as Model
 import Page.MultiScenarioComparison.Msg as Msg
 import RemoteData
+import Route
 import Table as SortableTable
 import Tuple
+import Types.Page as TypesPage
 import Types.Scenario as TypesScenario
 
 
 view : Model.Model -> Html Msg.Msg
 view model =
     section
-        [ class "hero is-fullheight-with-navbar is-fullheight"
+        [ class "section"
         ]
-        [ div [ class "hero-body" ]
-            [ div [ class "container" ]
-                [ div [ class "columns" ]
-                    [ div [ class "column is-half is-offset-one-quarter" ]
-                        [ dummyTable model
-                        ]
+        (content model)
+
+
+content : Model.Model -> List (Html Msg.Msg)
+content model =
+    case model.multiScenarioComparison of
+        RemoteData.Success scenarios ->
+            [ div [ class "column is-half is-offset-one-quarter" ]
+                [ yearButtons model.scenarioIds scenarios
+                ]
+            , div [ class "columns" ]
+                [ div [ class "column is-half is-offset-one-quarter" ]
+                    [ sortableTable model scenarios
                     ]
                 ]
             ]
-        ]
-
-
-dummyTable : Model.Model -> Html Msg.Msg
-dummyTable model =
-    case model.multiScenarioComparison of
-        RemoteData.Success scenarios ->
-            sortableTable model scenarios
 
         RemoteData.Failure err ->
             let
                 _ =
                     Debug.log "Remote data failure" err
             in
-            div [] [ text "Something went wrong" ]
+            [ div [] [ text "Something went wrong" ] ]
 
         RemoteData.Loading ->
-            div [] [ text "Loading" ]
+            [ div [] [ text "Loading" ] ]
 
         RemoteData.NotAsked ->
-            div [] [ text "Loading" ]
+            [ div [] [ text "Loading" ] ]
+
+
+yearButtons : List Int -> List TypesScenario.MultiScenarioComparison -> Html Msg.Msg
+yearButtons scenarioIds scenarios =
+    case scenarios of
+        x :: _ ->
+            div []
+                (List.map
+                    (\s ->
+                        a
+                            [ class "button is-link", Route.href <| TypesPage.MultiScenarioComparison s scenarioIds ]
+                            [ text s ]
+                    )
+                    x.scenario.scenario_years
+                )
+
+        _ ->
+            div [] []
 
 
 sortableTable : Model.Model -> List TypesScenario.MultiScenarioComparison -> Html Msg.Msg

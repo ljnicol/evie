@@ -9,6 +9,7 @@ import Page.MultiScenarioComparison.Update as MultiScenarioComparisonUpdate
 import Page.ScenariosList.Msg as ScenariosListMsg
 import Page.ScenariosList.Update as ScenariosListUpdate
 import Route
+import Types.Page as TypesPage
 import Url
 
 
@@ -58,19 +59,19 @@ showScenariosList : Model.Model -> ( Model.Model, Cmd Msg.Msg )
 showScenariosList model =
     let
         newModel =
-            { model | page = Model.ScenariosList }
+            { model | page = TypesPage.ScenariosList }
     in
     ScenariosListUpdate.update ScenariosListMsg.LoadScenariosList model.scenariosList
         |> updateWith (\s -> { newModel | scenariosList = s }) Msg.ScenariosList model
 
 
-showMultiScenarioComparison : Model.Model -> List Int -> ( Model.Model, Cmd Msg.Msg )
-showMultiScenarioComparison model scenarioIds =
+showMultiScenarioComparison : Model.Model -> String -> List Int -> ( Model.Model, Cmd Msg.Msg )
+showMultiScenarioComparison model year scenarioIds =
     let
         newModel =
-            { model | page = Model.MultiScenarioComparison scenarioIds }
+            { model | page = TypesPage.MultiScenarioComparison year scenarioIds }
     in
-    MultiScenarioComparisonUpdate.update (MultiScenarioComparisonMsg.LoadMultiScenarioComparison scenarioIds) model.scenario
+    MultiScenarioComparisonUpdate.update (MultiScenarioComparisonMsg.LoadMultiScenarioComparison year scenarioIds) model.scenario
         |> updateWith (\s -> { newModel | scenario = s }) Msg.MultiScenarioComparison model
 
 
@@ -78,10 +79,10 @@ changeToUrl : Url.Url -> Model.Model -> ( Model.Model, Cmd Msg.Msg )
 changeToUrl url model =
     case Route.fromUrl url of
         Nothing ->
-            ( model, Route.pushUrl model.key Model.ScenariosList )
+            ( model, Route.pushUrl model.key TypesPage.ScenariosList )
 
-        Just Model.ScenariosList ->
+        Just TypesPage.ScenariosList ->
             showScenariosList model
 
-        Just (Model.MultiScenarioComparison scenarioIds) ->
-            showMultiScenarioComparison model scenarioIds
+        Just (TypesPage.MultiScenarioComparison year scenarioIds) ->
+            showMultiScenarioComparison model year scenarioIds

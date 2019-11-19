@@ -9,6 +9,7 @@ import Html.Events as Events
 import Model
 import Msg
 import Route
+import Types.Page as TypesPage
 
 
 myNavbarBurger : Bool -> Html Msg.Msg
@@ -29,8 +30,8 @@ view model isMenuOpen =
         [ Components.navbarMenu isMenuOpen
             []
             [ Components.navbarStart []
-                [ Components.navbarItemLink False [ Route.href Model.ScenariosList ] [ text "Scenarios" ]
-                , Components.navbarItemLink False [ Route.href <| Model.MultiScenarioComparison [ 1, 2 ] ] [ text "Scenario Comparison" ]
+                [ Components.navbarItemLink False [ Route.href TypesPage.ScenariosList ] [ text "Scenarios" ]
+                , Components.navbarItemLink False [ Route.href <| TypesPage.MultiScenarioComparison "2019" [ 1, 2 ] ] [ text "Scenario Comparison" ]
                 ]
             , Components.navbarEnd []
                 [ Components.navbarItem False

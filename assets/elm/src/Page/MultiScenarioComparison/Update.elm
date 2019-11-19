@@ -9,8 +9,8 @@ import RemoteData
 update : Msg.Msg -> Model.Model -> ( Model.Model, Cmd Msg.Msg )
 update msg model =
     case msg of
-        Msg.LoadMultiScenarioComparison scenarioIds ->
-            ( { model | multiScenarioComparison = RemoteData.Loading, scenarioIds = scenarioIds }, Api.getMultiScenarioComparison scenarioIds )
+        Msg.LoadMultiScenarioComparison year scenarioIds ->
+            ( { model | multiScenarioComparison = RemoteData.Loading, year = year, scenarioIds = scenarioIds }, Api.getMultiScenarioComparison year scenarioIds )
 
         Msg.HandleGetMultiScenarioComparison (Ok a) ->
             ( { model | multiScenarioComparison = RemoteData.Success a }, Cmd.none )

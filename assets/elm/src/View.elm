@@ -7,6 +7,7 @@ import Model
 import Msg exposing (Msg)
 import Page.MultiScenarioComparison.View as MultiScenarioComparison
 import Page.ScenariosList.View as ScenariosList
+import Types.Page as TypesPage
 import Views.Navbar as Navbar
 
 
@@ -25,8 +26,8 @@ view model =
 viewPage : Model.Model -> Html Msg
 viewPage model =
     case model.page of
-        Model.ScenariosList ->
+        TypesPage.ScenariosList ->
             Html.map Msg.ScenariosList (ScenariosList.view model.scenariosList)
 
-        Model.MultiScenarioComparison _ ->
+        TypesPage.MultiScenarioComparison _ _ ->
             Html.map Msg.MultiScenarioComparison (MultiScenarioComparison.view model.scenario)
