@@ -42,7 +42,7 @@ Postgresql: If the build fails because of a missing libpq or similar, check that
 
 ```bash
 yarn
-yarn run parcel watch asssets/elm/index.html -d assets/static --public-url app
+yarn run parcel watch assets/elm/index.html -d assets/static --public-url app
 ```
 
 ## Run migrations
