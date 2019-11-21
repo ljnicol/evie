@@ -32,6 +32,10 @@ Use Ormolu: <https://github.com/tweag/ormolu>
 stack build
 ```
 
+### Common Problems:
+
+Postgresql: If the build fails because of a missing libpq or similar, check that the postgresql bin directory has been added to your path.
+
 ## Run migrations
 Note: On windows, you will need to do this from inside a bash on windows session (enter 'bash' in powershell)
 
