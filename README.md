@@ -28,8 +28,21 @@ Use Ormolu: <https://github.com/tweag/ormolu>
 
 ## Building
 
+### Server
 ```bash
 stack build
+```
+
+#### Common Problems:
+
+Postgresql: If the build fails because of a missing libpq or similar, check that the postgresql bin directory has been added to your path. Eg: <https://github.com/lpsmith/postgresql-simple/pull/66>. Make sure you restart after changing the path!
+
+
+### Elm
+
+```bash
+yarn
+yarn run parcel watch assets/elm/index.html -d assets/static --public-url app
 ```
 
 ## Run migrations
