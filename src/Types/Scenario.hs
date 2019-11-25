@@ -131,7 +131,7 @@ instance Ginger.ToGVal m MetricData where
   toGVal md = Ginger.rawJSONToGVal $ Aeson.toJSON md
 
 data TemplateData
-  = TemplateData {metricData :: HashMap.HashMap Integer MetricData, scenario :: Scenario}
+  = TemplateData {metricData :: HashMap.HashMap Integer MetricData, scenario :: Scenario, year :: Year}
   deriving (Eq, Generic, Show)
 
 instance Aeson.ToJSON TemplateData where

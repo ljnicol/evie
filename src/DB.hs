@@ -21,20 +21,20 @@ getScenarioDetailDB :: DBTypes.DatabaseEngine a -> Integer -> ScenarioTypes.Year
 getScenarioDetailDB dbEngine scenarioId year = do
   metrics <- fmap ScenarioTypes.metricListToHashMap $ metricsDBForYear dbEngine scenarioId year
   scenario <- scenarioDB dbEngine scenarioId
-  return $ ScenarioTypes.TemplateData metrics scenario
+  return $ ScenarioTypes.TemplateData metrics scenario year
 
 getScenarioMapDB :: DBTypes.DatabaseEngine a -> Integer -> Integer -> ScenarioTypes.Year -> Servant.Handler ScenarioTypes.TemplateData
 getScenarioMapDB dbEngine scenarioId metricId year = do
   metrics <- fmap ScenarioTypes.metricListToHashMap $ metricDBForYear dbEngine scenarioId metricId year
   scenario <- scenarioDB dbEngine scenarioId
-  return $ ScenarioTypes.TemplateData metrics scenario
+  return $ ScenarioTypes.TemplateData metrics scenario year
 
 getScenarioComparisonListDB :: DBTypes.DatabaseEngine a -> [Integer] -> ScenarioTypes.Year -> Servant.Handler [ScenarioTypes.TemplateData]
 getScenarioComparisonListDB dbEngine scenarioIds year =
   let toTD :: ScenarioTypes.Year -> ScenarioTypes.Scenario -> Servant.Handler ScenarioTypes.TemplateData
       toTD year scenario = do
         metrics <- fmap ScenarioTypes.metricListToHashMap $ metricsDBForYear dbEngine (ScenarioTypes.scenarioId scenario) year
-        pure $ ScenarioTypes.TemplateData metrics scenario
+        pure $ ScenarioTypes.TemplateData metrics scenario year
    in do
         -- TODO: What happens if there is no data for a scenario in the requested year.
         scenarios <- scenariosSelectDB dbEngine scenarioIds
