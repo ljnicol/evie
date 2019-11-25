@@ -37,10 +37,6 @@ content model =
             ]
 
         RemoteData.Failure err ->
-            let
-                _ =
-                    Debug.log "Remote data failure" err
-            in
             [ div [] [ text "Something went wrong" ] ]
 
         RemoteData.Loading ->
