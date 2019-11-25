@@ -48,6 +48,7 @@ type API =
                :> Get '[Html] Text.Text
              :<|> Raw
          )
+         :<|> "spatial" :> Raw
 
 -- HTML content type with mimeRender instance
 data Html
