@@ -1,8 +1,8 @@
 module Page.ScenariosList.View exposing (view)
 
-import Html exposing (Html, a, button, div, section, table, tbody, td, text, th, thead, tr)
-import Html.Attributes exposing (class)
-import Html.Events exposing (onClick)
+import Html exposing (Html, a, br, button, div, input, section, table, tbody, td, text, th, thead, tr)
+import Html.Attributes exposing (checked, class, disabled, type_)
+import Html.Events exposing (onCheck, onClick)
 import Page.ScenariosList.Model as Model
 import Page.ScenariosList.Msg as Msg
 import RemoteData
@@ -11,19 +11,46 @@ import Types.Scenario as TypesScenario
 
 view : Model.Model -> Html Msg.Msg
 view model =
-    section
-        [ class "hero is-dark is-fullheight-with-navbar is-fullheight"
-        ]
-        [ div [ class "hero-body" ]
+    div []
+        [ section
+            [ class "section" ]
             [ div [ class "container" ]
                 [ div [ class "columns" ]
-                    [ div [ class "column is-half is-offset-one-quarter" ]
+                    [ div [ class "column is-full" ]
                         [ dummyTable model
                         ]
                     ]
                 ]
+            , br [] []
+            , div
+                [ class "container" ]
+                [ div [ class "level" ]
+                    [ div [ class "level-left" ]
+                        []
+                    , div [ class "level-right" ]
+                        [ div [ class "level-item" ] [ multiScenarioComparisonButton model ]
+                        ]
+                    ]
+                ]
             ]
+        , section
+            [ class "section" ]
+            []
         ]
+
+
+multiScenarioComparisonButton : Model.Model -> Html Msg.Msg
+multiScenarioComparisonButton model =
+    let
+        noScenariosSelected =
+            case model.scenariosList of
+                RemoteData.Success scenarios ->
+                    List.isEmpty <| List.filter (\s -> s.selected) scenarios
+
+                _ ->
+                    True
+    in
+    button [ class "button is-link", onClick Msg.ShowMultiScenario, disabled noScenariosSelected ] [ text "Multi-Scenario Comparison" ]
 
 
 dummyTable : Model.Model -> Html Msg.Msg
@@ -46,7 +73,7 @@ reportsTable : List TypesScenario.Scenario -> Html Msg.Msg
 reportsTable scenarios =
     if List.length scenarios > 0 then
         div [ class "table-container" ]
-            [ table [ class "table" ]
+            [ table [ class "table is-bordered is-striped is-fullwidth is-hoverable" ]
                 [ thead []
                     [ tr []
                         [ th [] [ text "ID" ]
@@ -63,7 +90,9 @@ reportsTable scenarios =
                             [ text "Years"
                             ]
                         , th []
-                            []
+                            [ text "Select" ]
+                        , th []
+                            [ text "View" ]
                         ]
                     ]
                 , tbody []
@@ -77,7 +106,7 @@ reportsTable scenarios =
 
 tableRow : Int -> TypesScenario.Scenario -> Html Msg.Msg
 tableRow index scenario =
-    tr []
+    tr [ class "is-vcentered" ]
         [ td []
             [ text (String.fromInt <| scenario.scenario_id) ]
         , td []
@@ -92,9 +121,9 @@ tableRow index scenario =
         , td []
             [ text <| String.join "," scenario.scenario_years
             ]
-        , td []
-            [ button
-                [ class "button is-link", onClick (Msg.OpenScenarioDetail scenario) ]
-                [ text "View" ]
+        , td [ class "has-text-centered" ]
+            [ input [ type_ "checkbox", onCheck (Msg.SelectScenario scenario), checked scenario.selected ] [] ]
+        , td [ class "has-text-centered", onClick (Msg.OpenScenarioDetail scenario) ]
+            [ button [ class "button is-small is-link" ] [ text "View" ]
             ]
         ]

@@ -16,8 +16,8 @@ view model =
     { title = "Evie"
     , body =
         [ main_ []
-            [ Navbar.view model False
-            , viewPage model
+            [ --             Navbar.view model False,
+              viewPage model
             ]
         ]
     }

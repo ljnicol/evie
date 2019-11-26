@@ -34,12 +34,17 @@ routeToString page =
             "app#scenarios_list"
 
         TypesPage.MultiScenarioComparison year scenarioIds ->
-            case scenarioIds of
-                [] ->
-                    "app#multi_scenario_comparison"
+            multiScenarioComparisonUrl year scenarioIds
 
-                _ ->
-                    "app#multi_scenario_comparison/" ++ year ++ "?" ++ String.join "&" (List.map (\s -> "scenarioId=" ++ String.fromInt s) scenarioIds)
+
+multiScenarioComparisonUrl : String -> List Int -> String
+multiScenarioComparisonUrl year scenarioIds =
+    case scenarioIds of
+        [] ->
+            "app#multi_scenario_comparison"
+
+        _ ->
+            "app#multi_scenario_comparison/" ++ year ++ "?" ++ String.join "&" (List.map (\s -> "scenarioId=" ++ String.fromInt s) scenarioIds)
 
 
 href : TypesPage.Page -> Html.Attribute msg

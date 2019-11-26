@@ -1,8 +1,8 @@
 module Page.MultiScenarioComparison.View exposing (view)
 
 import Dict
-import Html exposing (Html, a, button, div, section, table, tbody, td, text, th, thead, tr)
-import Html.Attributes exposing (class)
+import Html exposing (Html, a, button, div, p, section, table, tbody, td, text, th, thead, tr)
+import Html.Attributes exposing (class, classList, style)
 import Html.Events exposing (onClick)
 import Page.MultiScenarioComparison.Model as Model
 import Page.MultiScenarioComparison.Msg as Msg
@@ -16,10 +16,12 @@ import Types.Scenario as TypesScenario
 
 view : Model.Model -> Html Msg.Msg
 view model =
-    section
-        [ class "section"
+    div []
+        [ section
+            [ class "section"
+            ]
+            (content model)
         ]
-        (content model)
 
 
 content : Model.Model -> List (Html Msg.Msg)
@@ -48,14 +50,25 @@ content model =
 
 yearButtons : List Int -> List TypesScenario.MultiScenarioComparison -> Html Msg.Msg
 yearButtons scenarioIds scenarios =
+    let
+        isCurrent y =
+            case scenarios of
+                x :: xs ->
+                    y == x.year
+
+                _ ->
+                    False
+    in
     case scenarios of
         x :: _ ->
-            div []
+            div [ class "field has-addons" ]
                 (List.map
-                    (\s ->
-                        a
-                            [ class "button is-link", Route.href <| TypesPage.MultiScenarioComparison s scenarioIds ]
-                            [ text s ]
+                    (\y ->
+                        p [ class "control" ]
+                            [ a
+                                [ classList [ ( "button", True ), ( "is-primary", isCurrent y ) ], Route.href <| TypesPage.MultiScenarioComparison y scenarioIds ]
+                                [ text y ]
+                            ]
                     )
                     x.scenario.scenario_years
                 )
@@ -74,12 +87,16 @@ sortableTable model scenarios =
 
                 _ ->
                     []
+
+        -- this will be implemented later to get orange highlights on the values
+        bestPerformance =
+            Dict.empty
     in
-    SortableTable.view (sortableTableConfig metricAccessors) model.tableState scenarios
+    SortableTable.view (sortableTableConfig bestPerformance metricAccessors) model.tableState scenarios
 
 
-sortableTableConfig : List TypesScenario.MetricAccessor -> SortableTable.Config TypesScenario.MultiScenarioComparison Msg.Msg
-sortableTableConfig metricAccessors =
+sortableTableConfig : Dict.Dict String Float -> List TypesScenario.MetricAccessor -> SortableTable.Config TypesScenario.MultiScenarioComparison Msg.Msg
+sortableTableConfig bestPerformance metricAccessors =
     let
         fToId a =
             let
@@ -98,20 +115,53 @@ sortableTableConfig metricAccessors =
         fToScenarioMetricData a =
             a.metric_data
     in
-    SortableTable.config
+    SortableTable.customConfig
         { toId = fToId
         , toMsg = Msg.NewTableState
+        , customizations = tableCustomizations
         , columns =
             [ SortableTable.stringColumn "Name" fToScenarioName
             ]
-                ++ toCustomColumns metricAccessors
+                ++ toCustomColumns bestPerformance metricAccessors
         }
 
 
-toCustomColumns : List TypesScenario.MetricAccessor -> List (SortableTable.Column TypesScenario.MultiScenarioComparison Msg.Msg)
-toCustomColumns metricAccessors =
+tableCustomizations : SortableTable.Customizations data msg
+tableCustomizations =
+    let
+        def =
+            SortableTable.defaultCustomizations
+
+        ta =
+            [ class "table is-bordered is-striped is-fullwidth is-hoverable" ]
+    in
+    { def | tableAttrs = def.tableAttrs ++ ta }
+
+
+toCustomColumns : Dict.Dict String Float -> List TypesScenario.MetricAccessor -> List (SortableTable.Column TypesScenario.MultiScenarioComparison Msg.Msg)
+toCustomColumns bestPerformance metricAccessors =
     let
         vd metricId a =
+            let
+                metric_data =
+                    a.metric_data
+
+                metric_1 =
+                    Maybe.withDefault (TypesScenario.MetricData 0 "Empty" "Empty" "Empty" 0 "Empty") <| Dict.get metricId metric_data
+
+                value =
+                    metric_1.metric_value
+
+                highlight =
+                    if Just value == Dict.get metricId bestPerformance then
+                        [ style "color" "orange" ]
+
+                    else
+                        []
+            in
+            { attributes = [], children = [ div highlight [ text <| String.fromFloat value ] ] }
+
+        sort metricId a =
             let
                 metric_data =
                     a.metric_data
@@ -121,4 +171,4 @@ toCustomColumns metricAccessors =
             in
             String.fromFloat metric_1.metric_value
     in
-    List.map (\( k, v ) -> SortableTable.customColumn { name = v, viewData = vd k, sorter = SortableTable.increasingOrDecreasingBy (vd k) }) metricAccessors
+    List.map (\( k, v ) -> SortableTable.veryCustomColumn { name = v, viewData = vd k, sorter = SortableTable.increasingOrDecreasingBy (sort k) }) metricAccessors

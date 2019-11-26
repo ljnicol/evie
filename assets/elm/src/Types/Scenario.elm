@@ -12,6 +12,7 @@ type alias Scenario =
     , scenario_assumptions : String
     , scenario_spatial_table : String
     , scenario_years : List String
+    , selected : Bool
     }
 
 
@@ -24,6 +25,7 @@ scenarioDecoder =
         |> DecodePipeline.required "scenario_assumptions" Decode.string
         |> DecodePipeline.required "scenario_spatial_table" Decode.string
         |> DecodePipeline.required "scenario_years" (Decode.list Decode.string)
+        |> DecodePipeline.hardcoded False
 
 
 decodeListScenario : Decode.Decoder (List Scenario)
@@ -34,6 +36,7 @@ decodeListScenario =
 type alias MultiScenarioComparison =
     { scenario : Scenario
     , metric_data : Dict.Dict String MetricData
+    , year : String
     }
 
 
@@ -42,6 +45,7 @@ multiScenarioComparisonDecoder =
     Decode.succeed MultiScenarioComparison
         |> DecodePipeline.required "scenario" scenarioDecoder
         |> DecodePipeline.required "metric_data" (Decode.dict metricDataDecoder)
+        |> DecodePipeline.required "year" Decode.string
 
 
 decodeListMultiScenario : Decode.Decoder (List MultiScenarioComparison)
