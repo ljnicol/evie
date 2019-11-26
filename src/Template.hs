@@ -1,5 +1,6 @@
 module Template where
 
+import Control.Monad (mapM)
 import qualified Control.Monad.Trans as MonadTrans (liftIO)
 import qualified DB
 import qualified Data.Text as Text
@@ -53,13 +54,17 @@ renderScenarioDetail context template = GingerHtml.htmlSource $ Ginger.easyRende
 
 -- Scenario Comparison Page
 
-scenarioComparison :: DBTypes.DatabaseEngine a -> FilePath -> Integer -> ScenarioTypes.Year -> Integer -> ScenarioTypes.Year -> Servant.Handler Text.Text
-scenarioComparison conns templateFile scenarioId1 year1 scenarioId2 year2 = do
-  scenario1Context <- DB.getScenarioDetailDB conns scenarioId1 year1
-  scenario2Context <- DB.getScenarioDetailDB conns scenarioId2 year2
-  renderPage templateFile (renderScenarioComparison scenario1Context)
+scenarioComparison :: DBTypes.DatabaseEngine a -> FilePath -> [Integer] -> [ScenarioTypes.Year] -> Servant.Handler Text.Text
+scenarioComparison conns templateFile scenarioIds years = do
+  case (scenarioIds, years) of
+      (s:_, y:_) -> do
+        context <- fmap ScenarioTypes.ComparisonTemplateData $ mapM (\a -> DB.getScenarioDetailDB conns a y ) scenarioIds
+        renderPage templateFile (renderScenarioComparison ( context))
+      
+      _ ->
+        return $ Text.pack $ show "Failed to parse scenario IDs and years"
 
-renderScenarioComparison :: ScenarioTypes.TemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
+renderScenarioComparison :: ScenarioTypes.ComparisonTemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
 renderScenarioComparison context template = GingerHtml.htmlSource $ Ginger.easyRender context template
 
 -- -- Scenario Map Page

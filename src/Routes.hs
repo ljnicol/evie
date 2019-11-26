@@ -30,10 +30,8 @@ type API =
              :> Capture "year" ScenarioTypes.Year
              :> Get '[Html] Text.Text
              :<|> "scenario_comparison"
-               :> Capture "scenario_id_1" Integer
-               :> Capture "scenario_year_1" ScenarioTypes.Year
-               :> Capture "scenario_id_2" Integer
-               :> Capture "scenario_year_2" ScenarioTypes.Year
+               :> QueryParams "scenarioId" Integer
+               :> QueryParams "year" ScenarioTypes.Year
                :> Get '[Html] Text.Text
              :<|> "scenario_detail_map"
                :> Capture "scenario_id" Integer

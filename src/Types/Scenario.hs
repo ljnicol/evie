@@ -149,3 +149,16 @@ metricListToHashMap ms =
       toPairs m = (metricId m, m)
    in -- combine ::
       HashMap.fromList (map toPairs ms)
+
+data ComparisonTemplateData
+    = ComparisonTemplateData { scenarioData :: [TemplateData] }  deriving (Eq, Generic, Show)
+
+
+instance Aeson.ToJSON ComparisonTemplateData where
+
+  toJSON = Aeson.genericToJSON encodingOptions
+
+  toEncoding = Aeson.genericToEncoding encodingOptions
+
+instance Ginger.ToGVal m ComparisonTemplateData where
+  toGVal td = Ginger.rawJSONToGVal $ Aeson.toJSON td
