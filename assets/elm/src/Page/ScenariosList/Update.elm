@@ -14,10 +14,10 @@ update msg model =
         Msg.LoadScenariosList ->
             ( { model | scenariosList = RemoteData.Loading }, Api.getScenariosList )
 
-        Msg.OpenScenarioDetail scenario ->
+        Msg.OpenScenarioDetail y scenario ->
             let
                 year =
-                    Maybe.withDefault "2019" <| List.head scenario.scenario_years
+                    Maybe.withDefault (Maybe.withDefault "2019" <| List.head scenario.scenario_years) y
             in
             ( model, Navigation.load ("/app/scenario_detail/" ++ String.fromInt scenario.scenario_id ++ "/" ++ year) )
 
@@ -52,7 +52,7 @@ update msg model =
             in
             ( { model | scenariosList = newScenarios }, Cmd.none )
 
-        Msg.ShowMultiScenario ->
+        Msg.ShowMultiScenarioTable ->
             let
                 scenariosToCompare =
                     case model.scenariosList of
@@ -69,6 +69,27 @@ update msg model =
                             Maybe.withDefault "2019" <| List.head x.scenario_years
                     in
                     ( model, Navigation.load <| Route.multiScenarioComparisonUrl year (List.map .scenario_id scenariosToCompare) )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        Msg.ShowMultiScenarioDetail ->
+            let
+                scenariosToCompare =
+                    case model.scenariosList of
+                        RemoteData.Success scenarios ->
+                            List.filter (\s -> s.selected) scenarios
+
+                        _ ->
+                            []
+            in
+            case scenariosToCompare of
+                x :: xs ->
+                    let
+                        year =
+                            Maybe.withDefault "2019" <| List.head x.scenario_years
+                    in
+                    ( model, Navigation.load <| Route.multiScenarioComparisonDetailUrl year (List.map .scenario_id scenariosToCompare) )
 
                 _ ->
                     ( model, Cmd.none )

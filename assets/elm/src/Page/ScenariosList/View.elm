@@ -1,6 +1,6 @@
 module Page.ScenariosList.View exposing (view)
 
-import Html exposing (Html, a, br, button, div, input, section, table, tbody, td, text, th, thead, tr)
+import Html exposing (Html, a, br, button, div, h1, input, section, table, tbody, td, text, th, thead, tr)
 import Html.Attributes exposing (checked, class, disabled, type_)
 import Html.Events exposing (onCheck, onClick)
 import Page.ScenariosList.Model as Model
@@ -28,7 +28,15 @@ view model =
                     [ div [ class "level-left" ]
                         []
                     , div [ class "level-right" ]
-                        [ div [ class "level-item" ] [ multiScenarioComparisonButton model ]
+                        [ div [ class "level-item" ]
+                            [ h1 [ class "title is-5" ] [ text "Compare Scenarios:" ]
+                            ]
+                        , div [ class "level-item" ]
+                            [ multiScenarioComparisonTable model
+                            ]
+                        , div [ class "level-item" ]
+                            [ multiScenarioComparisonDetail model
+                            ]
                         ]
                     ]
                 ]
@@ -39,8 +47,8 @@ view model =
         ]
 
 
-multiScenarioComparisonButton : Model.Model -> Html Msg.Msg
-multiScenarioComparisonButton model =
+multiScenarioComparisonTable : Model.Model -> Html Msg.Msg
+multiScenarioComparisonTable model =
     let
         noScenariosSelected =
             case model.scenariosList of
@@ -50,7 +58,21 @@ multiScenarioComparisonButton model =
                 _ ->
                     True
     in
-    button [ class "button is-link", onClick Msg.ShowMultiScenario, disabled noScenariosSelected ] [ text "Multi-Scenario Comparison" ]
+    button [ class "button is-primary", onClick Msg.ShowMultiScenarioTable, disabled noScenariosSelected ] [ text "Table" ]
+
+
+multiScenarioComparisonDetail : Model.Model -> Html Msg.Msg
+multiScenarioComparisonDetail model =
+    let
+        noScenariosSelected =
+            case model.scenariosList of
+                RemoteData.Success scenarios ->
+                    List.isEmpty <| List.filter (\s -> s.selected) scenarios
+
+                _ ->
+                    True
+    in
+    button [ class "button is-primary", onClick Msg.ShowMultiScenarioDetail, disabled noScenariosSelected ] [ text "Scenario Detail" ]
 
 
 dummyTable : Model.Model -> Html Msg.Msg
@@ -119,11 +141,10 @@ tableRow index scenario =
             [ text scenario.scenario_assumptions
             ]
         , td []
-            [ text <| String.join "," scenario.scenario_years
-            ]
+            (List.map (\y -> button [ class "button is-small", onClick (Msg.OpenScenarioDetail (Just y) scenario) ] [ text y ]) scenario.scenario_years)
         , td [ class "has-text-centered" ]
             [ input [ type_ "checkbox", onCheck (Msg.SelectScenario scenario), checked scenario.selected ] [] ]
-        , td [ class "has-text-centered", onClick (Msg.OpenScenarioDetail scenario) ]
-            [ button [ class "button is-small is-link" ] [ text "View" ]
+        , td [ class "has-text-centered", onClick (Msg.OpenScenarioDetail Nothing scenario) ]
+            [ button [ class "button is-small is-primary" ] [ text "View" ]
             ]
         ]

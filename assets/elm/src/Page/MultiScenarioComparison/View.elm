@@ -17,35 +17,51 @@ import Types.Scenario as TypesScenario
 view : Model.Model -> Html Msg.Msg
 view model =
     div []
-        [ section
-            [ class "section"
-            ]
-            (content model)
-        ]
+        (content
+            model
+        )
 
 
 content : Model.Model -> List (Html Msg.Msg)
 content model =
     case model.multiScenarioComparison of
         RemoteData.Success scenarios ->
-            [ div [ class "column is-half is-offset-one-quarter" ]
-                [ yearButtons model.scenarioIds scenarios
+            [ section
+                [ class "section"
                 ]
-            , div [ class "columns" ]
-                [ div [ class "column is-half is-offset-one-quarter" ]
-                    [ sortableTable model scenarios
+                [ div [ class "columns" ]
+                    [ div [ class "column is-full" ]
+                        [ yearButtons model.scenarioIds scenarios
+                        ]
+                    ]
+                , div [ class "columns" ]
+                    [ div [ class "column is-full" ]
+                        [ sortableTable model scenarios
+                        ]
                     ]
                 ]
             ]
 
-        RemoteData.Failure err ->
-            [ div [] [ text "Something went wrong" ] ]
+        RemoteData.Failure _ ->
+            [ section
+                [ class "section"
+                ]
+                [ div [] [ text "Something went wrong" ] ]
+            ]
 
         RemoteData.Loading ->
-            [ div [] [ text "Loading" ] ]
+            [ section
+                [ class "section"
+                ]
+                [ div [] [ text "Loading" ] ]
+            ]
 
         RemoteData.NotAsked ->
-            [ div [] [ text "Loading" ] ]
+            [ section
+                [ class "section"
+                ]
+                [ div [] [ text "Loading" ] ]
+            ]
 
 
 yearButtons : List Int -> List TypesScenario.MultiScenarioComparison -> Html Msg.Msg

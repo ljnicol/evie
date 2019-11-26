@@ -41,10 +41,20 @@ multiScenarioComparisonUrl : String -> List Int -> String
 multiScenarioComparisonUrl year scenarioIds =
     case scenarioIds of
         [] ->
-            "app#multi_scenario_comparison"
+            "app#scenarios_list"
 
         _ ->
             "app#multi_scenario_comparison/" ++ year ++ "?" ++ String.join "&" (List.map (\s -> "scenarioId=" ++ String.fromInt s) scenarioIds)
+
+
+multiScenarioComparisonDetailUrl : String -> List Int -> String
+multiScenarioComparisonDetailUrl year scenarioIds =
+    case scenarioIds of
+        [] ->
+            "app#scenarios_list"
+
+        _ ->
+            "app/scenario_comparison?year=" ++ year ++ "&" ++ String.join "&" (List.map (\s -> "scenarioId=" ++ String.fromInt s) scenarioIds)
 
 
 href : TypesPage.Page -> Html.Attribute msg
