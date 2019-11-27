@@ -15,7 +15,10 @@ data InputConfig
   = InputConfig
       { _inputConfigApplicationDomain :: Text.Text,
         _inputConfigApplicationPort :: Int,
-        _inputConfigPG :: PGConnectionConfig
+        _inputConfigPG :: PGConnectionConfig,
+        _inputConfigTemplates :: FilePath,
+        _inputConfigStaticDirectory :: FilePath,
+        _inputConfigSpatialDirectory :: FilePath
       }
   deriving (Show, Generic)
 
@@ -25,6 +28,9 @@ instance Aeson.FromJSON InputConfig where
       <$> o Aeson..: "application_domain"
       <*> o Aeson..: "application_port"
       <*> o Aeson..: "postgres_config"
+      <*> o Aeson..: "template_directory"
+      <*> o Aeson..: "static_directory"
+      <*> o Aeson..: "spatial_directory"
 
 data Config
   = Config
@@ -32,7 +38,10 @@ data Config
         _configApplicationPort :: Int,
         _configDirectory :: FilePath,
         _configDataFile :: FilePath,
-        _configPG :: PGConnectionConfig
+        _configPG :: PGConnectionConfig,
+        _configTemplates :: FilePath,
+        _configStaticDirectory :: FilePath,
+        _configSpatialDirectory :: FilePath
       }
 
 data PGConnectionConfig
@@ -45,7 +54,7 @@ data PGConnectionConfig
   deriving (Show, Generic)
 
 instance Aeson.FromJSON PGConnectionConfig where
-  parseJSON = Aeson.withObject "Config" $ \o ->
+  parseJSON = Aeson.withObject "PGConnectionConfig" $ \o ->
     PostgresConnectionConfig
       <$> o Aeson..: "host"
       <*> o Aeson..: "database"

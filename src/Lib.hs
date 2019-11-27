@@ -25,7 +25,7 @@ debug app req resp = do
 
 startApp :: Config.Config -> IO ()
 startApp config@Config.Config {..} = do
-  let dbFile = "data/data.sqlite"
+  let dbFile = _configDataFile
       dbConnection =
         PGSimple.postgreSQLConnectionString $
           PGSimple.defaultConnectInfo

@@ -26,3 +26,7 @@ addDefaults Config.InputConfig {..} appDirectory dataFile =
     appDirectory
     dataFile
     _inputConfigPG
+    _inputConfigTemplates
+    _inputConfigStaticDirectory
+    _inputConfigSpatialDirectory
+
