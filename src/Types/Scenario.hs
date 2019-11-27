@@ -151,8 +151,8 @@ metricListToHashMap ms =
       HashMap.fromList (map toPairs ms)
 
 data ComparisonTemplateData
-    = ComparisonTemplateData { scenarioData :: [TemplateData] }  deriving (Eq, Generic, Show)
-
+  = ComparisonTemplateData {scenarioData :: [TemplateData]}
+  deriving (Eq, Generic, Show)
 
 instance Aeson.ToJSON ComparisonTemplateData where
 

@@ -10,7 +10,7 @@ import qualified Types.DB as DB
 server ::
   Config.Config -> DB.DatabaseEngine a -> Servant.Server Routes.API
 server config@Config.Config {..} dbEngine =
-  apiServer dbEngine Servant.:<|>  appServer dbEngine Servant.:<|> Servant.serveDirectoryFileServer (_configDirectory ++ "/" ++ "spatial") 
+  apiServer dbEngine Servant.:<|> appServer dbEngine Servant.:<|> Servant.serveDirectoryFileServer (_configDirectory ++ "/" ++ "spatial")
   where
     apiServer dbEngine = DB.scenariosDB dbEngine Servant.:<|> DB.metricsDB dbEngine Servant.:<|> DB.getScenarioComparisonListDB dbEngine
     appServer dbEngine =

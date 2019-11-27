@@ -57,12 +57,11 @@ renderScenarioDetail context template = GingerHtml.htmlSource $ Ginger.easyRende
 scenarioComparison :: DBTypes.DatabaseEngine a -> FilePath -> [Integer] -> [ScenarioTypes.Year] -> Servant.Handler Text.Text
 scenarioComparison conns templateFile scenarioIds years = do
   case (scenarioIds, years) of
-      (s:_, y:_) -> do
-        context <- fmap ScenarioTypes.ComparisonTemplateData $ mapM (\a -> DB.getScenarioDetailDB conns a y ) scenarioIds
-        renderPage templateFile (renderScenarioComparison ( context))
-      
-      _ ->
-        return $ Text.pack $ show "Failed to parse scenario IDs and years"
+    (s : _, y : _) -> do
+      context <- fmap ScenarioTypes.ComparisonTemplateData $ mapM (\a -> DB.getScenarioDetailDB conns a y) scenarioIds
+      renderPage templateFile (renderScenarioComparison (context))
+    _ ->
+      return $ Text.pack $ show "Failed to parse scenario IDs and years"
 
 renderScenarioComparison :: ScenarioTypes.ComparisonTemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
 renderScenarioComparison context template = GingerHtml.htmlSource $ Ginger.easyRender context template
