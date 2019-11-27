@@ -6,5 +6,8 @@
         "database": "DB_NAME",
         "user": "DB_USER",
         "password": "DB_PASSWORD"
-    }
+    },
+    "template_directory": "templates",
+    "static_directory": "static",
+    "spatial_directory": "spatial"
 }
