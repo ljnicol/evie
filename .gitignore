@@ -26,7 +26,6 @@ elm-stuff/
 .idea/
 release/
 release/*
-release/static/
 assets/static/
 assets/config.json
 data/
