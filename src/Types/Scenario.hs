@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 
@@ -93,7 +94,7 @@ data MetricData
         metricDescription :: Text.Text,
         metricYear :: Text.Text,
         metricValue :: Double,
-        metricSpatialTableColumn :: Text.Text
+        metricSpatial :: [SpatialValue]
       }
   deriving (Eq, Generic, Show)
 
@@ -129,6 +130,19 @@ instance PGSimple.FromRow MetricData where
 
 instance Ginger.ToGVal m MetricData where
   toGVal md = Ginger.rawJSONToGVal $ Aeson.toJSON md
+
+data SpatialValue
+  = SpatialValue
+      { id :: Integer,
+        value :: Double
+      }
+  deriving (Eq, Generic, Show, Aeson.ToJSON, Aeson.FromJSON)
+
+instance SQLiteSimple.FromField [SpatialValue] where
+  fromField = fromJSONField
+
+instance PGSimple.FromField [SpatialValue] where
+  fromField = PGSimple.fromJSONField
 
 data TemplateData
   = TemplateData {metricData :: HashMap.HashMap Integer MetricData, scenario :: Scenario, year :: Year}
