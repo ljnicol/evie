@@ -92,9 +92,15 @@ data MetricData
         metricId :: Integer,
         metricName :: Text.Text,
         metricDescription :: Text.Text,
+        metricLowOutcome :: Double,
+        metricLowOutcomeText :: Text.Text,
+        metricHighOutcome :: Double,
+        metricHighOutcomeText :: Text.Text,
+        metricBins :: [(Double, Text.Text)],
+        metricUnit :: Text.Text,
         metricYear :: Text.Text,
         metricValue :: Double,
-        metricSpatial :: [SpatialValue]
+        metricSpatial :: Text.Text
       }
   deriving (Eq, Generic, Show)
 
@@ -115,6 +121,12 @@ instance SQLiteSimple.FromRow MetricData where
       <*> SQLiteSimple.field
       <*> SQLiteSimple.field
       <*> SQLiteSimple.field
+      <*> SQLiteSimple.field
+      <*> SQLiteSimple.field
+      <*> SQLiteSimple.field
+      <*> SQLiteSimple.field
+      <*> SQLiteSimple.field
+      <*> SQLiteSimple.field
 
 instance PGSimple.FromRow MetricData where
   fromRow =
@@ -127,6 +139,18 @@ instance PGSimple.FromRow MetricData where
       <*> PGSimple.field
       <*> PGSimple.field
       <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+
+instance SQLiteSimple.FromField [(Double, Text.Text)] where
+  fromField = fromJSONField
+
+instance PGSimple.FromField [(Double, Text.Text)] where
+  fromField = PGSimple.fromJSONField
 
 instance Ginger.ToGVal m MetricData where
   toGVal md = Ginger.rawJSONToGVal $ Aeson.toJSON md
@@ -145,7 +169,7 @@ instance PGSimple.FromField [SpatialValue] where
   fromField = PGSimple.fromJSONField
 
 data TemplateData
-  = TemplateData {metricData :: HashMap.HashMap Integer MetricData, scenario :: Scenario, year :: Year}
+  = TemplateData {metricData :: HashMap.HashMap Integer MetricData, scenario :: Scenario, year :: Year, host :: String}
   deriving (Eq, Generic, Show)
 
 instance Aeson.ToJSON TemplateData where
@@ -175,4 +199,17 @@ instance Aeson.ToJSON ComparisonTemplateData where
   toEncoding = Aeson.genericToEncoding encodingOptions
 
 instance Ginger.ToGVal m ComparisonTemplateData where
+  toGVal td = Ginger.rawJSONToGVal $ Aeson.toJSON td
+
+data MapTemplateData
+  = MapTemplateData {spatialValues :: [SpatialValue]}
+  deriving (Eq, Generic, Show)
+
+instance Aeson.ToJSON MapTemplateData where
+
+  toJSON = Aeson.genericToJSON encodingOptions
+
+  toEncoding = Aeson.genericToEncoding encodingOptions
+
+instance Ginger.ToGVal m MapTemplateData where
   toGVal td = Ginger.rawJSONToGVal $ Aeson.toJSON td

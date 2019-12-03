@@ -44,9 +44,9 @@ renderPage templateFile renderFn = do
 
 -- Scenario Detail Page
 
-scenarioDetail :: DBTypes.DatabaseEngine a -> FilePath -> Integer -> ScenarioTypes.Year -> Servant.Handler Text.Text
-scenarioDetail conns templateFile scenarioId year = do
-  context <- DB.getScenarioDetailDB conns scenarioId year
+scenarioDetail :: DBTypes.DatabaseEngine a -> String -> FilePath -> Integer -> ScenarioTypes.Year -> Servant.Handler Text.Text
+scenarioDetail conns host templateFile scenarioId year = do
+  context <- DB.getScenarioDetailDB conns scenarioId year host
   renderPage templateFile (renderScenarioDetail context)
 
 renderScenarioDetail :: ScenarioTypes.TemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
@@ -54,34 +54,33 @@ renderScenarioDetail context template = GingerHtml.htmlSource $ Ginger.easyRende
 
 -- Scenario Comparison Page
 
-scenarioComparison :: DBTypes.DatabaseEngine a -> FilePath -> [Integer] -> [ScenarioTypes.Year] -> Servant.Handler Text.Text
-scenarioComparison conns templateFile scenarioIds years = do
+scenarioComparison :: DBTypes.DatabaseEngine a -> String -> FilePath -> [Integer] -> [ScenarioTypes.Year] -> Servant.Handler Text.Text
+scenarioComparison conns host templateFile scenarioIds years = do
   case (scenarioIds, years) of
     (s : _, y : _) -> do
-      context <- fmap ScenarioTypes.ComparisonTemplateData $ mapM (\a -> DB.getScenarioDetailDB conns a y) scenarioIds
+      context <- fmap ScenarioTypes.ComparisonTemplateData $ mapM (\a -> DB.getScenarioDetailDB conns a y host) scenarioIds
       renderPage templateFile (renderScenarioComparison (context))
     _ ->
       return $ Text.pack $ show "Failed to parse scenario IDs and years"
 
 renderScenarioComparison :: ScenarioTypes.ComparisonTemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
 renderScenarioComparison context template = GingerHtml.htmlSource $ Ginger.easyRender context template
-
 -- -- Scenario Map Page
 
-scenarioDetailMap :: DBTypes.DatabaseEngine a -> FilePath -> Integer -> Integer -> ScenarioTypes.Year -> Servant.Handler Text.Text
-scenarioDetailMap conns templateFile scenarioId metricId year = do
-  context <- DB.getScenarioMapDB conns scenarioId metricId year
-  renderPage templateFile (renderScenarioDetailMap context)
+-- scenarioDetailMap :: DBTypes.DatabaseEngine a -> FilePath -> Integer -> Integer -> ScenarioTypes.Year -> Servant.Handler Text.Text
+-- scenarioDetailMap conns templateFile scenarioId metricId year = do
+--   context <- DB.getScenarioMapDB conns scenarioId metricId year
+--   renderPage templateFile (renderScenarioDetailMap context)
 
-renderScenarioDetailMap :: ScenarioTypes.TemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
-renderScenarioDetailMap context template = GingerHtml.htmlSource $ Ginger.easyRender context template
+-- renderScenarioDetailMap :: ScenarioTypes.TemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
+-- renderScenarioDetailMap context template = GingerHtml.htmlSource $ Ginger.easyRender context template
 
 -- Scenario Comparison Map
 
-scenarioComparisonMap :: DBTypes.DatabaseEngine a -> FilePath -> Integer -> Integer -> Integer -> ScenarioTypes.Year -> Servant.Handler Text.Text
-scenarioComparisonMap conns templateFile scenarioId1 scenarioId2 metricId year = do
-  context <- DB.getScenarioMapDB conns scenarioId1 metricId year
-  renderPage templateFile (renderScenarioComparisonMap context)
+-- scenarioComparisonMap :: DBTypes.DatabaseEngine a -> FilePath -> Integer -> Integer -> Integer -> ScenarioTypes.Year -> Servant.Handler Text.Text
+-- scenarioComparisonMap conns templateFile scenarioId1 scenarioId2 metricId year = do
+--   context <- DB.getScenarioMapDB conns scenarioId1 metricId year
+--   renderPage templateFile (renderScenarioComparisonMap context)
 
-renderScenarioComparisonMap :: ScenarioTypes.TemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
-renderScenarioComparisonMap context template = GingerHtml.htmlSource $ Ginger.easyRender context template
+-- renderScenarioComparisonMap :: ScenarioTypes.TemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
+-- renderScenarioComparisonMap context template = GingerHtml.htmlSource $ Ginger.easyRender context template
