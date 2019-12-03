@@ -10,7 +10,6 @@ type alias Scenario =
     , scenario_name : String
     , scenario_description : String
     , scenario_assumptions : String
-    , scenario_spatial_table : String
     , scenario_years : List String
     , selected : Bool
     }
@@ -23,7 +22,6 @@ scenarioDecoder =
         |> DecodePipeline.required "scenario_name" Decode.string
         |> DecodePipeline.required "scenario_description" Decode.string
         |> DecodePipeline.required "scenario_assumptions" Decode.string
-        |> DecodePipeline.required "scenario_spatial_table" Decode.string
         |> DecodePipeline.required "scenario_years" (Decode.list Decode.string)
         |> DecodePipeline.hardcoded False
 
@@ -59,7 +57,6 @@ type alias MetricData =
     , metric_description : String
     , metric_year : String
     , metric_value : Float
-    , metric_spatial_table_column : String
     }
 
 
@@ -71,7 +68,6 @@ metricDataDecoder =
         |> DecodePipeline.required "metric_description" Decode.string
         |> DecodePipeline.required "metric_year" Decode.string
         |> DecodePipeline.required "metric_value" Decode.float
-        |> DecodePipeline.required "metric_spatial_table_column" Decode.string
 
 
 decodeListMetricData : Decode.Decoder (List MetricData)

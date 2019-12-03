@@ -163,7 +163,7 @@ toCustomColumns bestPerformance metricAccessors =
                     a.metric_data
 
                 metric_1 =
-                    Maybe.withDefault (TypesScenario.MetricData 0 "Empty" "Empty" "Empty" 0 "Empty") <| Dict.get metricId metric_data
+                    Maybe.withDefault (TypesScenario.MetricData 0 "Empty" "Empty" "Empty" 0) <| Dict.get metricId metric_data
 
                 value =
                     metric_1.metric_value
@@ -183,7 +183,7 @@ toCustomColumns bestPerformance metricAccessors =
                     a.metric_data
 
                 metric_1 =
-                    Maybe.withDefault (TypesScenario.MetricData 0 "Empty" "Empty" "Empty" 0 "Empty") <| Dict.get metricId metric_data
+                    Maybe.withDefault (TypesScenario.MetricData 0 "Empty" "Empty" "Empty" 0) <| Dict.get metricId metric_data
             in
             String.fromFloat metric_1.metric_value
     in
