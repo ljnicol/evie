@@ -16,10 +16,6 @@ update msg model =
             ( { model | multiScenarioComparison = RemoteData.Success a }, Cmd.none )
 
         Msg.HandleGetMultiScenarioComparison (Err error) ->
-            let
-                _ =
-                    Debug.log "error" error
-            in
             ( { model | multiScenarioComparison = RemoteData.Failure error }, Cmd.none )
 
         Msg.NewTableState s ->
