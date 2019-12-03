@@ -3,6 +3,7 @@ module View exposing (view)
 import Browser
 import Bulma.CDN as CDN
 import Html exposing (Html, main_, text)
+import Html.Attributes exposing (style)
 import Model
 import Msg exposing (Msg)
 import Page.MultiScenarioComparison.View as MultiScenarioComparison
@@ -13,11 +14,11 @@ import Views.Navbar as Navbar
 
 view : Model.Model -> Browser.Document Msg
 view model =
-    { title = "Evie"
+    { title = "Evie " ++ TypesPage.showPage model.page
     , body =
         [ main_ []
-            [ --             Navbar.view model False,
-              viewPage model
+            [ Navbar.view model False
+            , Html.div [ style "padding-top" "50px" ] [ viewPage model ]
             ]
         ]
     }

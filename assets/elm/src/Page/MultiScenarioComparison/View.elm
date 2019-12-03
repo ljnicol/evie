@@ -2,7 +2,7 @@ module Page.MultiScenarioComparison.View exposing (view)
 
 import Dict
 import Html exposing (Html, a, button, div, p, section, table, tbody, td, text, th, thead, tr)
-import Html.Attributes exposing (class, classList, style)
+import Html.Attributes exposing (class, classList, href, style)
 import Html.Events exposing (onClick)
 import Page.MultiScenarioComparison.Model as Model
 import Page.MultiScenarioComparison.Msg as Msg
