@@ -67,7 +67,7 @@ scenarioDB dbEngine scenarioId = do
             (PGSimple.Only $ scenarioId)
     sqQuery =
       [SQQQ.sql| 
-        SELECT id, name, description, assumptions, spatial_table, md.years 
+        SELECT id, name, description, assumptions, md.years 
         from scenarios 
         join (
           select json_group_array(year) as years, scenario_id 
@@ -78,7 +78,7 @@ scenarioDB dbEngine scenarioId = do
         |]
     pgQuery =
       [PGQQ.sql| 
-        SELECT id, name, description, assumptions, spatial_table, md.years 
+        SELECT id, name, description, assumptions, md.years 
         from scenarios 
         join (
             select json_agg(year) as years, scenario_id 
@@ -117,7 +117,7 @@ scenariosDB dbEngine =
             pgQuery
     sqQuery =
       [SQQQ.sql|
-        SELECT id, name, description, assumptions, spatial_table, md.years
+        SELECT id, name, description, assumptions, md.years
         from scenarios
                 join (select json_group_array(year) as years, scenario_id
                       from (select distinct year, scenario_id from metric_data order by year) as a
@@ -125,7 +125,7 @@ scenariosDB dbEngine =
       |]
     pgQuery =
       [PGQQ.sql|
-        SELECT id, name, description, assumptions, spatial_table, md.years
+        SELECT id, name, description, assumptions, md.years
         from scenarios
                 join (select json_agg(year) as years, scenario_id
                       from (select distinct year, scenario_id from metric_data order by year) as a

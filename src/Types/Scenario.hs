@@ -34,7 +34,6 @@ data Scenario
         scenarioName :: Text.Text,
         scenarioDescription :: Text.Text,
         scenarioAssumptions :: Text.Text,
-        scenarioSpatialTable :: Text.Text,
         scenarioYears :: [Text.Text]
       }
   deriving (Eq, Generic, Show)
@@ -70,13 +69,11 @@ instance SQLiteSimple.FromRow Scenario where
       <*> SQLiteSimple.field
       <*> SQLiteSimple.field
       <*> SQLiteSimple.field
-      <*> SQLiteSimple.field
 
 instance PGSimple.FromRow Scenario where
   fromRow =
     Scenario
       <$> PGSimple.field
-      <*> PGSimple.field
       <*> PGSimple.field
       <*> PGSimple.field
       <*> PGSimple.field
