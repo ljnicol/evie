@@ -2,9 +2,9 @@
 
 Quickly build evaluation applications for strategic decisions.
 
-EViE provides a concise API for accessing scenario and metric data stored in a PostgreSQL database, and a set of templates for getting started with different use cases.
+EViE provides a concise API for accessing scenario and metric data stored in a PostgreSQL or SQLite database, and a set of templates for getting started with different use cases.
 
-Simply download the latest releast from the releases page to get started.
+Download the latest releast from the releases page to get started.
 
 # Getting Started
 

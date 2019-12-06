@@ -7,6 +7,7 @@ import qualified Controller
 import qualified Data.ByteString as ByteString
 import qualified Data.Pool as Pool
 import qualified Data.Text as Text
+import qualified Database.Mbtiles as Mbtiles
 import qualified Database.PostgreSQL.Simple as PGSimple
 import qualified Database.SQLite.Simple as SQLiteSimple
 import qualified Network.Wai as Wai
@@ -35,11 +36,16 @@ startApp config@Config.Config {..} = do
               PGSimple.connectPassword = Config._password _configPG
             }
   conns <- initSQLiteConnectionPool dbFile
-  -- conns <- initPostgreSQLConnectionPool dbConnection
-  b <- Browser.openBrowser $ Text.unpack _configApplicationDomain ++ ":" ++ (show _configApplicationPort) ++ "/app"
-  if b
-    then Wai.run _configApplicationPort $ debug $ Servant.serve Routes.api (Controller.server config $ DB.SQLite3 conns)
-    else print "Failed to start browser"
+  mbTilesConnsOrError <- Mbtiles.getMbtilesPool (_configSpatialDirectory ++ "/seq_old.mbtiles")
+  case mbTilesConnsOrError of
+    Left e ->
+      print e
+    Right spatialConns -> do
+      -- conns <- initPostgreSQLConnectionPool dbConnection
+      b <- Browser.openBrowser $ Text.unpack _configApplicationDomain ++ ":" ++ (show _configApplicationPort) ++ "/app"
+      if b
+        then Wai.run _configApplicationPort $ debug $ Servant.serve Routes.api (Controller.server config spatialConns $ DB.SQLite3 conns)
+        else print "Failed to start browser"
 
 initSQLiteConnectionPool :: String -> IO (Pool.Pool SQLiteSimple.Connection)
 initSQLiteConnectionPool dbFile =

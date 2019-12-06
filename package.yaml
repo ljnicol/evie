@@ -52,6 +52,7 @@ library:
     - http-media
     - sqlite-simple
     - neat-interpolation
+    - mbtiles
 
 executables:
   evie:

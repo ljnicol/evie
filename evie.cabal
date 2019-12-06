@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 09100395ac44d03dface8d745d8d595d8c39d3205025938b58fb87d35054dd41
+-- hash: 1dc150c12bb024e0519458f9f9dafca630f91d9c99e42833f907764c20794e23
 
 name:           evie
 version:        0.0.3
@@ -48,6 +48,7 @@ library
     , bytestring
     , ginger
     , http-media
+    , mbtiles
     , mtl
     , neat-interpolation
     , open-browser

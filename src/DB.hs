@@ -5,7 +5,14 @@ module DB where
 
 import Control.Monad (mapM)
 import qualified Control.Monad.Trans as MonadTrans (liftIO)
+import qualified Data.ByteString as BS
+import qualified Data.ByteString.Lazy.Char8 as ByteStringLazyChar8
+import qualified Data.Char as Char
 import qualified Data.Pool as Pool
+import qualified Data.Text as Text
+import qualified Data.Text.Encoding as TextEncoding
+import qualified Data.Text.Read as TextRead
+import qualified Database.Mbtiles as Mbtiles
 import qualified Database.PostgreSQL.Simple as PGSimple
 import qualified Database.PostgreSQL.Simple.SqlQQ as PGQQ
 import qualified Database.SQLite.Simple as SQLiteSimple
@@ -207,6 +214,7 @@ metricsDBForYear dbEngine scenarioId year =
             where scenario_id = ? and metric_data.year = ?
             order by metric_id;
             |]
+
 -- spatialDataDB ::
 --   DBTypes.DatabaseEngine a ->
 --   Integer ->
@@ -268,3 +276,38 @@ metricsDBForYear dbEngine scenarioId year =
 --                           group by metric_id) as spatial_data on metric_data.metric_id = spatial_data.id and metric_data.year = spatial_data.year
 --         where scenario_id = ? and metric_id = ?;
 --         |]
+
+tilesDB ::
+  Mbtiles.MbtilesPool ->
+  Int ->
+  Int ->
+  Text.Text ->
+  Servant.Handler BS.ByteString
+tilesDB conns z x stringY
+  | (".mvt" `Text.isSuffixOf` stringY) || (".pbf" `Text.isSuffixOf` stringY) || (".vector.pbf" `Text.isSuffixOf` stringY) = getAnything conns z x stringY
+  | otherwise = Servant.throwError $ Servant.err400 {Servant.errBody = "Unknown request: " <> ByteStringLazyChar8.fromStrict (TextEncoding.encodeUtf8 stringY)}
+
+getAnything ::
+  Mbtiles.MbtilesPool ->
+  Int ->
+  Int ->
+  Text.Text ->
+  Servant.Handler BS.ByteString
+getAnything conns z x stringY =
+  case getY stringY of
+    Left e -> Servant.throwError $ Servant.err400 {Servant.errBody = "Unknown request: " <> ByteStringLazyChar8.fromStrict (TextEncoding.encodeUtf8 stringY)}
+    Right (y, _) -> getTile conns z x y
+  where
+    getY s = TextRead.decimal $ Text.takeWhile Char.isNumber s
+
+getTile :: Mbtiles.MbtilesPool -> Int -> Int -> Int -> Servant.Handler BS.ByteString
+getTile conns z x y = do
+  res <- MonadTrans.liftIO $ action
+  case res of
+    Just a ->
+      return a
+    _ ->
+      Servant.throwError Servant.err404 {Servant.errBody = Errors.errorString "404" "No tiles found" "Try requesting a different tile."}
+  where
+    action =
+      Mbtiles.runMbtilesPoolT conns (Mbtiles.getTile (Mbtiles.Z z) (Mbtiles.X x) (Mbtiles.Y y))
