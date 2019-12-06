@@ -26,16 +26,7 @@ debug app req resp = do
 
 startApp :: Config.Config -> IO ()
 startApp config@Config.Config {..} = do
-  let dbFile = _configDataFile
-      dbConnection =
-        PGSimple.postgreSQLConnectionString $
-          PGSimple.defaultConnectInfo
-            { PGSimple.connectHost = Config._host _configPG,
-              PGSimple.connectDatabase = Config._database _configPG,
-              PGSimple.connectUser = Config._user _configPG,
-              PGSimple.connectPassword = Config._password _configPG
-            }
-  conns <- initSQLiteConnectionPool dbFile
+  conns <- initDBConnectionPool _configDB
   mbTilesConnsOrError <- Mbtiles.getMbtilesPool (_configSpatialDirectory ++ "/seq_old.mbtiles")
   case mbTilesConnsOrError of
     Left e ->
@@ -44,8 +35,25 @@ startApp config@Config.Config {..} = do
       -- conns <- initPostgreSQLConnectionPool dbConnection
       b <- Browser.openBrowser $ Text.unpack _configApplicationDomain ++ ":" ++ (show _configApplicationPort) ++ "/app"
       if b
-        then Wai.run _configApplicationPort $ debug $ Servant.serve Routes.api (Controller.server config spatialConns $ DB.SQLite3 conns)
+        then Wai.run _configApplicationPort $ debug $ Servant.serve Routes.api (Controller.server config spatialConns $ conns)
         else print "Failed to start browser"
+
+initDBConnectionPool :: Config.DBConfig -> IO (DB.DatabaseEngine a)
+initDBConnectionPool dbConfig =
+  case dbConfig of
+    Config.SQLiteConfig f ->
+      fmap DB.SQLite3 $ initSQLiteConnectionPool f
+    Config.PGConfig pgConfig ->
+      fmap DB.PostgreSQL $ initPostgreSQLConnectionPool dbConnection
+      where
+        dbConnection =
+          PGSimple.postgreSQLConnectionString $
+            PGSimple.defaultConnectInfo
+              { PGSimple.connectHost = Config._host pgConfig,
+                PGSimple.connectDatabase = Config._database pgConfig,
+                PGSimple.connectUser = Config._user pgConfig,
+                PGSimple.connectPassword = Config._password pgConfig
+              }
 
 initSQLiteConnectionPool :: String -> IO (Pool.Pool SQLiteSimple.Connection)
 initSQLiteConnectionPool dbFile =

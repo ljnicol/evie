@@ -1,4 +1,5 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -15,7 +16,7 @@ data InputConfig
   = InputConfig
       { _inputConfigApplicationDomain :: Text.Text,
         _inputConfigApplicationPort :: Int,
-        _inputConfigPG :: PGConnectionConfig,
+        _inputConfigDB :: DBConfig,
         _inputConfigTemplates :: FilePath,
         _inputConfigStaticDirectory :: FilePath,
         _inputConfigSpatialDirectory :: FilePath
@@ -27,10 +28,12 @@ instance Aeson.FromJSON InputConfig where
     InputConfig
       <$> o Aeson..: "application_domain"
       <*> o Aeson..: "application_port"
-      <*> o Aeson..: "postgres_config"
+      <*> o Aeson..: "db_config"
       <*> o Aeson..: "template_directory"
       <*> o Aeson..: "static_directory"
       <*> o Aeson..: "spatial_directory"
+
+data DBConfig = SQLiteConfig FilePath | PGConfig PGConnectionConfig deriving (Show, Generic, Aeson.FromJSON)
 
 data Config
   = Config
@@ -38,7 +41,7 @@ data Config
         _configApplicationPort :: Int,
         _configDirectory :: FilePath,
         _configDataFile :: FilePath,
-        _configPG :: PGConnectionConfig,
+        _configDB :: DBConfig,
         _configTemplates :: FilePath,
         _configStaticDirectory :: FilePath,
         _configSpatialDirectory :: FilePath
