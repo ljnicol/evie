@@ -29,3 +29,5 @@ release/*
 assets/static/
 assets/config.json
 data/
+.DS_Store
+*.mbtiles
