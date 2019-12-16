@@ -4,10 +4,10 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 1dc150c12bb024e0519458f9f9dafca630f91d9c99e42833f907764c20794e23
+-- hash: 488f78f79abe4f6ab89c90a727719099309b086d5ac4739eb38709182e081f53
 
 name:           evie
-version:        0.0.3
+version:        0.0.4
 description:    Please see the README on GitHub at <https://github.com/state-machine-io/evie#readme>
 homepage:       https://github.com/state-machine-io/evie#readme
 bug-reports:    https://github.com/state-machine-io/evie/issues
