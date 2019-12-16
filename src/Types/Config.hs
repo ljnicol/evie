@@ -33,14 +33,15 @@ instance Aeson.FromJSON InputConfig where
       <*> o Aeson..: "static_directory"
       <*> o Aeson..: "spatial_directory"
 
-data DBConfig = SQLiteConfig FilePath | PGConfig PGConnectionConfig deriving (Show, Generic, Aeson.FromJSON)
+data DBConfig = SQLiteConfig FilePath | PGConfig PGConnectionConfig deriving (Show, Generic)
+
+instance Aeson.FromJSON DBConfig where
+  parseJSON = Aeson.genericParseJSON Aeson.defaultOptions {Aeson.sumEncoding = Aeson.UntaggedValue}
 
 data Config
   = Config
       { _configApplicationDomain :: Text.Text,
         _configApplicationPort :: Int,
-        _configDirectory :: FilePath,
-        _configDataFile :: FilePath,
         _configDB :: DBConfig,
         _configTemplates :: FilePath,
         _configStaticDirectory :: FilePath,
@@ -66,8 +67,7 @@ instance Aeson.FromJSON PGConnectionConfig where
 
 data CommandLine w
   = CommandLine
-      { appDirectory :: w ::: Maybe FilePath <?> "Default: \".\"",
-        dataFile :: w ::: Maybe FilePath <?> "Default: \"data.sqlite\" in the app directory"
+      { configFile :: w ::: Maybe FilePath <?> "Default: \"config.json\""
       }
   deriving (Generic)
 

@@ -1,10 +1,8 @@
 module Controller where
 
 import qualified DB
-import qualified Data.Pool as Pool
 import qualified Data.Text as Text
 import qualified Database.Mbtiles as Mbtiles
-import qualified Database.SQLite.Simple as SQLiteSimple
 import qualified Routes
 import qualified Servant
 import qualified Template

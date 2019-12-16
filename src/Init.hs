@@ -8,23 +8,20 @@ import qualified System.Exit as SystemExit
 import qualified Types.Config as Config
 
 getConfig :: Config.CommandLine OptionsGeneric.Unwrapped -> IO Config.Config
-getConfig (Config.CommandLine d df) = do
-  let appDirectory = Maybe.fromMaybe ("." :: FilePath) $ d
-      dataFile = Maybe.fromMaybe (appDirectory ++ "/" ++ "data.sqlite" :: FilePath) $ df
-  configBs <- ByteStringLazyChar8.readFile (appDirectory ++ "/" ++ "config.json")
+getConfig (Config.CommandLine cf) = do
+  let configFile = Maybe.fromMaybe ("config.json" :: FilePath) $ cf
+  configBs <- ByteStringLazyChar8.readFile configFile
   case Aeson.eitherDecode configBs of
     Left e -> do
       putStrLn $ "In file: " <> "config.json" <> "\nError: " <> e
       SystemExit.exitWith (SystemExit.ExitFailure 2)
-    Right config -> pure (addDefaults config appDirectory dataFile)
+    Right config -> pure (addDefaults config)
 
-addDefaults :: Config.InputConfig -> FilePath -> FilePath -> Config.Config
-addDefaults Config.InputConfig {..} appDirectory dataFile =
+addDefaults :: Config.InputConfig -> Config.Config
+addDefaults Config.InputConfig {..} =
   Config.Config
     _inputConfigApplicationDomain
     _inputConfigApplicationPort
-    appDirectory
-    dataFile
     _inputConfigDB
     _inputConfigTemplates
     _inputConfigStaticDirectory

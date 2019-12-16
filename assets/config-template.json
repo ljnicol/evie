@@ -1,12 +1,7 @@
 {
     "application_domain": "http://127.0.0.1",
     "application_port": 7249,
-    "postgres_config": {
-        "host": "DB_HOST",
-        "database": "DB_NAME",
-        "user": "DB_USER",
-        "password": "DB_PASSWORD"
-    },
+    "db_config": "data.sqlite",
     "template_directory": "templates",
     "static_directory": "static",
     "spatial_directory": "spatial"
