@@ -9,8 +9,9 @@ import qualified System.IO as SystemIO (IOMode (ReadMode), hGetContents, openFil
 import qualified System.IO.Error as IOError (tryIOError)
 import qualified Text.Ginger as Ginger
 import qualified Text.Ginger.Html as GingerHtml (htmlSource)
+import qualified Types
 import qualified Types.DB as DBTypes
-import qualified Types.Scenario as ScenarioTypes
+import qualified Types.Template as TemplateTypes
 
 -- Static File
 
@@ -44,30 +45,30 @@ renderPage templateFile renderFn = do
 
 -- Scenario Detail Page
 
-scenarioDetail :: DBTypes.DatabaseEngine a -> String -> FilePath -> Integer -> ScenarioTypes.Year -> Servant.Handler Text.Text
+scenarioDetail :: DBTypes.DatabaseEngine a -> String -> FilePath -> Integer -> Types.Year -> Servant.Handler Text.Text
 scenarioDetail conns host templateFile scenarioId year = do
   context <- DB.getScenarioDetailDB conns scenarioId year host
   renderPage templateFile (renderScenarioDetail context)
 
-renderScenarioDetail :: ScenarioTypes.TemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
+renderScenarioDetail :: TemplateTypes.TemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
 renderScenarioDetail context template = GingerHtml.htmlSource $ Ginger.easyRender context template
 
 -- Scenario Comparison Page
 
-scenarioComparison :: DBTypes.DatabaseEngine a -> String -> FilePath -> [Integer] -> [ScenarioTypes.Year] -> Servant.Handler Text.Text
+scenarioComparison :: DBTypes.DatabaseEngine a -> String -> FilePath -> [Integer] -> [Types.Year] -> Servant.Handler Text.Text
 scenarioComparison conns host templateFile scenarioIds years = do
   case (scenarioIds, years) of
     (s : _, y : _) -> do
-      context <- fmap ScenarioTypes.ComparisonTemplateData $ mapM (\a -> DB.getScenarioDetailDB conns a y host) scenarioIds
+      context <- fmap TemplateTypes.ComparisonTemplateData $ mapM (\a -> DB.getScenarioDetailDB conns a y host) scenarioIds
       renderPage templateFile (renderScenarioComparison (context))
     _ ->
       return $ Text.pack $ show "Failed to parse scenario IDs and years"
 
-renderScenarioComparison :: ScenarioTypes.ComparisonTemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
+renderScenarioComparison :: TemplateTypes.ComparisonTemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
 renderScenarioComparison context template = GingerHtml.htmlSource $ Ginger.easyRender context template
 -- -- Scenario Map Page
 
--- scenarioDetailMap :: DBTypes.DatabaseEngine a -> FilePath -> Integer -> Integer -> ScenarioTypes.Year -> Servant.Handler Text.Text
+-- scenarioDetailMap :: DBTypes.DatabaseEngine a -> FilePath -> Integer -> Integer -> Types.Year -> Servant.Handler Text.Text
 -- scenarioDetailMap conns templateFile scenarioId metricId year = do
 --   context <- DB.getScenarioMapDB conns scenarioId metricId year
 --   renderPage templateFile (renderScenarioDetailMap context)
@@ -77,7 +78,7 @@ renderScenarioComparison context template = GingerHtml.htmlSource $ Ginger.easyR
 
 -- Scenario Comparison Map
 
--- scenarioComparisonMap :: DBTypes.DatabaseEngine a -> FilePath -> Integer -> Integer -> Integer -> ScenarioTypes.Year -> Servant.Handler Text.Text
+-- scenarioComparisonMap :: DBTypes.DatabaseEngine a -> FilePath -> Integer -> Integer -> Integer -> Types.Year -> Servant.Handler Text.Text
 -- scenarioComparisonMap conns templateFile scenarioId1 scenarioId2 metricId year = do
 --   context <- DB.getScenarioMapDB conns scenarioId1 metricId year
 --   renderPage templateFile (renderScenarioComparisonMap context)

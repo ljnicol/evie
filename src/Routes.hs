@@ -9,7 +9,8 @@ import qualified Data.Proxy as Proxy
 import qualified Data.Text as Text
 import Network.HTTP.Media ((//), (/:))
 import Servant
-import qualified Types.DB as DBTypes
+import qualified Types
+import qualified Types.Api as ApiTypes
 import qualified Types.Scenario as ScenarioTypes
 
 api :: Proxy.Proxy API
@@ -20,28 +21,28 @@ type API =
     :> ( "scenarios"
            :> Get '[JSON] [ScenarioTypes.Scenario]
            :<|> "multi_scenario_comparison" :> QueryParams "scenarioId" Integer
-             :> QueryParam' '[Required, Strict] "year" ScenarioTypes.Year
-             :> Get '[JSON] [ScenarioTypes.TemplateData]
+             :> QueryParam' '[Required, Strict] "year" Types.Year
+             :> Get '[JSON] [ApiTypes.ComparisonListData]
        )
     :<|> "app"
     :> ( "scenario_detail"
            :> Capture "scenario_id" Integer
-           :> Capture "year" ScenarioTypes.Year
+           :> Capture "year" Types.Year
            :> Get '[Html] Text.Text
            :<|> "scenario_comparison"
            :> QueryParams "scenarioId" Integer
-           :> QueryParams "year" ScenarioTypes.Year
+           :> QueryParams "year" Types.Year
            :> Get '[Html] Text.Text
            --  :<|> "scenario_detail_map"
            --    :> Capture "scenario_id" Integer
            --    :> Capture "metric_id" Integer
-           --    :> Capture "year" ScenarioTypes.Year
+           --    :> Capture "year" Types.Year
            --    :> Get '[Html] Text.Text
            --  :<|> "scenario_comparison_map"
            --    :> Capture "scenario_id_1" Integer
            --    :> Capture "scenario_id_2" Integer
            --    :> Capture "metric_id" Integer
-           --    :> Capture "year" ScenarioTypes.Year
+           --    :> Capture "year" Types.Year
            --    :> Get '[Html] Text.Text
            :<|> Raw
        )
