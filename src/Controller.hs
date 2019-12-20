@@ -14,7 +14,11 @@ server ::
 server config@Config.Config {..} spatialConns dbEngine =
   apiServer dbEngine Servant.:<|> appServer dbEngine Servant.:<|> DB.tilesDB spatialConns
   where
-    apiServer dbEngine = DB.scenariosDB dbEngine Servant.:<|> DB.getScenarioComparisonListDB dbEngine
+    apiServer dbEngine =
+      DB.scenariosDB dbEngine
+        Servant.:<|> DB.getScenarioDetailDBForYear dbEngine
+        Servant.:<|> DB.getScenarioDetailDB dbEngine
+        Servant.:<|> DB.getScenarioComparisonListDB dbEngine
     host = Text.unpack _configApplicationDomain ++ ":" ++ (show _configApplicationPort)
     appServer dbEngine =
       Template.scenarioDetail dbEngine host (_configTemplates ++ "/" ++ "scenario_detail.html")

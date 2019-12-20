@@ -47,7 +47,7 @@ renderPage templateFile renderFn = do
 
 scenarioDetail :: DBTypes.DatabaseEngine a -> String -> FilePath -> Integer -> Types.Year -> Servant.Handler Text.Text
 scenarioDetail conns host templateFile scenarioId year = do
-  context <- DB.getScenarioDetailDB conns scenarioId year host
+  context <- DB.getScenarioDetailTemplate conns scenarioId year host
   renderPage templateFile (renderScenarioDetail context)
 
 renderScenarioDetail :: TemplateTypes.TemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
@@ -59,7 +59,7 @@ scenarioComparison :: DBTypes.DatabaseEngine a -> String -> FilePath -> [Integer
 scenarioComparison conns host templateFile scenarioIds years = do
   case (scenarioIds, years) of
     (s : _, y : _) -> do
-      context <- fmap TemplateTypes.ComparisonTemplateData $ mapM (\a -> DB.getScenarioDetailDB conns a y host) scenarioIds
+      context <- fmap TemplateTypes.ComparisonTemplateData $ mapM (\a -> DB.getScenarioDetailTemplate conns a y host) scenarioIds
       renderPage templateFile (renderScenarioComparison (context))
     _ ->
       return $ Text.pack $ show "Failed to parse scenario IDs and years"

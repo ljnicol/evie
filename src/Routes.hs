@@ -12,6 +12,7 @@ import Servant
 import qualified Types
 import qualified Types.Api as ApiTypes
 import qualified Types.Scenario as ScenarioTypes
+import qualified Types.Template as TemplateTypes
 
 api :: Proxy.Proxy API
 api = Proxy.Proxy
@@ -20,9 +21,18 @@ type API =
   "api"
     :> ( "scenarios"
            :> Get '[JSON] [ScenarioTypes.Scenario]
-           :<|> "multi_scenario_comparison" :> QueryParams "scenarioId" Integer
-             :> QueryParam' '[Required, Strict] "year" Types.Year
-             :> Get '[JSON] [ApiTypes.ComparisonListData]
+           :<|> "scenario_detail"
+           :> QueryParam' '[Required, Strict] "scenarioId" Integer
+           :> QueryParam' '[Required, Strict] "year" Types.Year
+           :> Get '[JSON] ApiTypes.ComparisonListData
+           :<|> "scenario_detail_all_years"
+           :> QueryParam' '[Required, Strict] "scenarioId" Integer
+           :> QueryParam' '[Required, Strict] "year" Types.Year
+           :> Get '[JSON] TemplateTypes.TemplateData
+           :<|> "multi_scenario_comparison"
+           :> QueryParams "scenarioId" Integer
+           :> QueryParam' '[Required, Strict] "year" Types.Year
+           :> Get '[JSON] [ApiTypes.ComparisonListData]
        )
     :<|> "app"
     :> ( "scenario_detail"

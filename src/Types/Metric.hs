@@ -21,8 +21,7 @@ import qualified Types.DB as DBTypes
 
 data MetricData
   = MetricData
-      { metricDataId :: Integer,
-        metricScenarioId :: Integer,
+      { metricScenarioId :: Integer,
         metricId :: Integer,
         metricName :: Text.Text,
         metricDescription :: Text.Text,
@@ -60,13 +59,11 @@ instance SQLiteSimple.FromRow MetricData where
       <*> SQLiteSimple.field
       <*> SQLiteSimple.field
       <*> SQLiteSimple.field
-      <*> SQLiteSimple.field
 
 instance PGSimple.FromRow MetricData where
   fromRow =
     MetricData
       <$> PGSimple.field
-      <*> PGSimple.field
       <*> PGSimple.field
       <*> PGSimple.field
       <*> PGSimple.field
