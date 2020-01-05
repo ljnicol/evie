@@ -52,7 +52,7 @@ decodeListMultiScenario =
 
 
 type alias MetricData =
-    { metric_data_id : Int
+    { metric_id : Int
     , metric_name : String
     , metric_description : String
     , metric_year : String
@@ -63,7 +63,7 @@ type alias MetricData =
 metricDataDecoder : Decode.Decoder MetricData
 metricDataDecoder =
     Decode.succeed MetricData
-        |> DecodePipeline.required "metric_data_id" Decode.int
+        |> DecodePipeline.required "metric_id" Decode.int
         |> DecodePipeline.required "metric_name" Decode.string
         |> DecodePipeline.required "metric_description" Decode.string
         |> DecodePipeline.required "metric_year" Decode.string
