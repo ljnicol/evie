@@ -36,13 +36,13 @@ getScenarioDetailDBForYear dbEngine scenarioId year = do
 
 getScenarioDetailDB :: DBTypes.DatabaseEngine a -> Integer -> Types.Year -> Servant.Handler TemplateTypes.TemplateData
 getScenarioDetailDB dbEngine scenarioId year = do
-  metrics <- fmap MetricTypes.metricListToHashMapYear $ metricsDB dbEngine scenarioId
+  metrics <- fmap MetricTypes.metricListToHashMap $ metricsDB dbEngine scenarioId
   scenario <- scenarioDB dbEngine scenarioId
   return $ TemplateTypes.TemplateData metrics scenario year ""
 
 getScenarioDetailTemplate :: DBTypes.DatabaseEngine a -> Integer -> Types.Year -> String -> Servant.Handler TemplateTypes.TemplateData
 getScenarioDetailTemplate dbEngine scenarioId year host = do
-  metrics <- fmap MetricTypes.metricListToHashMapYear $ metricsDB dbEngine scenarioId
+  metrics <- fmap MetricTypes.metricListToHashMap $ metricsDB dbEngine scenarioId
   scenario <- scenarioDB dbEngine scenarioId
   return $ TemplateTypes.TemplateData metrics scenario year host
 
