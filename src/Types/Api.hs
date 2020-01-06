@@ -10,11 +10,11 @@ import Options.Generic
   ( Generic,
   )
 import Types (Year, encodingOptions)
-import qualified Types.Metric as MetricTypes
+import qualified Types.MetricData as MetricDataTypes
 import qualified Types.Scenario as ScenarioTypes
 
 data ComparisonListData
-  = ComparisonListData {metricData :: HashMap.HashMap Integer MetricTypes.MetricData, scenario :: ScenarioTypes.Scenario, year :: Year}
+  = ComparisonListData {metricData :: HashMap.HashMap Integer MetricDataTypes.MetricData, scenario :: ScenarioTypes.Scenario, year :: Year}
   deriving (Eq, Generic, Show)
 
 instance Aeson.ToJSON ComparisonListData where

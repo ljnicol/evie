@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 4bc780ec902beedc215704fa0c1cfe23fc06fc9aa4cc9aa177ca296663873606
+-- hash: cdf29fa8d62cdaae38afe455cb0a5389ca0af8b738cc07447218ce23e372aaa5
 
 name:           evie
 version:        0.0.4
@@ -38,6 +38,7 @@ library
       Types.Config
       Types.DB
       Types.Metric
+      Types.MetricData
       Types.Scenario
       Types.Template
   other-modules:

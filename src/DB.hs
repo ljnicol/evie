@@ -23,6 +23,7 @@ import qualified Types
 import qualified Types.Api as ApiTypes
 import qualified Types.DB as DBTypes
 import qualified Types.Metric as MetricTypes
+import qualified Types.MetricData as MetricDataTypes
 import qualified Types.Scenario as ScenarioTypes
 import qualified Types.Template as TemplateTypes
 
@@ -30,33 +31,33 @@ import qualified Types.Template as TemplateTypes
 
 getScenarioDetailDBForYear :: DBTypes.DatabaseEngine a -> Integer -> Types.Year -> Servant.Handler ApiTypes.ComparisonListData
 getScenarioDetailDBForYear dbEngine scenarioId year = do
-  metrics <- fmap MetricTypes.metricListToHashMap $ metricsDBForYear dbEngine scenarioId year
+  metrics <- fmap MetricDataTypes.metricListToHashMap $ metricsDBForYear dbEngine scenarioId year
   scenario <- scenarioDB dbEngine scenarioId
   return $ ApiTypes.ComparisonListData metrics scenario year
 
 getScenarioDetailDB :: DBTypes.DatabaseEngine a -> Integer -> Types.Year -> Servant.Handler TemplateTypes.TemplateData
 getScenarioDetailDB dbEngine scenarioId year = do
-  metrics <- fmap MetricTypes.metricListToHashMap $ metricsDB dbEngine scenarioId
+  metrics <- fmap MetricDataTypes.metricListToHashMap $ metricsDB dbEngine scenarioId
   scenario <- scenarioDB dbEngine scenarioId
   return $ TemplateTypes.TemplateData metrics scenario year ""
 
 getScenarioDetailTemplate :: DBTypes.DatabaseEngine a -> Integer -> Types.Year -> String -> Servant.Handler TemplateTypes.TemplateData
 getScenarioDetailTemplate dbEngine scenarioId year host = do
-  metrics <- fmap MetricTypes.metricListToHashMap $ metricsDB dbEngine scenarioId
+  metrics <- fmap MetricDataTypes.metricListToHashMap $ metricsDB dbEngine scenarioId
   scenario <- scenarioDB dbEngine scenarioId
   return $ TemplateTypes.TemplateData metrics scenario year host
 
--- getScenarioMapDB :: DBTypes.DatabaseEngine a -> Integer -> Integer -> Servant.Handler ScenarioTypes.TemplateData
--- getScenarioMapDB dbEngine scenarioId metricId = do
---   spatialData <- spatialDataDB dbEngine scenarioId metricId
---   scenario <- scenarioDB dbEngine scenarioId
---   return $ ScenarioTypes.MapTemplateData spatialData scenario
+getScenarioMapDB :: DBTypes.DatabaseEngine a -> Integer -> Integer -> String -> Servant.Handler TemplateTypes.MapTemplateData
+getScenarioMapDB dbEngine scenarioId metricId host = do
+  spatialData <- fmap MetricTypes.spatialMetricsToHashMap $ spatialDataDB dbEngine scenarioId metricId
+  metricData <- metricDB dbEngine scenarioId
+  return $ TemplateTypes.MapTemplateData spatialData metricData host
 
 getScenarioComparisonListDB :: DBTypes.DatabaseEngine a -> [Integer] -> Types.Year -> Servant.Handler [ApiTypes.ComparisonListData]
 getScenarioComparisonListDB dbEngine scenarioIds year =
   let toTD :: Types.Year -> ScenarioTypes.Scenario -> Servant.Handler ApiTypes.ComparisonListData
       toTD year scenario = do
-        metrics <- fmap MetricTypes.metricListToHashMap $ metricsDBForYear dbEngine (ScenarioTypes.scenarioId scenario) year
+        metrics <- fmap MetricDataTypes.metricListToHashMap $ metricsDBForYear dbEngine (ScenarioTypes.scenarioId scenario) year
         pure $ ApiTypes.ComparisonListData metrics scenario year
    in do
         -- TODO: What happens if there is no data for a scenario in the requested year.
@@ -159,7 +160,7 @@ metricsDBForYear ::
   DBTypes.DatabaseEngine a ->
   Integer ->
   Types.Year ->
-  Servant.Handler [MetricTypes.MetricData]
+  Servant.Handler [MetricDataTypes.MetricData]
 metricsDBForYear dbEngine scenarioId year =
   MonadTrans.liftIO $
     action
@@ -192,7 +193,7 @@ metricsDBForYear dbEngine scenarioId year =
                   value,
                   spatial_data.spatial_values
             from metric_data
-                    join (select id, name, description, low_outcome, low_outcome_text, high_outcome,high_outcome_text, json(bins) as bins, unit from metrics group by id) as m on metric_data.metric_id = m.id
+                    join (select id, json_object(name, description, low_outcome, low_outcome_text, high_outcome,high_outcome_text, json(bins) as bins, unit from metrics group by id) as m on metric_data.metric_id = m.id
                     left join (select zonal_data.metric_id as id,
                                       json_group_array(
                                               json_object('id', zone_id, 'value', value)
@@ -232,7 +233,7 @@ metricsDBForYear dbEngine scenarioId year =
 metricsDB ::
   DBTypes.DatabaseEngine a ->
   Integer ->
-  Servant.Handler [MetricTypes.MetricData]
+  Servant.Handler [MetricDataTypes.MetricData]
 metricsDB dbEngine scenarioId =
   MonadTrans.liftIO $
     action
@@ -300,67 +301,85 @@ metricsDB dbEngine scenarioId =
             order by metric_id;
             |]
 
--- spatialDataDB ::
---   DBTypes.DatabaseEngine a ->
---   Integer ->
---   Integer ->
---   Servant.Handler Text.Text
--- spatialDataDB dbEngine scenarioId metricId =
---   MonadTrans.liftIO $
---     action
---   where
---     action =
---       case dbEngine of
---         DBTypes.SQLite3 conns -> Pool.withResource conns $ \conn ->
---           SQLiteSimple.query
---             conn
---             sqQuery
---             (scenarioId, metricId)
---         DBTypes.PostgreSQL conns -> Pool.withResource conns $ \conn ->
---           PGSimple.query
---             conn
---             pgQuery
---             (scenarioId, metricId)
---     sqQuery =
---       [SQQQ.sql|
---             SELECT metric_data.id,
---                   scenario_id,
---                   metric_id,
---                   m.name,
---                   m.description,
---                   metric_data.year,
---                   value,
---                   spatial_data.spatial_values as spatial_values
---             from metric_data
---                     join (select id, name, description from metrics group by id) as m on metric_data.metric_id = m.id
---                     left join (select zonal_data.metric_id as id,
---                                       json_group_array(
---                                               json_object('id', zone_id, 'value', value)
---                                       )                      as spatial_values, year
---                           from zonal_data
---                           group by metric_id) as spatial_data on metric_data.metric_id = spatial_data.id and metric_data.year = spatial_data.year
---         where scenario_id = ? and metric_id = ?;
---         |]
--- pgQuery =
---   [PGQQ.sql|
---         SELECT metric_data.id,
---               scenario_id,
---               metric_id,
---               m.name,
---               m.description,
---               metric_data.year,
---               value,
---               spatial_data.spatial_values as spatial_values
---         from metric_data
---                 join (select id, name, description from metrics group by id) as m on metric_data.metric_id = m.id
---                 left join (select zonal_data.metric_id as id,
---                                   json_agg(
---                                           json_object('id', zone_id, 'value', value)
---                                       )                      as spatial_values, year
---                           from zonal_data
---                           group by metric_id) as spatial_data on metric_data.metric_id = spatial_data.id and metric_data.year = spatial_data.year
---         where scenario_id = ? and metric_id = ?;
---         |]
+spatialDataDB ::
+  DBTypes.DatabaseEngine a ->
+  Integer ->
+  Integer ->
+  Servant.Handler [MetricTypes.SpatialData]
+spatialDataDB dbEngine scenarioId metricId =
+  MonadTrans.liftIO $
+    action
+  where
+    action =
+      case dbEngine of
+        DBTypes.SQLite3 conns -> Pool.withResource conns $ \conn ->
+          SQLiteSimple.query
+            conn
+            sqQuery
+            (scenarioId, metricId)
+        DBTypes.PostgreSQL conns -> Pool.withResource conns $ \conn ->
+          PGSimple.query
+            conn
+            pgQuery
+            (scenarioId, metricId)
+    sqQuery =
+      [SQQQ.sql|
+          select year, 
+                json_group_array(
+                        json_object('id', zone_id, 'value', value)
+                    ) as spatial_values
+          from zonal_data
+          where metric_id = ? and scenario_id = ?
+          group by year
+        |]
+
+pgQuery =
+  [PGQQ.sql|
+          select year, 
+                json_group_array(
+                        json_object('id', zone_id, 'value', value)
+                    ) as spatial_values
+          from zonal_data
+          where metric_id = ? and scenario_id = ?
+          group by year
+        |]
+
+metricDB ::
+  DBTypes.DatabaseEngine a ->
+  Integer ->
+  Servant.Handler MetricTypes.Metric
+metricDB dbEngine metricId = do
+  res <- MonadTrans.liftIO $ action
+  case res of
+    x : xs ->
+      return x
+    _ ->
+      Servant.throwError Servant.err401 {Servant.errBody = Errors.errorString "401" "No results found" "Try a different scenario or contact your support team."}
+  where
+    action =
+      case dbEngine of
+        DBTypes.SQLite3 conns -> Pool.withResource conns $ \conn ->
+          SQLiteSimple.query
+            conn
+            sqQuery
+            (SQLiteSimple.Only $ metricId)
+        DBTypes.PostgreSQL conns -> Pool.withResource conns $ \conn ->
+          PGSimple.query
+            conn
+            pgQuery
+            (PGSimple.Only $ metricId)
+    sqQuery =
+      [SQQQ.sql|
+        select id, name, description, low_outcome, low_outcome_text, high_outcome,high_outcome_text, json(bins) as bins, unit 
+        from metrics 
+        where id = ?
+      |]
+    pgQuery =
+      [PGQQ.sql|
+          select id, name, description, low_outcome, low_outcome_text, high_outcome,high_outcome_text, json(bins) as bins, unit 
+          from metrics 
+          where id = ?
+        |]
 
 tilesDB ::
   Mbtiles.MbtilesPool ->

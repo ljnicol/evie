@@ -2,7 +2,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 
-module Types.Metric where
+module Types.MetricData where
 
 import qualified Data.Aeson as Aeson
 import qualified Data.HashMap.Strict as HashMap
@@ -19,9 +19,10 @@ import qualified Text.Ginger.GVal as Ginger
 import Types (Year, encodingOptions)
 import qualified Types.DB as DBTypes
 
-data Metric
-  = Metric
-      { metricId :: Integer,
+data MetricData
+  = MetricData
+      { metricScenarioId :: Integer,
+        metricId :: Integer,
         metricName :: Text.Text,
         metricDescription :: Text.Text,
         metricLowOutcome :: Double,
@@ -29,19 +30,22 @@ data Metric
         metricHighOutcome :: Double,
         metricHighOutcomeText :: Text.Text,
         metricBins :: [(Double, Text.Text)],
-        metricUnit :: Text.Text
+        metricUnit :: Text.Text,
+        metricYear :: Text.Text,
+        metricValue :: Double,
+        metricSpatial :: Text.Text
       }
   deriving (Eq, Generic, Show)
 
-instance Aeson.ToJSON Metric where
+instance Aeson.ToJSON MetricData where
 
   toJSON = Aeson.genericToJSON encodingOptions
 
   toEncoding = Aeson.genericToEncoding encodingOptions
 
-instance SQLiteSimple.FromRow Metric where
+instance SQLiteSimple.FromRow MetricData where
   fromRow =
-    Metric
+    MetricData
       <$> SQLiteSimple.field
       <*> SQLiteSimple.field
       <*> SQLiteSimple.field
@@ -51,50 +55,27 @@ instance SQLiteSimple.FromRow Metric where
       <*> SQLiteSimple.field
       <*> SQLiteSimple.field
       <*> SQLiteSimple.field
-
-instance PGSimple.FromRow Metric where
-  fromRow =
-    Metric
-      <$> PGSimple.field
-      <*> PGSimple.field
-      <*> PGSimple.field
-      <*> PGSimple.field
-      <*> PGSimple.field
-      <*> PGSimple.field
-      <*> PGSimple.field
-      <*> PGSimple.field
-      <*> PGSimple.field
-
-instance Ginger.ToGVal m Metric where
-  toGVal md = Ginger.rawJSONToGVal $ Aeson.toJSON md
-
-data SpatialData
-  = SpatialData
-      { year :: Text.Text,
-        spatialValues :: SpatialValues
-      }
-  deriving (Eq, Generic, Show)
-
-instance Aeson.ToJSON SpatialData where
-
-  toJSON = Aeson.genericToJSON encodingOptions
-
-  toEncoding = Aeson.genericToEncoding encodingOptions
-
-instance SQLiteSimple.FromRow SpatialData where
-  fromRow =
-    SpatialData
-      <$> SQLiteSimple.field
+      <*> SQLiteSimple.field
+      <*> SQLiteSimple.field
+      <*> SQLiteSimple.field
       <*> SQLiteSimple.field
 
-instance PGSimple.FromRow SpatialData where
+instance PGSimple.FromRow MetricData where
   fromRow =
-    SpatialData
+    MetricData
       <$> PGSimple.field
       <*> PGSimple.field
-
-instance Ginger.ToGVal m SpatialData where
-  toGVal md = Ginger.rawJSONToGVal $ Aeson.toJSON md
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
+      <*> PGSimple.field
 
 instance SQLiteSimple.FromField [(Double, Text.Text)] where
   fromField = DBTypes.fromJSONField
@@ -102,11 +83,19 @@ instance SQLiteSimple.FromField [(Double, Text.Text)] where
 instance PGSimple.FromField [(Double, Text.Text)] where
   fromField = PGSimple.fromJSONField
 
-spatialMetricsToHashMap :: [SpatialData] -> HashMap.HashMap Year SpatialValues
-spatialMetricsToHashMap ms =
-  let toPairs :: SpatialData -> (Year, SpatialValues)
-      toPairs m = (year m, spatialValues m)
+instance Ginger.ToGVal m MetricData where
+  toGVal md = Ginger.rawJSONToGVal $ Aeson.toJSON md
+
+metricListToHashMap :: [MetricData] -> HashMap.HashMap Integer MetricData
+metricListToHashMap ms =
+  let toPairs :: MetricData -> (Integer, MetricData)
+      toPairs m = (metricId m, m)
    in -- combine ::
       HashMap.fromList (map toPairs ms)
 
-type SpatialValues = Text.Text
+metricListToHashMapYear :: [MetricData] -> HashMap.HashMap Integer (HashMap.HashMap Year MetricData)
+metricListToHashMapYear ms =
+  let toPairs :: MetricData -> (Integer, [(Year, MetricData)])
+      toPairs m = (metricId m, [(metricYear m, m)])
+   in -- combine ::
+      HashMap.map (HashMap.fromList) $ HashMap.fromListWith (++) (map toPairs ms)

@@ -66,16 +66,16 @@ scenarioComparison conns host templateFile scenarioIds years = do
 
 renderScenarioComparison :: TemplateTypes.ComparisonTemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
 renderScenarioComparison context template = GingerHtml.htmlSource $ Ginger.easyRender context template
+
 -- -- Scenario Map Page
 
--- scenarioDetailMap :: DBTypes.DatabaseEngine a -> FilePath -> Integer -> Integer -> Types.Year -> Servant.Handler Text.Text
--- scenarioDetailMap conns templateFile scenarioId metricId year = do
---   context <- DB.getScenarioMapDB conns scenarioId metricId year
---   renderPage templateFile (renderScenarioDetailMap context)
+scenarioDetailMap :: DBTypes.DatabaseEngine a -> String -> FilePath -> Integer -> Integer -> Servant.Handler Text.Text
+scenarioDetailMap conns host templateFile scenarioId metricId = do
+  context <- DB.getScenarioMapDB conns scenarioId metricId host
+  renderPage templateFile (renderScenarioDetailMap context)
 
--- renderScenarioDetailMap :: ScenarioTypes.TemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
--- renderScenarioDetailMap context template = GingerHtml.htmlSource $ Ginger.easyRender context template
-
+renderScenarioDetailMap :: TemplateTypes.MapTemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
+renderScenarioDetailMap context template = GingerHtml.htmlSource $ Ginger.easyRender context template
 -- Scenario Comparison Map
 
 -- scenarioComparisonMap :: DBTypes.DatabaseEngine a -> FilePath -> Integer -> Integer -> Integer -> Types.Year -> Servant.Handler Text.Text

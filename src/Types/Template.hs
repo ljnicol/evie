@@ -6,15 +6,13 @@ module Types.Template where
 
 import qualified Data.Aeson as Aeson
 import qualified Data.HashMap.Strict as HashMap
-import qualified Database.PostgreSQL.Simple.FromField as PGSimple
-import qualified Database.SQLite.Simple.FromField as SQLiteSimple
 import Options.Generic
   ( Generic,
   )
 import qualified Text.Ginger.GVal as Ginger
 import Types (Year, encodingOptions)
-import Types.DB (fromJSONField)
-import Types.Metric (MetricData)
+import Types.Metric (Metric, SpatialValues)
+import Types.MetricData (MetricData)
 import Types.Scenario (Scenario)
 
 -- data TemplateDataYear
@@ -57,7 +55,7 @@ instance Ginger.ToGVal m ComparisonTemplateData where
   toGVal td = Ginger.rawJSONToGVal $ Aeson.toJSON td
 
 data MapTemplateData
-  = MapTemplateData {spatialValues :: [SpatialValue]}
+  = MapTemplateData {spatial :: HashMap.HashMap Year SpatialValues, metric :: Metric, hosT :: String}
   deriving (Eq, Generic, Show)
 
 instance Aeson.ToJSON MapTemplateData where
@@ -68,16 +66,15 @@ instance Aeson.ToJSON MapTemplateData where
 
 instance Ginger.ToGVal m MapTemplateData where
   toGVal td = Ginger.rawJSONToGVal $ Aeson.toJSON td
+-- data SpatialValue
+--   = SpatialValue
+--       { id :: Integer,
+--         value :: Double
+--       }
+--   deriving (Eq, Generic, Show, Aeson.ToJSON, Aeson.FromJSON)
 
-data SpatialValue
-  = SpatialValue
-      { id :: Integer,
-        value :: Double
-      }
-  deriving (Eq, Generic, Show, Aeson.ToJSON, Aeson.FromJSON)
+-- instance SQLiteSimple.FromField [SpatialValue] where
+--   fromField = fromJSONField
 
-instance SQLiteSimple.FromField [SpatialValue] where
-  fromField = fromJSONField
-
-instance PGSimple.FromField [SpatialValue] where
-  fromField = PGSimple.fromJSONField
+-- instance PGSimple.FromField [SpatialValue] where
+--   fromField = PGSimple.fromJSONField

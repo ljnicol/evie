@@ -23,6 +23,6 @@ server config@Config.Config {..} spatialConns dbEngine =
     appServer dbEngine =
       Template.scenarioDetail dbEngine host (_configTemplates ++ "/" ++ "scenario_detail.html")
         Servant.:<|> Template.scenarioComparison dbEngine host (_configTemplates ++ "/" ++ "scenario_comparison.html")
-        -- Servant.:<|> Template.scenarioDetailMap dbEngine (_configTemplates ++ "/" ++ "scenario_detail_map.html")
+        Servant.:<|> Template.scenarioDetailMap dbEngine host (_configTemplates ++ "/" ++ "scenario_detail_map.html")
         -- Servant.:<|> Template.scenarioComparisonMap dbEngine (_configTemplates ++ "/" ++ "scenario_comparison_map.html")
         Servant.:<|> Servant.serveDirectoryFileServer (_configStaticDirectory)

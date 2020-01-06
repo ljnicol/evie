@@ -22,3 +22,4 @@ fromJSONField f@(SQSimple.Field (SQLiteSimple.SQLText blb) _) = do
 fromJSONField f =
   SQLiteSimple.returnError SQLiteSimple.ConversionFailed f $
     "expecting SQLBlob column type"
+
