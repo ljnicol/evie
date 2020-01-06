@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: cdf29fa8d62cdaae38afe455cb0a5389ca0af8b738cc07447218ce23e372aaa5
+-- hash: f80522646ee993be6f0b8af0def505f72e3fb8cf63bf86a9c5b5e188cfd5c9cf
 
 name:           evie
 version:        0.0.4
@@ -41,6 +41,7 @@ library
       Types.MetricData
       Types.Scenario
       Types.Template
+      Types.Template.Map
   other-modules:
       Paths_evie
   hs-source-dirs:

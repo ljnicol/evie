@@ -11,7 +11,6 @@ import Options.Generic
   )
 import qualified Text.Ginger.GVal as Ginger
 import Types (Year, encodingOptions)
-import Types.Metric (Metric, SpatialValues)
 import Types.MetricData (MetricData)
 import Types.Scenario (Scenario)
 
@@ -54,27 +53,3 @@ instance Aeson.ToJSON ComparisonTemplateData where
 instance Ginger.ToGVal m ComparisonTemplateData where
   toGVal td = Ginger.rawJSONToGVal $ Aeson.toJSON td
 
-data MapTemplateData
-  = MapTemplateData {spatial :: HashMap.HashMap Year SpatialValues, metric :: Metric, hosT :: String}
-  deriving (Eq, Generic, Show)
-
-instance Aeson.ToJSON MapTemplateData where
-
-  toJSON = Aeson.genericToJSON encodingOptions
-
-  toEncoding = Aeson.genericToEncoding encodingOptions
-
-instance Ginger.ToGVal m MapTemplateData where
-  toGVal td = Ginger.rawJSONToGVal $ Aeson.toJSON td
--- data SpatialValue
---   = SpatialValue
---       { id :: Integer,
---         value :: Double
---       }
---   deriving (Eq, Generic, Show, Aeson.ToJSON, Aeson.FromJSON)
-
--- instance SQLiteSimple.FromField [SpatialValue] where
---   fromField = fromJSONField
-
--- instance PGSimple.FromField [SpatialValue] where
---   fromField = PGSimple.fromJSONField

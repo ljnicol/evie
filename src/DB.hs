@@ -26,6 +26,7 @@ import qualified Types.Metric as MetricTypes
 import qualified Types.MetricData as MetricDataTypes
 import qualified Types.Scenario as ScenarioTypes
 import qualified Types.Template as TemplateTypes
+import qualified Types.Template.Map as MapTemplateTypes
 
 --
 
@@ -47,11 +48,12 @@ getScenarioDetailTemplate dbEngine scenarioId year host = do
   scenario <- scenarioDB dbEngine scenarioId
   return $ TemplateTypes.TemplateData metrics scenario year host
 
-getScenarioMapDB :: DBTypes.DatabaseEngine a -> Integer -> Integer -> String -> Servant.Handler TemplateTypes.MapTemplateData
+getScenarioMapDB :: DBTypes.DatabaseEngine a -> Integer -> Integer -> String -> Servant.Handler MapTemplateTypes.MapTemplateData
 getScenarioMapDB dbEngine scenarioId metricId host = do
   spatialData <- fmap MetricTypes.spatialMetricsToHashMap $ spatialDataDB dbEngine scenarioId metricId
   metricData <- metricDB dbEngine scenarioId
-  return $ TemplateTypes.MapTemplateData spatialData metricData host
+  scenario <- scenarioDB dbEngine scenarioId
+  return $ MapTemplateTypes.MapTemplateData spatialData metricData scenario host
 
 getScenarioComparisonListDB :: DBTypes.DatabaseEngine a -> [Integer] -> Types.Year -> Servant.Handler [ApiTypes.ComparisonListData]
 getScenarioComparisonListDB dbEngine scenarioIds year =

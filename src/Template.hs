@@ -12,6 +12,7 @@ import qualified Text.Ginger.Html as GingerHtml (htmlSource)
 import qualified Types
 import qualified Types.DB as DBTypes
 import qualified Types.Template as TemplateTypes
+import qualified Types.Template.Map as MapTemplate
 
 -- Static File
 
@@ -74,7 +75,7 @@ scenarioDetailMap conns host templateFile scenarioId metricId = do
   context <- DB.getScenarioMapDB conns scenarioId metricId host
   renderPage templateFile (renderScenarioDetailMap context)
 
-renderScenarioDetailMap :: TemplateTypes.MapTemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
+renderScenarioDetailMap :: MapTemplate.MapTemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
 renderScenarioDetailMap context template = GingerHtml.htmlSource $ Ginger.easyRender context template
 -- Scenario Comparison Map
 
