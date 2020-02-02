@@ -53,3 +53,4 @@ instance Aeson.ToJSON ComparisonTemplateData where
 instance Ginger.ToGVal m ComparisonTemplateData where
   toGVal td = Ginger.rawJSONToGVal $ Aeson.toJSON td
 
+

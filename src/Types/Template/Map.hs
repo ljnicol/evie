@@ -26,6 +26,7 @@ instance Aeson.ToJSON MapTemplateData where
 
 instance Ginger.ToGVal m MapTemplateData where
   toGVal td = Ginger.rawJSONToGVal $ Aeson.toJSON td
+
 -- data SpatialValue
 --   = SpatialValue
 --       { id :: Integer,
@@ -38,3 +39,16 @@ instance Ginger.ToGVal m MapTemplateData where
 
 -- instance PGSimple.FromField [SpatialValue] where
 --   fromField = PGSimple.fromJSONField
+
+data ComparisonMapTemplateData
+  = ComparisonMapTemplateData {scenarioMapData :: [MapTemplateData]}
+  deriving (Eq, Generic, Show)
+
+instance Aeson.ToJSON ComparisonMapTemplateData where
+
+  toJSON = Aeson.genericToJSON encodingOptions
+
+  toEncoding = Aeson.genericToEncoding encodingOptions
+
+instance Ginger.ToGVal m ComparisonMapTemplateData where
+  toGVal td = Ginger.rawJSONToGVal $ Aeson.toJSON td

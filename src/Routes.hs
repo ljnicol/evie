@@ -11,6 +11,7 @@ import Network.HTTP.Media ((//), (/:))
 import Servant
 import qualified Types
 import qualified Types.Api as ApiTypes
+import qualified Types.Metric as MetricTypes
 import qualified Types.Scenario as ScenarioTypes
 import qualified Types.Template as TemplateTypes
 
@@ -33,6 +34,10 @@ type API =
            :> QueryParams "scenarioId" Integer
            :> QueryParam' '[Required, Strict] "year" Types.Year
            :> Get '[JSON] [ApiTypes.ComparisonListData]
+           :<|> "multi_scenario_metrics"
+           :> QueryParam' '[Required, Strict] "scenarioId1" Integer
+           :> QueryParam' '[Required, Strict] "scenarioId2" Integer
+           :> Get '[JSON] [MetricTypes.MetricName]
        )
     :<|> "app"
     :> ( "scenario_detail"
@@ -47,12 +52,11 @@ type API =
            :> Capture "scenario_id" Integer
            :> Capture "metric_id" Integer
            :> Get '[Html] Text.Text
-           --  :<|> "scenario_comparison_map"
-           --    :> Capture "scenario_id_1" Integer
-           --    :> Capture "scenario_id_2" Integer
-           --    :> Capture "metric_id" Integer
-           --    :> Capture "year" Types.Year
-           --    :> Get '[Html] Text.Text
+           :<|> "scenario_comparison_map"
+           :> Capture "scenario_id_1" Integer
+           :> Capture "scenario_id_2" Integer
+           :> Capture "metric_id" Integer
+           :> Get '[Html] Text.Text
            :<|> Raw
        )
     :<|> "spatial"
@@ -60,6 +64,7 @@ type API =
     :> Capture "x" Int
     :> Capture "y" Text.Text
     :> Get '[OctetStream] BSS.ByteString
+    :<|> Get '[Html] Text.Text
 
 -- HTML content type with mimeRender instance
 data Html

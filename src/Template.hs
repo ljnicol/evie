@@ -77,12 +77,13 @@ scenarioDetailMap conns host templateFile scenarioId metricId = do
 
 renderScenarioDetailMap :: MapTemplate.MapTemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
 renderScenarioDetailMap context template = GingerHtml.htmlSource $ Ginger.easyRender context template
+
 -- Scenario Comparison Map
 
--- scenarioComparisonMap :: DBTypes.DatabaseEngine a -> FilePath -> Integer -> Integer -> Integer -> Types.Year -> Servant.Handler Text.Text
--- scenarioComparisonMap conns templateFile scenarioId1 scenarioId2 metricId year = do
---   context <- DB.getScenarioMapDB conns scenarioId1 metricId year
---   renderPage templateFile (renderScenarioComparisonMap context)
+scenarioComparisonMap :: DBTypes.DatabaseEngine a -> String -> FilePath -> Integer -> Integer -> Integer -> Servant.Handler Text.Text
+scenarioComparisonMap conns host templateFile scenarioId1 scenarioId2 metricId = do
+  context <- fmap MapTemplate.ComparisonMapTemplateData $ mapM (\a -> DB.getScenarioMapDB conns a metricId host) [scenarioId1, scenarioId2]
+  renderPage templateFile (renderScenarioComparisonMap context)
 
--- renderScenarioComparisonMap :: ScenarioTypes.TemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
--- renderScenarioComparisonMap context template = GingerHtml.htmlSource $ Ginger.easyRender context template
+renderScenarioComparisonMap :: MapTemplate.ComparisonMapTemplateData -> Ginger.Template Ginger.SourcePos -> Text.Text
+renderScenarioComparisonMap context template = GingerHtml.htmlSource $ Ginger.easyRender context template

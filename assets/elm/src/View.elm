@@ -7,6 +7,7 @@ import Html.Attributes exposing (style)
 import Model
 import Msg exposing (Msg)
 import Page.MultiScenarioComparison.View as MultiScenarioComparison
+import Page.MultiScenarioMap.View as MultiScenarioMap
 import Page.ScenariosList.View as ScenariosList
 import Types.Page as TypesPage
 import Views.Navbar as Navbar
@@ -32,3 +33,6 @@ viewPage model =
 
         TypesPage.MultiScenarioComparison _ _ ->
             Html.map Msg.MultiScenarioComparison (MultiScenarioComparison.view model.scenario)
+
+        TypesPage.MultiScenarioMap _ _ ->
+            Html.map Msg.MultiScenarioMap (MultiScenarioMap.view model.metrics)

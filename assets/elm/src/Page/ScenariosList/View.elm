@@ -37,6 +37,9 @@ view model =
                         , div [ class "level-item" ]
                             [ multiScenarioComparisonDetail model
                             ]
+                        , div [ class "level-item" ]
+                            [ multiScenarioComparisonMap model
+                            ]
                         ]
                     ]
                 ]
@@ -45,6 +48,24 @@ view model =
             [ class "section" ]
             []
         ]
+
+
+multiScenarioComparisonMap : Model.Model -> Html Msg.Msg
+multiScenarioComparisonMap model =
+    let
+        ( noScenariosSelected, moreThanTwoSelected ) =
+            case model.scenariosList of
+                RemoteData.Success scenarios ->
+                    let
+                        selected =
+                            List.filter (\s -> s.selected) scenarios
+                    in
+                    ( List.isEmpty <| selected, List.length selected > 2 )
+
+                _ ->
+                    ( True, False )
+    in
+    button [ class "button is-primary", onClick Msg.ShowMultiScenarioMetrics, disabled ((||) noScenariosSelected moreThanTwoSelected) ] [ text "Map" ]
 
 
 multiScenarioComparisonTable : Model.Model -> Html Msg.Msg

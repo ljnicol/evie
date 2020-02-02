@@ -11,3 +11,4 @@ type Msg
     | SelectScenario TypesScenario.Scenario Bool
     | ShowMultiScenarioTable
     | ShowMultiScenarioDetail
+    | ShowMultiScenarioMetrics

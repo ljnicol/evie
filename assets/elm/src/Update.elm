@@ -6,6 +6,8 @@ import Model
 import Msg
 import Page.MultiScenarioComparison.Msg as MultiScenarioComparisonMsg
 import Page.MultiScenarioComparison.Update as MultiScenarioComparisonUpdate
+import Page.MultiScenarioMap.Msg as MultiScenarioMapMsg
+import Page.MultiScenarioMap.Update as MultiScenarioMapUpdate
 import Page.ScenariosList.Msg as ScenariosListMsg
 import Page.ScenariosList.Update as ScenariosListUpdate
 import Route
@@ -47,6 +49,10 @@ update msg model =
             MultiScenarioComparisonUpdate.update m model.scenario
                 |> updateWith (\s -> { model | scenario = s }) Msg.MultiScenarioComparison model
 
+        Msg.MultiScenarioMap m ->
+            MultiScenarioMapUpdate.update m model.metrics
+                |> updateWith (\me -> { model | metrics = me }) Msg.MultiScenarioMap model
+
 
 updateWith : (subModel -> Model.Model) -> (subMsg -> Msg.Msg) -> Model.Model -> ( subModel, Cmd subMsg ) -> ( Model.Model, Cmd Msg.Msg )
 updateWith toModel toMsg model ( subModel, subCmd ) =
@@ -75,6 +81,16 @@ showMultiScenarioComparison model year scenarioIds =
         |> updateWith (\s -> { newModel | scenario = s }) Msg.MultiScenarioComparison model
 
 
+showMultiScenarioMap : Model.Model -> Int -> Int -> ( Model.Model, Cmd Msg.Msg )
+showMultiScenarioMap model scenarioId1 scenarioId2 =
+    let
+        newModel =
+            { model | page = TypesPage.MultiScenarioMap scenarioId1 scenarioId2 }
+    in
+    MultiScenarioMapUpdate.update (MultiScenarioMapMsg.LoadMultiScenarioMap scenarioId1 scenarioId2) model.metrics
+        |> updateWith (\s -> { newModel | metrics = s }) Msg.MultiScenarioMap model
+
+
 changeToUrl : Url.Url -> Model.Model -> ( Model.Model, Cmd Msg.Msg )
 changeToUrl url model =
     case Route.fromUrl url of
@@ -86,3 +102,6 @@ changeToUrl url model =
 
         Just (TypesPage.MultiScenarioComparison year scenarioIds) ->
             showMultiScenarioComparison model year scenarioIds
+
+        Just (TypesPage.MultiScenarioMap scenarioId1 scenarioId2) ->
+            showMultiScenarioMap model scenarioId1 scenarioId2

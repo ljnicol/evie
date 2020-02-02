@@ -19,6 +19,31 @@ import qualified Text.Ginger.GVal as Ginger
 import Types (Year, encodingOptions)
 import qualified Types.DB as DBTypes
 
+data MetricName
+  = MetricName
+      { id :: Integer,
+        name :: Text.Text
+      }
+  deriving (Eq, Generic, Show)
+
+instance Aeson.ToJSON MetricName where
+
+  toJSON = Aeson.genericToJSON encodingOptions
+
+  toEncoding = Aeson.genericToEncoding encodingOptions
+
+instance SQLiteSimple.FromRow MetricName where
+  fromRow =
+    MetricName
+      <$> SQLiteSimple.field
+      <*> SQLiteSimple.field
+
+instance PGSimple.FromRow MetricName where
+  fromRow =
+    MetricName
+      <$> PGSimple.field
+      <*> PGSimple.field
+
 data Metric
   = Metric
       { metricId :: Integer,

@@ -3,6 +3,7 @@ module Types.Scenario exposing (..)
 import Dict
 import Json.Decode as Decode
 import Json.Decode.Pipeline as DecodePipeline
+import Types.Metric as TypesMetric
 
 
 type alias Scenario =
@@ -33,7 +34,7 @@ decodeListScenario =
 
 type alias MultiScenarioComparison =
     { scenario : Scenario
-    , metric_data : Dict.Dict String MetricData
+    , metric_data : Dict.Dict String TypesMetric.MetricData
     , year : String
     }
 
@@ -42,43 +43,10 @@ multiScenarioComparisonDecoder : Decode.Decoder MultiScenarioComparison
 multiScenarioComparisonDecoder =
     Decode.succeed MultiScenarioComparison
         |> DecodePipeline.required "scenario" scenarioDecoder
-        |> DecodePipeline.required "metric_data" (Decode.dict metricDataDecoder)
+        |> DecodePipeline.required "metric_data" (Decode.dict TypesMetric.metricDataDecoder)
         |> DecodePipeline.required "year" Decode.string
 
 
 decodeListMultiScenario : Decode.Decoder (List MultiScenarioComparison)
 decodeListMultiScenario =
     Decode.list multiScenarioComparisonDecoder
-
-
-type alias MetricData =
-    { metric_id : Int
-    , metric_name : String
-    , metric_description : String
-    , metric_year : String
-    , metric_value : Float
-    }
-
-
-metricDataDecoder : Decode.Decoder MetricData
-metricDataDecoder =
-    Decode.succeed MetricData
-        |> DecodePipeline.required "metric_id" Decode.int
-        |> DecodePipeline.required "metric_name" Decode.string
-        |> DecodePipeline.required "metric_description" Decode.string
-        |> DecodePipeline.required "metric_year" Decode.string
-        |> DecodePipeline.required "metric_value" Decode.float
-
-
-decodeListMetricData : Decode.Decoder (List MetricData)
-decodeListMetricData =
-    Decode.list metricDataDecoder
-
-
-type alias MetricAccessor =
-    ( String, String )
-
-
-toMetricAccessor : Dict.Dict String MetricData -> List MetricAccessor
-toMetricAccessor d =
-    List.map (\( k, v ) -> ( k, v.metric_name )) (Dict.toList d)

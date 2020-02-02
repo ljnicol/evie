@@ -33,7 +33,7 @@ startApp config@Config.Config {..} = do
       print e
     Right spatialConns -> do
       -- conns <- initPostgreSQLConnectionPool dbConnection
-      b <- Browser.openBrowser $ Text.unpack _configApplicationDomain ++ ":" ++ (show _configApplicationPort) ++ "/app"
+      b <- Browser.openBrowser $ Text.unpack _configApplicationDomain ++ ":" ++ (show _configApplicationPort)
       if b
         then Wai.run _configApplicationPort $ debug $ Servant.serve Routes.api (Controller.server config spatialConns $ conns)
         else print "Failed to start browser"

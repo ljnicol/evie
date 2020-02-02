@@ -93,3 +93,23 @@ update msg model =
 
                 _ ->
                     ( model, Cmd.none )
+
+        Msg.ShowMultiScenarioMetrics ->
+            let
+                scenariosToCompare =
+                    case model.scenariosList of
+                        RemoteData.Success scenarios ->
+                            List.filter (\s -> s.selected) scenarios
+
+                        _ ->
+                            []
+            in
+            case scenariosToCompare of
+                scenario1 :: scenario2 :: _ ->
+                    ( model, Navigation.load <| Route.multiScenarioComparisonMetricsUrl scenario1.scenario_id scenario2.scenario_id )
+
+                scenario1 :: _ ->
+                    ( model, Navigation.load <| Route.multiScenarioComparisonMetricsUrl scenario1.scenario_id scenario1.scenario_id )
+
+                _ ->
+                    ( model, Cmd.none )

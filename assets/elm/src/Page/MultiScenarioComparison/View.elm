@@ -10,6 +10,7 @@ import RemoteData
 import Route
 import Table as SortableTable
 import Tuple
+import Types.Metric as TypesMetric
 import Types.Page as TypesPage
 import Types.Scenario as TypesScenario
 
@@ -99,7 +100,7 @@ sortableTable model scenarios =
         metricAccessors =
             case scenarios of
                 x :: _ ->
-                    TypesScenario.toMetricAccessor x.metric_data
+                    TypesMetric.toMetricAccessor x.metric_data
 
                 _ ->
                     []
@@ -111,7 +112,7 @@ sortableTable model scenarios =
     SortableTable.view (sortableTableConfig bestPerformance metricAccessors) model.tableState scenarios
 
 
-sortableTableConfig : Dict.Dict String Float -> List TypesScenario.MetricAccessor -> SortableTable.Config TypesScenario.MultiScenarioComparison Msg.Msg
+sortableTableConfig : Dict.Dict String Float -> List TypesMetric.MetricAccessor -> SortableTable.Config TypesScenario.MultiScenarioComparison Msg.Msg
 sortableTableConfig bestPerformance metricAccessors =
     let
         fToId a =
@@ -154,7 +155,7 @@ tableCustomizations =
     { def | tableAttrs = def.tableAttrs ++ ta }
 
 
-toCustomColumns : Dict.Dict String Float -> List TypesScenario.MetricAccessor -> List (SortableTable.Column TypesScenario.MultiScenarioComparison Msg.Msg)
+toCustomColumns : Dict.Dict String Float -> List TypesMetric.MetricAccessor -> List (SortableTable.Column TypesScenario.MultiScenarioComparison Msg.Msg)
 toCustomColumns bestPerformance metricAccessors =
     let
         vd metricId a =
@@ -163,7 +164,7 @@ toCustomColumns bestPerformance metricAccessors =
                     a.metric_data
 
                 metric_1 =
-                    Maybe.withDefault (TypesScenario.MetricData 0 "Empty" "Empty" "Empty" 0) <| Dict.get metricId metric_data
+                    Maybe.withDefault (TypesMetric.MetricData 0 "Empty" "Empty" "Empty" 0) <| Dict.get metricId metric_data
 
                 value =
                     metric_1.metric_value
@@ -183,7 +184,7 @@ toCustomColumns bestPerformance metricAccessors =
                     a.metric_data
 
                 metric_1 =
-                    Maybe.withDefault (TypesScenario.MetricData 0 "Empty" "Empty" "Empty" 0) <| Dict.get metricId metric_data
+                    Maybe.withDefault (TypesMetric.MetricData 0 "Empty" "Empty" "Empty" 0) <| Dict.get metricId metric_data
             in
             String.fromFloat metric_1.metric_value
     in
