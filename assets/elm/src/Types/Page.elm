@@ -4,7 +4,7 @@ module Types.Page exposing (..)
 type Page
     = ScenariosList
     | MultiScenarioComparison String (List Int)
-    | MultiScenarioMap Int Int
+    | MultiScenarioMap Int Int String
 
 
 showPage : Page -> String
@@ -16,5 +16,5 @@ showPage p =
         MultiScenarioComparison _ _ ->
             "Scenario Comparison"
 
-        MultiScenarioMap _ _ ->
+        MultiScenarioMap _ _ _ ->
             "Scenario Spatial Comparison"

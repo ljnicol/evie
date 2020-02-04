@@ -17,7 +17,7 @@ parser =
     Parser.oneOf
         [ Parser.map TypesPage.ScenariosList (Parser.s "scenarios_list")
         , Parser.map TypesPage.MultiScenarioComparison (Parser.s "multi_scenario_comparison" </> Parser.string <?> scenarioParser)
-        , Parser.map TypesPage.MultiScenarioMap (Parser.s "multi_scenario_map" </> Parser.int </> Parser.int)
+        , Parser.map TypesPage.MultiScenarioMap (Parser.s "multi_scenario_map" </> Parser.int </> Parser.int </> Parser.string)
         ]
 
 
@@ -37,8 +37,8 @@ routeToString page =
         TypesPage.MultiScenarioComparison year scenarioIds ->
             multiScenarioComparisonUrl year scenarioIds
 
-        TypesPage.MultiScenarioMap scenarioId1 scenarioId2 ->
-            multiScenarioComparisonMetricsUrl scenarioId1 scenarioId2
+        TypesPage.MultiScenarioMap scenarioId1 scenarioId2 year ->
+            multiScenarioComparisonMetricsUrl scenarioId1 scenarioId2 year
 
 
 multiScenarioComparisonUrl : String -> List Int -> String
@@ -61,14 +61,14 @@ multiScenarioComparisonDetailUrl year scenarioIds =
             "app/scenario_comparison?year=" ++ year ++ "&" ++ String.join "&" (List.map (\s -> "scenarioId=" ++ String.fromInt s) scenarioIds)
 
 
-multiScenarioComparisonMetricsUrl : Int -> Int -> String
-multiScenarioComparisonMetricsUrl scenarioId1 scenarioId2 =
-    "app#multi_scenario_map/" ++ String.fromInt scenarioId1 ++ "/" ++ String.fromInt scenarioId2
+multiScenarioComparisonMetricsUrl : Int -> Int -> String -> String
+multiScenarioComparisonMetricsUrl scenarioId1 scenarioId2 year =
+    "app#multi_scenario_map/" ++ String.fromInt scenarioId1 ++ "/" ++ String.fromInt scenarioId2 ++ "/" ++ year
 
 
-multiScenarioComparisonMapUrl : Int -> Int -> Int -> String
-multiScenarioComparisonMapUrl scenarioId1 scenarioId2 metricId =
-    "app/scenario_comparison_map/" ++ String.fromInt scenarioId1 ++ "/" ++ String.fromInt scenarioId2 ++ "/" ++ String.fromInt metricId
+multiScenarioComparisonMapUrl : Int -> Int -> Int -> String -> String
+multiScenarioComparisonMapUrl scenarioId1 scenarioId2 metricId year =
+    "app/scenario_comparison_map/" ++ String.fromInt scenarioId1 ++ "/" ++ String.fromInt scenarioId2 ++ "/" ++ String.fromInt metricId ++ "?year=" ++ year
 
 
 href : TypesPage.Page -> Html.Attribute msg

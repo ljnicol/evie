@@ -34,5 +34,5 @@ viewPage model =
         TypesPage.MultiScenarioComparison _ _ ->
             Html.map Msg.MultiScenarioComparison (MultiScenarioComparison.view model.scenario)
 
-        TypesPage.MultiScenarioMap _ _ ->
+        TypesPage.MultiScenarioMap _ _ _ ->
             Html.map Msg.MultiScenarioMap (MultiScenarioMap.view model.metrics)

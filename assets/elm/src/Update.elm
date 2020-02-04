@@ -81,13 +81,13 @@ showMultiScenarioComparison model year scenarioIds =
         |> updateWith (\s -> { newModel | scenario = s }) Msg.MultiScenarioComparison model
 
 
-showMultiScenarioMap : Model.Model -> Int -> Int -> ( Model.Model, Cmd Msg.Msg )
-showMultiScenarioMap model scenarioId1 scenarioId2 =
+showMultiScenarioMap : Model.Model -> Int -> Int -> String -> ( Model.Model, Cmd Msg.Msg )
+showMultiScenarioMap model scenarioId1 scenarioId2 year =
     let
         newModel =
-            { model | page = TypesPage.MultiScenarioMap scenarioId1 scenarioId2 }
+            { model | page = TypesPage.MultiScenarioMap scenarioId1 scenarioId2 year }
     in
-    MultiScenarioMapUpdate.update (MultiScenarioMapMsg.LoadMultiScenarioMap scenarioId1 scenarioId2) model.metrics
+    MultiScenarioMapUpdate.update (MultiScenarioMapMsg.LoadMultiScenarioMap scenarioId1 scenarioId2 year) model.metrics
         |> updateWith (\s -> { newModel | metrics = s }) Msg.MultiScenarioMap model
 
 
@@ -103,5 +103,5 @@ changeToUrl url model =
         Just (TypesPage.MultiScenarioComparison year scenarioIds) ->
             showMultiScenarioComparison model year scenarioIds
 
-        Just (TypesPage.MultiScenarioMap scenarioId1 scenarioId2) ->
-            showMultiScenarioMap model scenarioId1 scenarioId2
+        Just (TypesPage.MultiScenarioMap scenarioId1 scenarioId2 year) ->
+            showMultiScenarioMap model scenarioId1 scenarioId2 year

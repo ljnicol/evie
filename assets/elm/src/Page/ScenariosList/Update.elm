@@ -103,13 +103,16 @@ update msg model =
 
                         _ ->
                             []
+
+                scenarioToYear s =
+                    Maybe.withDefault "2016" <| List.head s.scenario_years
             in
             case scenariosToCompare of
                 scenario1 :: scenario2 :: _ ->
-                    ( model, Navigation.load <| Route.multiScenarioComparisonMetricsUrl scenario1.scenario_id scenario2.scenario_id )
+                    ( model, Navigation.load <| Route.multiScenarioComparisonMetricsUrl scenario1.scenario_id scenario2.scenario_id (scenarioToYear scenario1) )
 
                 scenario1 :: _ ->
-                    ( model, Navigation.load <| Route.multiScenarioComparisonMetricsUrl scenario1.scenario_id scenario1.scenario_id )
+                    ( model, Navigation.load <| Route.multiScenarioComparisonMetricsUrl scenario1.scenario_id scenario1.scenario_id (scenarioToYear scenario1) )
 
                 _ ->
                     ( model, Cmd.none )
