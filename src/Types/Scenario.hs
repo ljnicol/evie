@@ -15,16 +15,16 @@ import Options.Generic
   ( Generic,
   )
 import qualified Text.Ginger.GVal as Ginger
-import qualified Types.DB as DBTypes
 import Types (Year, encodingOptions)
+import qualified Types.DB as DBTypes
 
 data Scenario
   = Scenario
-      { scenarioId :: Integer,
+      { scenarioId :: ScenarioId,
         scenarioName :: Text.Text,
         scenarioDescription :: Text.Text,
         scenarioAssumptions :: Text.Text,
-        scenarioYears :: [Text.Text]
+        scenarioYears :: [Year]
       }
   deriving (Eq, Generic, Show)
 
@@ -61,3 +61,4 @@ instance PGSimple.FromRow Scenario where
 instance Ginger.ToGVal m Scenario where
   toGVal s = Ginger.rawJSONToGVal $ Aeson.toJSON s
 
+type ScenarioId = Integer

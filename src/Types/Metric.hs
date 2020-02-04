@@ -19,9 +19,11 @@ import qualified Text.Ginger.GVal as Ginger
 import Types (Year, encodingOptions)
 import qualified Types.DB as DBTypes
 
+type MetricId = Integer
+
 data MetricName
   = MetricName
-      { id :: Integer,
+      { id :: MetricId,
         name :: Text.Text
       }
   deriving (Eq, Generic, Show)
@@ -46,7 +48,7 @@ instance PGSimple.FromRow MetricName where
 
 data Metric
   = Metric
-      { metricId :: Integer,
+      { metricId :: MetricId,
         metricName :: Text.Text,
         metricDescription :: Text.Text,
         metricLowOutcome :: Double,

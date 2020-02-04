@@ -13,6 +13,8 @@ import qualified Types
 import qualified Types.DB as DBTypes
 import qualified Types.Template as TemplateTypes
 import qualified Types.Template.Map as MapTemplate
+import qualified Types.Scenario as ScenarioTypes
+import qualified Types.Metric as MetricTypes
 
 -- Static File
 
@@ -46,7 +48,7 @@ renderPage templateFile renderFn = do
 
 -- Scenario Detail Page
 
-scenarioDetail :: DBTypes.DatabaseEngine a -> String -> FilePath -> Integer -> Types.Year -> Servant.Handler Text.Text
+scenarioDetail :: DBTypes.DatabaseEngine a -> String -> FilePath -> ScenarioTypes.ScenarioId -> Types.Year -> Servant.Handler Text.Text
 scenarioDetail conns host templateFile scenarioId year = do
   context <- DB.getScenarioDetailTemplate conns scenarioId year host
   renderPage templateFile (renderScenarioDetail context)
@@ -56,7 +58,7 @@ renderScenarioDetail context template = GingerHtml.htmlSource $ Ginger.easyRende
 
 -- Scenario Comparison Page
 
-scenarioComparison :: DBTypes.DatabaseEngine a -> String -> FilePath -> [Integer] -> [Types.Year] -> Servant.Handler Text.Text
+scenarioComparison :: DBTypes.DatabaseEngine a -> String -> FilePath -> [ScenarioTypes.ScenarioId] -> [Types.Year] -> Servant.Handler Text.Text
 scenarioComparison conns host templateFile scenarioIds years = do
   case (scenarioIds, years) of
     (s : _, y : _) -> do
@@ -70,7 +72,7 @@ renderScenarioComparison context template = GingerHtml.htmlSource $ Ginger.easyR
 
 -- -- Scenario Map Page
 
-scenarioDetailMap :: DBTypes.DatabaseEngine a -> String -> FilePath -> Integer -> Integer -> Servant.Handler Text.Text
+scenarioDetailMap :: DBTypes.DatabaseEngine a -> String -> FilePath -> ScenarioTypes.ScenarioId -> MetricTypes.MetricId -> Servant.Handler Text.Text
 scenarioDetailMap conns host templateFile scenarioId metricId = do
   context <- DB.getScenarioMapDB conns scenarioId metricId host
   renderPage templateFile (renderScenarioDetailMap context)
@@ -80,7 +82,7 @@ renderScenarioDetailMap context template = GingerHtml.htmlSource $ Ginger.easyRe
 
 -- Scenario Comparison Map
 
-scenarioComparisonMap :: DBTypes.DatabaseEngine a -> String -> FilePath -> Integer -> Integer -> Integer -> Servant.Handler Text.Text
+scenarioComparisonMap :: DBTypes.DatabaseEngine a -> String -> FilePath -> ScenarioTypes.ScenarioId -> ScenarioTypes.ScenarioId -> MetricTypes.MetricId -> Servant.Handler Text.Text
 scenarioComparisonMap conns host templateFile scenarioId1 scenarioId2 metricId = do
   context <- fmap MapTemplate.ComparisonMapTemplateData $ mapM (\a -> DB.getScenarioMapDB conns a metricId host) [scenarioId1, scenarioId2]
   renderPage templateFile (renderScenarioComparisonMap context)

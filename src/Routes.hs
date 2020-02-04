@@ -23,39 +23,39 @@ type API =
     :> ( "scenarios"
            :> Get '[JSON] [ScenarioTypes.Scenario]
            :<|> "scenario_detail"
-           :> QueryParam' '[Required, Strict] "scenarioId" Integer
+           :> QueryParam' '[Required, Strict] "scenarioId" ScenarioTypes.ScenarioId
            :> QueryParam' '[Required, Strict] "year" Types.Year
            :> Get '[JSON] ApiTypes.ComparisonListData
            :<|> "scenario_detail_all_years"
-           :> QueryParam' '[Required, Strict] "scenarioId" Integer
+           :> QueryParam' '[Required, Strict] "scenarioId" ScenarioTypes.ScenarioId
            :> QueryParam' '[Required, Strict] "year" Types.Year
            :> Get '[JSON] TemplateTypes.TemplateData
            :<|> "multi_scenario_comparison"
-           :> QueryParams "scenarioId" Integer
+           :> QueryParams "scenarioId" ScenarioTypes.ScenarioId
            :> QueryParam' '[Required, Strict] "year" Types.Year
            :> Get '[JSON] [ApiTypes.ComparisonListData]
            :<|> "multi_scenario_metrics"
-           :> QueryParam' '[Required, Strict] "scenarioId1" Integer
-           :> QueryParam' '[Required, Strict] "scenarioId2" Integer
+           :> QueryParam' '[Required, Strict] "scenarioId1" ScenarioTypes.ScenarioId
+           :> QueryParam' '[Required, Strict] "scenarioId2" ScenarioTypes.ScenarioId
            :> Get '[JSON] [MetricTypes.MetricName]
        )
     :<|> "app"
     :> ( "scenario_detail"
-           :> Capture "scenario_id" Integer
+           :> Capture "scenario_id" ScenarioTypes.ScenarioId
            :> Capture "year" Types.Year
            :> Get '[Html] Text.Text
            :<|> "scenario_comparison"
-           :> QueryParams "scenarioId" Integer
+           :> QueryParams "scenarioId" ScenarioTypes.ScenarioId
            :> QueryParams "year" Types.Year
            :> Get '[Html] Text.Text
            :<|> "scenario_detail_map"
-           :> Capture "scenario_id" Integer
-           :> Capture "metric_id" Integer
+           :> Capture "scenario_id" ScenarioTypes.ScenarioId
+           :> Capture "metric_id" MetricTypes.MetricId
            :> Get '[Html] Text.Text
            :<|> "scenario_comparison_map"
-           :> Capture "scenario_id_1" Integer
-           :> Capture "scenario_id_2" Integer
-           :> Capture "metric_id" Integer
+           :> Capture "scenario_id_1" ScenarioTypes.ScenarioId
+           :> Capture "scenario_id_2" ScenarioTypes.ScenarioId
+           :> Capture "metric_id" MetricTypes.MetricId
            :> Get '[Html] Text.Text
            :<|> Raw
        )

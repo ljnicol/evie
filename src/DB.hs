@@ -30,32 +30,32 @@ import qualified Types.Template.Map as MapTemplateTypes
 
 --
 
-getScenarioDetailDBForYear :: DBTypes.DatabaseEngine a -> Integer -> Types.Year -> Servant.Handler ApiTypes.ComparisonListData
+getScenarioDetailDBForYear :: DBTypes.DatabaseEngine a -> ScenarioTypes.ScenarioId -> Types.Year -> Servant.Handler ApiTypes.ComparisonListData
 getScenarioDetailDBForYear dbEngine scenarioId year = do
   metrics <- fmap MetricDataTypes.metricListToHashMap $ metricsDBForYear dbEngine scenarioId year
   scenario <- scenarioDB dbEngine scenarioId
   return $ ApiTypes.ComparisonListData metrics scenario year
 
-getScenarioDetailDB :: DBTypes.DatabaseEngine a -> Integer -> Types.Year -> Servant.Handler TemplateTypes.TemplateData
+getScenarioDetailDB :: DBTypes.DatabaseEngine a -> ScenarioTypes.ScenarioId -> Types.Year -> Servant.Handler TemplateTypes.TemplateData
 getScenarioDetailDB dbEngine scenarioId year = do
   metrics <- fmap MetricDataTypes.metricListToHashMap $ metricsDB dbEngine scenarioId
   scenario <- scenarioDB dbEngine scenarioId
   return $ TemplateTypes.TemplateData metrics scenario year ""
 
-getScenarioDetailTemplate :: DBTypes.DatabaseEngine a -> Integer -> Types.Year -> String -> Servant.Handler TemplateTypes.TemplateData
+getScenarioDetailTemplate :: DBTypes.DatabaseEngine a -> ScenarioTypes.ScenarioId -> Types.Year -> String -> Servant.Handler TemplateTypes.TemplateData
 getScenarioDetailTemplate dbEngine scenarioId year host = do
   metrics <- fmap MetricDataTypes.metricListToHashMap $ metricsDBForYear dbEngine scenarioId year
   scenario <- scenarioDB dbEngine scenarioId
   return $ TemplateTypes.TemplateData metrics scenario year host
 
-getScenarioMapDB :: DBTypes.DatabaseEngine a -> Integer -> Integer -> String -> Servant.Handler MapTemplateTypes.MapTemplateData
+getScenarioMapDB :: DBTypes.DatabaseEngine a -> ScenarioTypes.ScenarioId -> MetricTypes.MetricId -> String -> Servant.Handler MapTemplateTypes.MapTemplateData
 getScenarioMapDB dbEngine scenarioId metricId host = do
   spatialData <- fmap MetricTypes.spatialMetricsToHashMap $ spatialDataDB dbEngine scenarioId metricId
-  metricData <- metricDB dbEngine scenarioId
+  metricData <- metricDB dbEngine metricId
   scenario <- scenarioDB dbEngine scenarioId
   return $ MapTemplateTypes.MapTemplateData spatialData metricData scenario host
 
-getScenarioComparisonListDB :: DBTypes.DatabaseEngine a -> [Integer] -> Types.Year -> Servant.Handler [ApiTypes.ComparisonListData]
+getScenarioComparisonListDB :: DBTypes.DatabaseEngine a -> [ScenarioTypes.ScenarioId] -> Types.Year -> Servant.Handler [ApiTypes.ComparisonListData]
 getScenarioComparisonListDB dbEngine scenarioIds year =
   let toTD :: Types.Year -> ScenarioTypes.Scenario -> Servant.Handler ApiTypes.ComparisonListData
       toTD year scenario = do
@@ -66,7 +66,7 @@ getScenarioComparisonListDB dbEngine scenarioIds year =
         scenarios <- scenariosSelectDB dbEngine scenarioIds
         mapM (toTD year) scenarios
 
-getScenarioComparisonMetrics :: DBTypes.DatabaseEngine a -> Integer -> Integer -> Servant.Handler [MetricTypes.MetricName]
+getScenarioComparisonMetrics :: DBTypes.DatabaseEngine a -> ScenarioTypes.ScenarioId -> ScenarioTypes.ScenarioId -> Servant.Handler [MetricTypes.MetricName]
 getScenarioComparisonMetrics dbEngine scenarioId1 scenarioId2 =
   MonadTrans.liftIO $ action
   where
@@ -101,7 +101,7 @@ getScenarioComparisonMetrics dbEngine scenarioId1 scenarioId2 =
 
 scenarioDB ::
   DBTypes.DatabaseEngine a ->
-  Integer ->
+  ScenarioTypes.ScenarioId ->
   Servant.Handler ScenarioTypes.Scenario
 scenarioDB dbEngine scenarioId = do
   res <-
@@ -150,7 +150,7 @@ scenarioDB dbEngine scenarioId = do
 
 scenariosSelectDB ::
   DBTypes.DatabaseEngine a ->
-  [Integer] ->
+  [ScenarioTypes.ScenarioId] ->
   Servant.Handler [ScenarioTypes.Scenario]
 scenariosSelectDB dbEngine scenarioIds =
   mapM
@@ -193,7 +193,7 @@ scenariosDB dbEngine =
 
 metricsDBForYear ::
   DBTypes.DatabaseEngine a ->
-  Integer ->
+  ScenarioTypes.ScenarioId ->
   Types.Year ->
   Servant.Handler [MetricDataTypes.MetricData]
 metricsDBForYear dbEngine scenarioId year =
@@ -269,7 +269,7 @@ metricsDBForYear dbEngine scenarioId year =
 
 metricsDB ::
   DBTypes.DatabaseEngine a ->
-  Integer ->
+  ScenarioTypes.ScenarioId ->
   Servant.Handler [MetricDataTypes.MetricData]
 metricsDB dbEngine scenarioId =
   MonadTrans.liftIO $
@@ -340,8 +340,8 @@ metricsDB dbEngine scenarioId =
 
 spatialDataDB ::
   DBTypes.DatabaseEngine a ->
-  Integer ->
-  Integer ->
+  ScenarioTypes.ScenarioId ->
+  MetricTypes.MetricId ->
   Servant.Handler [MetricTypes.SpatialData]
 spatialDataDB dbEngine scenarioId metricId =
   MonadTrans.liftIO $
@@ -353,12 +353,12 @@ spatialDataDB dbEngine scenarioId metricId =
           SQLiteSimple.query
             conn
             sqQuery
-            (scenarioId, metricId)
+            (metricId, scenarioId)
         DBTypes.PostgreSQL conns -> Pool.withResource conns $ \conn ->
           PGSimple.query
             conn
             pgQuery
-            (scenarioId, metricId)
+            (metricId, scenarioId)
     sqQuery =
       [SQQQ.sql|
           select year, 
@@ -383,7 +383,7 @@ pgQuery =
 
 metricDB ::
   DBTypes.DatabaseEngine a ->
-  Integer ->
+  MetricTypes.MetricId ->
   Servant.Handler MetricTypes.Metric
 metricDB dbEngine metricId = do
   res <- MonadTrans.liftIO $ action
