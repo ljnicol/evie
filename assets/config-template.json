@@ -4,5 +4,6 @@
     "db_config": "data.sqlite",
     "template_directory": "templates",
     "static_directory": "static",
-    "spatial_directory": "spatial"
+    "spatial_directory": "spatial",
+    "lib_directory": "./lib"
 }
