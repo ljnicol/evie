@@ -2,8 +2,7 @@ CREATE TABLE "scenarios" (
   "id" integer PRIMARY KEY,
   "name" varchar UNIQUE NOT NULL,
   "description" varchar,
-  "assumptions" varchar,
-  "spatial_table" varchar UNIQUE NOT NULL
+  "assumptions" varchar
 );
 
 CREATE TABLE "metric_data" (
@@ -19,7 +18,13 @@ CREATE TABLE "metric_data" (
 CREATE TABLE "metrics" (
   "id" integer PRIMARY KEY,
   "name" varchar UNIQUE,
-  "description" varchar
+  "description" varchar,
+  "low_outcome" double precision,
+  "high_outcome" double precision,
+  "low_outcome_text" varchar,
+  "high_outcome_text" varchar,
+  "unit" varchar,
+  "bins" varchar
 );
 
 ALTER TABLE "metric_data" ADD FOREIGN KEY ("scenario_id") REFERENCES "scenarios" ("id");
