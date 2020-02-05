@@ -26,3 +26,4 @@ addDefaults Config.InputConfig {..} =
     _inputConfigTemplates
     _inputConfigStaticDirectory
     _inputConfigSpatialDirectory
+    _inputConfigLibDirectory

@@ -57,6 +57,8 @@ type API =
            :> Capture "scenario_id_2" ScenarioTypes.ScenarioId
            :> Capture "metric_id" MetricTypes.MetricId
            :> Get '[Html] Text.Text
+           :<|> "lib"
+           :> Raw
            :<|> Raw
        )
     :<|> "spatial"

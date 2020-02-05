@@ -19,7 +19,8 @@ data InputConfig
         _inputConfigDB :: DBConfig,
         _inputConfigTemplates :: FilePath,
         _inputConfigStaticDirectory :: FilePath,
-        _inputConfigSpatialDirectory :: FilePath
+        _inputConfigSpatialDirectory :: FilePath,
+        _inputConfigLibDirectory :: FilePath
       }
   deriving (Show, Generic)
 
@@ -32,6 +33,7 @@ instance Aeson.FromJSON InputConfig where
       <*> o Aeson..: "template_directory"
       <*> o Aeson..: "static_directory"
       <*> o Aeson..: "spatial_directory"
+      <*> o Aeson..: "lib_directory"
 
 data DBConfig = SQLiteConfig FilePath | PGConfig PGConnectionConfig deriving (Show, Generic)
 
@@ -45,7 +47,8 @@ data Config
         _configDB :: DBConfig,
         _configTemplates :: FilePath,
         _configStaticDirectory :: FilePath,
-        _configSpatialDirectory :: FilePath
+        _configSpatialDirectory :: FilePath,
+        _configLibDirectory :: FilePath
       }
 
 data PGConnectionConfig
