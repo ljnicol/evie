@@ -4,10 +4,10 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: f80522646ee993be6f0b8af0def505f72e3fb8cf63bf86a9c5b5e188cfd5c9cf
+-- hash: f499a390585c1ed2584a26a3fcb64d355ed5a24c5bd85a39b404a944fdafca65
 
 name:           evie
-version:        0.0.5
+version:        0.0.6
 description:    Please see the README on GitHub at <https://github.com/state-machine-io/evie#readme>
 homepage:       https://github.com/state-machine-io/evie#readme
 bug-reports:    https://github.com/state-machine-io/evie/issues
@@ -52,6 +52,7 @@ library
       aeson
     , base >=4.7 && <5
     , bytestring
+    , directory
     , ginger
     , http-media
     , mbtiles

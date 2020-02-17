@@ -1,6 +1,7 @@
 module Controller where
 
 import qualified DB
+import qualified Data.HashMap.Strict as HashMap
 import qualified Data.Text as Text
 import qualified Database.Mbtiles as Mbtiles
 import qualified Routes
@@ -10,7 +11,7 @@ import qualified Types.Config as Config
 import qualified Types.DB as DB
 
 server ::
-  Config.Config -> Mbtiles.MbtilesPool -> DB.DatabaseEngine a -> Servant.Server Routes.API
+  Config.Config -> HashMap.HashMap Text.Text Mbtiles.MbtilesPool -> DB.DatabaseEngine a -> Servant.Server Routes.API
 server config@Config.Config {..} spatialConns dbEngine =
   apiServer dbEngine Servant.:<|> appServer dbEngine Servant.:<|> DB.tilesDB spatialConns Servant.:<|> Template.renderStatic (_configTemplates ++ "/" ++ "index.html")
   where

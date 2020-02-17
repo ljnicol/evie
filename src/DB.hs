@@ -8,6 +8,7 @@ import qualified Control.Monad.Trans as MonadTrans (liftIO)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy.Char8 as ByteStringLazyChar8
 import qualified Data.Char as Char
+import qualified Data.HashMap.Strict as HashMap
 import qualified Data.Pool as Pool
 import qualified Data.Text as Text
 import qualified Data.Text.Encoding as TextEncoding
@@ -419,13 +420,19 @@ metricDB dbEngine metricId = do
         |]
 
 tilesDB ::
-  Mbtiles.MbtilesPool ->
+  HashMap.HashMap Text.Text Mbtiles.MbtilesPool ->
+  Text.Text ->
   Int ->
   Int ->
   Text.Text ->
   Servant.Handler BS.ByteString
-tilesDB conns z x stringY
-  | (".mvt" `Text.isSuffixOf` stringY) || (".pbf" `Text.isSuffixOf` stringY) || (".vector.pbf" `Text.isSuffixOf` stringY) = getAnything conns z x stringY
+tilesDB conns mbtilesFilename z x stringY
+  | (".mvt" `Text.isSuffixOf` stringY) || (".pbf" `Text.isSuffixOf` stringY) || (".vector.pbf" `Text.isSuffixOf` stringY) =
+    case HashMap.lookup mbtilesFilename conns of
+      Just conns ->
+        getAnything conns z x stringY
+      Nothing ->
+        Servant.throwError $ Servant.err400 {Servant.errBody = "Could not find mbtiles file: " <> ByteStringLazyChar8.fromStrict (TextEncoding.encodeUtf8 mbtilesFilename)}
   | otherwise = Servant.throwError $ Servant.err400 {Servant.errBody = "Unknown request: " <> ByteStringLazyChar8.fromStrict (TextEncoding.encodeUtf8 stringY)}
 
 getAnything ::

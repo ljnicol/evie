@@ -1,5 +1,5 @@
 name:                evie
-version:             0.0.5
+version:             0.0.6
 github:              "state-machine-io/evie"
 license:             "Apache-2.0"
 author:              "State Machine Pty Ltd"
@@ -53,6 +53,7 @@ library:
     - sqlite-simple
     - neat-interpolation
     - mbtiles
+    - directory
 
 executables:
   evie:

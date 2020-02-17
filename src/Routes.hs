@@ -62,6 +62,7 @@ type API =
            :<|> Raw
        )
     :<|> "spatial"
+    :> Capture "layer" Text.Text
     :> Capture "z" Int
     :> Capture "x" Int
     :> Capture "y" Text.Text
