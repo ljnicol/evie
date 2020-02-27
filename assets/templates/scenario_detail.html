@@ -5,50 +5,77 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="/app/css/bulma.min.css">
+  <link href="/app/css/fontawesome.min.css" rel="stylesheet">
+  <link href="/app/css/brands.min.css" rel="stylesheet">
+  <link href="/app/css/solid.min.css" rel="stylesheet">
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.css' rel='stylesheet' />
+</head>
+
 </head>
 
 <body>
-  <h1>Scenario Detail</h1>
   <script>
-    let scenario = {{ raw(json(scenario)) }}
-    let metrics = {{ raw(json(metric_data)) }}
-    console.log(scenario);
-    console.log(metrics);
+      let scenario = {{ raw(json(scenario)) }}
+      let metrics = {{ raw(json(metric_data)) }}
+      console.log(scenario);
+      console.log(metrics);
   </script>
-  <h2>
-    {{ scenario.scenario_name }}
-  </h2>
-  <div>
-    {{ scenario.scenario_description }}
-  </div>
-  <h2>
-    Metrics
-  </h2>
-  <div>
-    <h2>
-      {{ metric_data[1].metric_name }}
-    </h2>
-    <p>
-      {{ metric_data[1].metric_description }}
-    </p>
-    {{ metric_data[1].metric_value }}
-  </div>
-
-  <div>
-    <h2>
-      {{ metric_data[2].metric_name }}
-    </h2>
-    <p>
-      {{ metric_data[2].metric_description }}
-    </p>
-    {{ metric_data[2].metric_value }}
-  </div>
-  <div>
-    <a href="/app/scenario_detail_map/{{scenario.scenario_id}}/1">map_link</a>
-  </div>
-  <div>
-    <a href="/app/scenario_comparison/{{scenario.scenario_id}}/{{scenario.scenario_id}}">comparison_link</a>
-  </div>
+  <section id="metric_summary" style="height: 100vh">
+    <section class="section hero is-dark">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title">
+            {{ scenario.scenario_name }}
+          </h1>
+          <p>
+            {% for y in scenario.scenario_years %}
+            <a class="{%- if y == year -%} button is-primary {% else %} button {% endif %}" href="/app/scenario_detail/{{ scenario.scenario_id }}/{{ y }}">
+              {{ y }}
+            </a>
+            {% endfor %}
+          </p>
+        </div>
+      </div>
+    </section>
+    <section class="section" style="background-color: rgba(207,207,207,0.46)">
+      <div class="">
+        <div class="container">
+          <h2 class="is-2">
+            {{ scenario.scenario_description }}
+          </h2>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="container">
+        <div class="columns is-multiline">
+          {% for metric in metric_data %}
+          <div class="column is-6-tablet is-3-desktop">
+            <div class="box" style="height: 250px">
+              <div class="media">
+                <div class="media-left">
+                  <figure class="image is-48x48"><i class="fas {{ m.metric_icon }}"></i></figure>
+                </div>
+                <div class="media-content has-text-right">
+                  <h3 class="title is-1 has-text-info">{{ metric.metric_value }} </h3>
+                </div>
+              </div>
+              <h4 class="title">{{ metric.metric_name }}</h4>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+  </section>
+  <section id="metric_detail">
+    <section style="background-color: rgba(207,207,207,0.46)">
+      {% include "scenario_detail_metric_1_detail.html" %}
+      {% include "scenario_detail_metric_2_detail.html" %}
+    </section>
+  </section>
 </body>
 
 </html>

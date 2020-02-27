@@ -1,0 +1,60 @@
+<div class="container">
+  <div class="columns">
+    <div class="column is-6">
+      <div class="content">
+        <h1>
+          {{ metric_data[2].metric_name }}
+        </h1>
+        <h2>
+          {{ metric_data[2].metric_value }}
+        </h2>
+          {{ raw(metric_data[2].metric_description) }}
+      </div>
+      <a class="button" href="/app/scenario_detail_map.html/1/2019">MAP</a>
+    </div>
+    <div class="column is-16" style="height: 500px">
+      <div id='map-{{ metric_data[2].metric_id }}' style="height: 100%"></div>
+      <script>
+        let colours = ["red", "blue"];
+        var map_{{ metric_data[2].metric_id }} = new mapboxgl.Map({
+            container: 'map-{{ metric_data[2].metric_id }}', // container id
+            style: {
+                "version": 8,
+                "sources": {
+                    "raster-tiles": {
+                        "type": "raster",
+                        "tiles": ["https://c.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png"],
+                        "tileSize": 256,
+                        "attribution": 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
+                    },
+                    "seq_lvl1":{
+                        "type": "geojson",
+                        "data": "/spatial/seq_lvl1.geojson"
+                    },
+                    "seq_lvl2":{
+                        "type": "geojson",
+                        "data": "/spatial/seq_lvl2.geojson"
+                    },
+                    "seq_lvl3":{
+                        "type": "geojson",
+                        "data": "/spatial/seq_lvl3.geojson"
+                    }
+                },
+                "layers": [{
+                    "id": "simple-tiles",
+                    "type": "raster",
+                    "source": "raster-tiles",
+                    "minzoom": 0,
+                    "maxzoom": 22
+                } , {"id": "seq_lvl3", "type": "line", "source": "seq_lvl3", "minzoom": 14}
+                    , {"id": "seq_lvl2", "type": "line", "source": "seq_lvl2", "minzoom": 12, "maxzoom": 14}
+                    , {"id": "seq_lvl1", "type": "line", "source": "seq_lvl1", "minzoom": 0, "maxzoom": 12}]
+            },
+            center: {lng: 153, lat: -27.5}, // starting position
+            zoom: 10 // starting zoom
+        });
+          map_{{ metric_data[2].metric_id }}.addControl(new mapboxgl.FullscreenControl({container: document.getElementById('map-{{ metric_data[2].metric_id }}')}));
+      </script>
+    </div>
+  </div>
+</div>

@@ -10,18 +10,22 @@
 <body>
   <h1>Scenario Comparison</h1>
   <script>
-    let scenario = {{ raw(json(scenario)) }}
-    let metrics = {{ raw(json(metric_data)) }}
-    console.log(scenario);
-    console.log(metrics);
+    let scenarios = {{ raw(json(scenario_data)) }}
+    console.log(scenarios);
   </script>
-  <div>
-    {{ metric_data[1].metric_name }}
-    {{ metric_data[1].metric_description }}
-    {{ metric_data[1].metric_value }}
+  <div class="columns">
+    {% for s in scenario_data %}
+      {% scope %}
+        {% set metric_data = s.metric_data %}
+        {% set scenario = s.scenario %}
+        {% set year = s.year %}
+        <div class="column">
+          {% include "scenario_detail.html" %}
+        </div>
+      {% endscope %}
+    {% endfor %}
   </div>
 
-  <a href="/app/scenario_comparison_map/{{scenario.scenario_id}}/{{scenario.scenario_id}}/1">map_link</a>
 </body>
 
 </html>
