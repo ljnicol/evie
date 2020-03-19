@@ -29,7 +29,8 @@ data MetricData
         metricLowOutcomeText :: Text.Text,
         metricHighOutcome :: Double,
         metricHighOutcomeText :: Text.Text,
-        metricBins :: [(Double, Text.Text)],
+        metricAggregateBins :: [(Double, Text.Text)],
+        metricSpatialBins :: [(Double, Text.Text)],
         metricUnit :: Text.Text,
         metricYear :: Text.Text,
         metricValue :: Double,
@@ -59,11 +60,13 @@ instance SQLiteSimple.FromRow MetricData where
       <*> SQLiteSimple.field
       <*> SQLiteSimple.field
       <*> SQLiteSimple.field
+      <*> SQLiteSimple.field
 
 instance PGSimple.FromRow MetricData where
   fromRow =
     MetricData
       <$> PGSimple.field
+      <*> PGSimple.field
       <*> PGSimple.field
       <*> PGSimple.field
       <*> PGSimple.field

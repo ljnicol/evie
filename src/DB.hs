@@ -223,13 +223,14 @@ metricsDBForYear dbEngine scenarioId year =
                     m.low_outcome_text,
                     m.high_outcome,
                     m.high_outcome_text,
-                    m.bins,
+                    m.aggregate_bins,
+                    m.spatial_bins,
                     m.unit,
                     metric_data.year,
                     value,
                     spatial_data.spatial_values
               from metric_data
-                    join (select id, name, description, low_outcome, low_outcome_text, high_outcome,high_outcome_text, json(bins) as bins, unit from metrics group by id) as m on metric_data.metric_id = m.id
+                    join (select id, name, description, low_outcome, low_outcome_text, high_outcome,high_outcome_text, json(aggregate_bins) as aggregate_bins, json(spatial_bins) as spatial_bins, unit from metrics group by id) as m on metric_data.metric_id = m.id
                     left join (select zonal_data.metric_id as id,
                                       json_group_array(
                                               json_object('id', zone_id, 'value', value)
@@ -250,13 +251,14 @@ metricsDBForYear dbEngine scenarioId year =
                     m.low_outcome_text,
                     m.high_outcome,
                     m.high_outcome_text,
-                    m.bins,
+                    m.aggregate_bins,
+                    m.spatial_bins,
                     m.unit,
                     metric_data.year,
                     value,
                     spatial_data.spatial_values
               from metric_data
-                    join (select id, name, description, low_outcome, low_outcome_text, high_outcome,high_outcome_text, json(bins) as bins, unit from metrics group by id) as m on metric_data.metric_id = m.id
+                    join (select id, name, description, low_outcome, low_outcome_text, high_outcome,high_outcome_text, json(aggregate_bins) as aggregate_bins, json(spatial_bins) as spatial_bins, unit from metrics group by id) as m on metric_data.metric_id = m.id
                     left join (select zonal_data.metric_id as id,
                                       json_group_array(
                                               json_object('id', zone_id, 'value', value)
@@ -298,13 +300,14 @@ metricsDB dbEngine scenarioId =
                   m.low_outcome_text,
                   m.high_outcome,
                   m.high_outcome_text,
-                  m.bins,
+                  m.aggregate_bins,
+                  m.spatial_bins,
                   m.unit,
                   metric_data.year,
                   value,
                   spatial_data.spatial_values
             from metric_data
-                  join (select id, name, description, low_outcome, low_outcome_text, high_outcome,high_outcome_text, json(bins) as bins, unit from metrics group by id) as m on metric_data.metric_id = m.id
+                  join (select id, name, description, low_outcome, low_outcome_text, high_outcome,high_outcome_text, json(aggregate_bins) as aggregate_bins, json(spatial_bins) as spatial_bins, unit from metrics group by id) as m on metric_data.metric_id = m.id
                   left join (select zonal_data.metric_id as id,
                                     json_group_array(
                                             json_object('id', zone_id, 'value', value)
@@ -321,14 +324,17 @@ metricsDB dbEngine scenarioId =
                   m.name,
                   m.description,
                   m.low_outcome,
+                  m.low_outcome_text,
                   m.high_outcome,
-                  m.bins,
-                  m.unit
+                  m.high_outcome_text,
+                  m.aggregate_bins,
+                  m.spatial_bins,
+                  m.unit,
                   metric_data.year,
                   value,
                   spatial_data.spatial_values
             from metric_data
-                  join (select id, name, description, low_outcome, low_outcome_text, high_outcome,high_outcome_text, json(bins) as bins, unit from metrics group by id) as m on metric_data.metric_id = m.id
+                  join (select id, name, description, low_outcome, low_outcome_text, high_outcome,high_outcome_text, json(aggregate_bins) as aggregate_bins, json(spatial_bins) as spatial_bins, unit from metrics group by id) as m on metric_data.metric_id = m.id
                   left join (select zonal_data.metric_id as id,
                                     json_group_array(
                                             json_object('id', zone_id, 'value', value)
@@ -408,13 +414,13 @@ metricDB dbEngine metricId = do
             (PGSimple.Only $ metricId)
     sqQuery =
       [SQQQ.sql|
-        select id, name, description, low_outcome, low_outcome_text, high_outcome,high_outcome_text, json(bins) as bins, unit 
+        select id, name, description, low_outcome, low_outcome_text, high_outcome,high_outcome_text, json(aggregate_bins) as aggregate_bins, json(spatial_bins) as spatial_bins, unit 
         from metrics 
         where id = ?
       |]
     pgQuery =
       [PGQQ.sql|
-          select id, name, description, low_outcome, low_outcome_text, high_outcome,high_outcome_text, json(bins) as bins, unit 
+          select id, name, description, low_outcome, low_outcome_text, high_outcome,high_outcome_text, json(aggregate_bins) as aggregate_bins, json(spatial_bins) as spatial_bins, unit 
           from metrics 
           where id = ?
         |]

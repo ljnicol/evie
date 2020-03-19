@@ -55,7 +55,8 @@ data Metric
         metricLowOutcomeText :: Text.Text,
         metricHighOutcome :: Double,
         metricHighOutcomeText :: Text.Text,
-        metricBins :: [(Double, Text.Text)],
+        metricAggregateBins :: [(Double, Text.Text)],
+        metricSpatialBins :: [(Double, Text.Text)],
         metricUnit :: Text.Text
       }
   deriving (Eq, Generic, Show)
@@ -78,11 +79,13 @@ instance SQLiteSimple.FromRow Metric where
       <*> SQLiteSimple.field
       <*> SQLiteSimple.field
       <*> SQLiteSimple.field
+      <*> SQLiteSimple.field
 
 instance PGSimple.FromRow Metric where
   fromRow =
     Metric
       <$> PGSimple.field
+      <*> PGSimple.field
       <*> PGSimple.field
       <*> PGSimple.field
       <*> PGSimple.field
