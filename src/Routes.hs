@@ -57,6 +57,10 @@ type API =
            :> Capture "scenario_id_2" ScenarioTypes.ScenarioId
            :> Capture "metric_id" MetricTypes.MetricId
            :> Get '[Html] Text.Text
+           :<|> "single_scenario_comparison_map"
+           :> Capture "scenario_id" ScenarioTypes.ScenarioId
+           :> Capture "metric_id" MetricTypes.MetricId
+           :> Get '[Html] Text.Text
            :<|> "lib"
            :> Raw
            :<|> Raw
