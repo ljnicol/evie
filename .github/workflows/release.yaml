@@ -12,45 +12,50 @@ jobs:
     runs-on: ubuntu-latest    
 
     steps:
-    - name: Get code
-      uses: actions/checkout@v2
-      with:
-        path: ./evie
+    # - name: Get code
+    #   uses: actions/checkout@v2
+    #   with:
+    #     path: ./evie
     
-    - name: Setup Stack
-      uses: mstksg/setup-stack@v2
+    # - name: Setup Stack
+    #   uses: mstksg/setup-stack@v2
     
-    - name: Cache Stack downloads
-      uses: actions/cache@v1
-      with:
-        path: /home/runner/.stack/
-        key: stack-download-${{ runner.os }}-2-${{ hashFiles('**/stack.yaml.lock') }}
-        restore-keys: stack-download-${{ runner.os }}-2-
+    # - name: Cache Stack downloads
+    #   uses: actions/cache@v1
+    #   with:
+    #     path: /home/runner/.stack/
+    #     key: stack-download-${{ runner.os }}-2-${{ hashFiles('**/stack.yaml.lock') }}
+    #     restore-keys: stack-download-${{ runner.os }}-2-
 
-    - name: Cache Stack Build
-      uses: actions/cache@v1
-      with:
-        path: ./evie/.stack-work/
-        key: stack-work-${{ runner.os }}-2-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
-        restore-keys: stack-work-${{ runner.os }}-2-
+    # - name: Cache Stack Build
+    #   uses: actions/cache@v1
+    #   with:
+    #     path: ./evie/.stack-work/
+    #     key: stack-work-${{ runner.os }}-2-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
+    #     restore-keys: stack-work-${{ runner.os }}-2-
     
-    - name: stack pre (setup, configure)
-      run: |
-        stack setup --no-terminal -j2
-        stack build --no-system-ghc --only-configure --no-terminal -j2
-      working-directory: ./evie
+    # - name: stack pre (setup, configure)
+    #   run: |
+    #     stack setup --no-terminal -j2
+    #     stack build --no-system-ghc --only-configure --no-terminal -j2
+    #   working-directory: ./evie
 
-    - name: stack compile and install
-      run: |
-        stack build --no-terminal -j2
-        stack install --no-terminal -j2
-      working-directory: ./evie
+    # - name: stack compile and install
+    #   run: |
+    #     stack build --no-terminal -j2
+    #     stack install --no-terminal -j2
+    #   working-directory: ./evie
 
-    - name: create zip
+    - name: dummy-file
       run: |
-        stack install --local-bin-path .
+        touch ./evie/evie-exe.txt
         zip -r evie.zip ./evie
-      working-directory: ./evie
+
+    # - name: create zip
+    #   run: |
+    #     stack install --local-bin-path .
+    #     zip -r evie.zip ./evie
+    #   working-directory: ./evie
 
     - name: Upload zip of binary
       uses: actions/upload-artifact@v1
