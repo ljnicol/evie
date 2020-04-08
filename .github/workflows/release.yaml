@@ -12,14 +12,6 @@ jobs:
     runs-on: ubuntu-latest    
 
     steps:
-    - name: Install Postgresql 11 and PostGIS
-      uses: huaxk/postgis-action@v1
-      with:
-        postgresql version: '11'
-        postgresql password: 'password'
-        postgresql user: 'evie' 
-        postgresql db: 'evie_test'
-
     - name: Get code
       uses: actions/checkout@v2
       with:
@@ -32,15 +24,15 @@ jobs:
       uses: actions/cache@v1
       with:
         path: /home/runner/.stack/
-        key: stack-download-${{ runner.os }}-${{ hashFiles('**/stack.yaml.lock') }}
-        restore-keys: stack-download-${{ runner.os }}-
+        key: stack-download-${{ runner.os }}-2-${{ hashFiles('**/stack.yaml.lock') }}
+        restore-keys: stack-download-${{ runner.os }}-2-
 
     - name: Cache Stack Build
       uses: actions/cache@v1
       with:
         path: ./evie/.stack-work/
-        key: stack-work-${{ runner.os }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
-        restore-keys: stack-work-${{ runner.os }}-
+        key: stack-work-${{ runner.os }}-2-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
+        restore-keys: stack-work-${{ runner.os }}-2-
     
     - name: stack pre (setup, configure)
       run: |
@@ -57,7 +49,7 @@ jobs:
     - name: create zip
       run: |
         stack install --local-bin-path .
-        zip -r evie.zip ./evie ./migrate
+        zip -r evie.zip ./evie
       working-directory: ./evie
 
     - name: Upload zip of binary
