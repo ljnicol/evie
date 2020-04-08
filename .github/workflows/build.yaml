@@ -56,17 +56,7 @@ jobs:
         stack build --no-terminal -j2
         stack install --no-terminal -j2
       working-directory: ./evie
-
-    - name: db migrate
-      run: |
-        ./db/migration setup --stack test
-      working-directory: ./evie
-    
-    - name: stack test
-      run: |
-        stack test --no-terminal -j2
-      working-directory: ./evie
-
+      
     - name: create zip
       run: |
         stack install --local-bin-path .
