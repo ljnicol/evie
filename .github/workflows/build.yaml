@@ -31,19 +31,15 @@ jobs:
     
     - name: Cache Stack downloads
       uses: actions/cache@v1
-      env:
-        cache-name: cache-stack-modules-linux
       with:
-        path: $HOME/.stack/
-        key: download-${{ hashFiles('**/stack.yaml.lock') }}
+        path: /home/runner/.stack/
+        key: ${{ runner.os }}-${{ hashFiles('**/stack.yaml.lock') }}
 
     - name: Cache Stack Build
       uses: actions/cache@v1
-      env:
-        cache-name: cache-stack-local-modules-linux
       with:
         path: ./evie/.stack-work/
-        key: ${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
+        key: ${{ runner.os }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
     
     - name: stack pre (setup, configure)
       run: |
@@ -95,19 +91,15 @@ jobs:
     
     - name: Cache Stack downloads
       uses: actions/cache@v1
-      env:
-        cache-name: cache-stack-modules-windows
       with:
         path: C:\Users\runneradmin\AppData\Roaming\stack
-        key: ${{ hashFiles('**/stack.yaml.lock') }}
+        key: ${{ runner.os }}-${{ hashFiles('**/stack.yaml.lock') }}
 
     - name: Cache Stack Build
       uses: actions/cache@v1
-      env:
-        cache-name: cache-stack-local-modules-windows
       with:
         path: ./evie/.stack-work/
-        key: ${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
+        key: ${{ runner.os }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
       
     - name: stack pre (setup, configure)
       run: |
@@ -161,19 +153,15 @@ jobs:
     
     - name: Cache Stack downloads
       uses: actions/cache@v1
-      env:
-        cache-name: cache-stack-modules-macos
       with:
-        path: $HOME/.stack/
-        key: download-${{ hashFiles('**/stack.yaml.lock') }}
+        path: /Users/runner/.stack/
+        key: ${{ runner.os }}-${{ hashFiles('**/stack.yaml.lock') }}
 
     - name: Cache Stack Build
       uses: actions/cache@v1
-      env:
-        cache-name: cache-stack-local-modules-macos
       with:
         path: ./evie/.stack-work/
-        key: ${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
+        key: ${{ runner.os }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
       
     - name: stack pre (setup, configure)
       timeout-minutes: 720
