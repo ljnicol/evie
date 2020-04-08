@@ -34,8 +34,8 @@ jobs:
       env:
         cache-name: cache-stack-modules-linux
       with:
-        path: /home/runner/.stack/
-        key: ${{ hashFiles('**/stack.yaml.lock') }}
+        path: $HOME/.stack/
+        key: download-${{ hashFiles('**/stack.yaml.lock') }}
 
     - name: Cache Stack Build
       uses: actions/cache@v1
@@ -56,7 +56,7 @@ jobs:
         stack build --no-terminal -j2
         stack install --no-terminal -j2
       working-directory: ./evie
-      
+
     - name: create zip
       run: |
         stack install --local-bin-path .
@@ -164,8 +164,8 @@ jobs:
       env:
         cache-name: cache-stack-modules-macos
       with:
-        path: /home/runner/.stack/
-        key: ${{ hashFiles('**/stack.yaml.lock') }}
+        path: $HOME/.stack/
+        key: download-${{ hashFiles('**/stack.yaml.lock') }}
 
     - name: Cache Stack Build
       uses: actions/cache@v1
