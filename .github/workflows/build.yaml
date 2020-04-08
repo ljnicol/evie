@@ -20,12 +20,6 @@ jobs:
       with:
         path: ./evie
 
-    - name: Checkout zellige repo
-      uses: actions/checkout@v2
-      with:
-        repository: zellige/zellige
-        path: ./zellige
-    
     - name: Setup Stack
       uses: mstksg/setup-stack@v2
     
@@ -33,13 +27,15 @@ jobs:
       uses: actions/cache@v1
       with:
         path: /home/runner/.stack/
-        key: ${{ runner.os }}-${{ hashFiles('**/stack.yaml.lock') }}
+        key: stack-download-${{ runner.os }}-${{ hashFiles('**/stack.yaml.lock') }}
+        restore-keys: stack-download-${{ runner.os }}
 
     - name: Cache Stack Build
       uses: actions/cache@v1
       with:
         path: ./evie/.stack-work/
-        key: ${{ runner.os }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
+        key: stack-work-${{ runner.os }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
+        restore-keys: stack-work-${{ runner.os }}-
     
     - name: stack pre (setup, configure)
       run: |
@@ -80,12 +76,6 @@ jobs:
       with:
         path: ./evie
 
-    - name: Checkout zellige repo
-      uses: actions/checkout@v2
-      with:
-        repository: zellige/zellige
-        path: ./zellige
-    
     - name: Setup Stack
       uses: mstksg/setup-stack@v2
     
@@ -93,13 +83,15 @@ jobs:
       uses: actions/cache@v1
       with:
         path: C:\Users\runneradmin\AppData\Roaming\stack
-        key: ${{ runner.os }}-${{ hashFiles('**/stack.yaml.lock') }}
+        key: stack-download-${{ runner.os }}-${{ hashFiles('**/stack.yaml.lock') }}
+        restore-keys: stack-download-${{ runner.os }}
 
     - name: Cache Stack Build
       uses: actions/cache@v1
       with:
         path: ./evie/.stack-work/
-        key: ${{ runner.os }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
+        key: stack-work-${{ runner.os }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
+        restore-keys: stack-work-${{ runner.os }}-
       
     - name: stack pre (setup, configure)
       run: |
@@ -142,12 +134,6 @@ jobs:
       with:
         path: ./evie
 
-    - name: Checkout zellige repo
-      uses: actions/checkout@v2
-      with:
-        repository: zellige/zellige
-        path: ./zellige
-    
     - name: Setup Stack
       uses: mstksg/setup-stack@v2
     
@@ -155,13 +141,15 @@ jobs:
       uses: actions/cache@v1
       with:
         path: /Users/runner/.stack/
-        key: ${{ runner.os }}-${{ hashFiles('**/stack.yaml.lock') }}
+        key: stack-download-${{ runner.os }}-${{ hashFiles('**/stack.yaml.lock') }}
+        restor-keys: stack-download-${{ runner.os }}
 
     - name: Cache Stack Build
       uses: actions/cache@v1
       with:
         path: ./evie/.stack-work/
-        key: ${{ runner.os }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
+        key: stack-work-${{ runner.os }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
+        restore-keys: stack-work-${{ runner.os }}-
       
     - name: stack pre (setup, configure)
       timeout-minutes: 720
