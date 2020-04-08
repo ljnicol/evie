@@ -198,7 +198,7 @@ jobs:
       uses: actions/download-artifact@v1
       with:
         name: evie-linux
-        path: ./evie
+        path: evie-linux.zip
 
     # - name: Download build artifacts
     #   uses: actions/download-artifact@v1
@@ -232,8 +232,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./evie/evie-linux.zip
-        asset_name: evie-linux.zip
+        asset_path: evie-linux.zip
+        asset_name: evie-linux
         asset_content_type: application/zip
 
     # - name: Upload Release Asset Windows
