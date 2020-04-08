@@ -1,0 +1,240 @@
+name: Release
+
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+
+
+jobs:
+  build_linux:
+    runs-on: ubuntu-latest    
+
+    steps:
+    - name: Install Postgresql 11 and PostGIS
+      uses: huaxk/postgis-action@v1
+      with:
+        postgresql version: '11'
+        postgresql password: 'password'
+        postgresql user: 'evie' 
+        postgresql db: 'evie_test'
+
+    - name: Get code
+      uses: actions/checkout@v2
+      with:
+        path: ./evie
+
+    - name: Checkout zellige repo
+      uses: actions/checkout@v2
+      with:
+        repository: zellige/zellige
+        path: ./zellige
+    
+    - name: Setup Stack
+      uses: mstksg/setup-stack@v2
+    
+    - name: Cache Stack downloads
+      uses: actions/cache@v1
+      with:
+        path: /home/runner/.stack/
+        key: ${{ runner.os }}-${{ hashFiles('**/stack.yaml.lock') }}
+
+    - name: Cache Stack Build
+      uses: actions/cache@v1
+      with:
+        path: ./evie/.stack-work/
+        key: ${{ runner.os }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
+    
+    - name: stack pre (setup, configure)
+      run: |
+        stack setup --no-terminal -j2
+        stack build --no-system-ghc --only-configure --no-terminal -j2
+      working-directory: ./evie
+
+    - name: stack compile and install
+      run: |
+        stack build --no-terminal -j2
+        stack install --no-terminal -j2
+      working-directory: ./evie
+
+    - name: create zip
+      run: |
+        stack install --local-bin-path .
+        zip -r evie.zip ./evie ./migrate
+      working-directory: ./evie
+
+    - name: Upload zip of binary
+      uses: actions/upload-artifact@v1
+      with:
+        name: evie-linux
+        path: ./evie/evie.zip
+  
+  build_windows:
+    runs-on: windows-latest
+
+    steps:
+
+    - name: Install Postgresql 11 Client
+      run: |
+        choco install postgresql11
+        echo "::add-path::C:\Program Files\PostgreSQL\11\bin"
+
+    - name: Get code
+      uses: actions/checkout@v2
+      with:
+        path: ./evie
+
+    - name: Checkout zellige repo
+      uses: actions/checkout@v2
+      with:
+        repository: zellige/zellige
+        path: ./zellige
+    
+    - name: Setup Stack
+      uses: mstksg/setup-stack@v2
+    
+    - name: Cache Stack downloads
+      uses: actions/cache@v1
+      with:
+        path: C:\Users\runneradmin\AppData\Roaming\stack
+        key: ${{ runner.os }}-${{ hashFiles('**/stack.yaml.lock') }}
+
+    - name: Cache Stack Build
+      uses: actions/cache@v1
+      with:
+        path: ./evie/.stack-work/
+        key: ${{ runner.os }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
+      
+    - name: stack pre (setup, configure)
+      run: |
+        echo "::add-path::C:\Program Files\PostgreSQL\11\bin"
+        stack setup --no-terminal -j2
+        stack build --no-system-ghc --only-configure --no-terminal -j2
+      working-directory: ./evie
+
+    - name: stack compile
+      run: |
+        echo "::add-path::C:\Program Files\PostgreSQL\11\bin"
+        stack build --no-terminal -j2
+      working-directory: ./evie        
+
+    - name: create zip
+      shell: powershell -Command "& '{0}'"
+      run: |
+        echo "::add-path::C:\Program Files\PostgreSQL\11\bin"
+        stack install --local-bin-path .
+        7z a evie.zip ./evie.exe ./migrate.exe
+      working-directory: ./evie
+
+    - name: Upload zip of binary
+      uses: actions/upload-artifact@v1
+      with:
+        name: evie-windows
+        path: ./evie/evie.zip
+  
+  build_macos:
+    runs-on: macos-latest
+
+    steps:
+
+    - name: Install Postgresql 11 Client
+      run: |
+        brew install postgresql@11
+
+    - name: Get code
+      uses: actions/checkout@v2
+      with:
+        path: ./evie
+
+    - name: Checkout zellige repo
+      uses: actions/checkout@v2
+      with:
+        repository: zellige/zellige
+        path: ./zellige
+    
+    - name: Setup Stack
+      uses: mstksg/setup-stack@v2
+    
+    - name: Cache Stack downloads
+      uses: actions/cache@v1
+      with:
+        path: /Users/runner/.stack/
+        key: ${{ runner.os }}-${{ hashFiles('**/stack.yaml.lock') }}
+
+    - name: Cache Stack Build
+      uses: actions/cache@v1
+      with:
+        path: ./evie/.stack-work/
+        key: ${{ runner.os }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
+      
+    - name: stack pre (setup, configure)
+      timeout-minutes: 720
+      run: |
+        export PATH=/usr/local/opt/postgresql@11/bin:$PATH
+        export LDFLAGS="-L/usr/local/opt/postgresql@11/lib"
+        export CPPFLAGS="-I/usr/local/opt/postgresql@11/include"
+        stack setup --no-terminal
+        stack build --no-system-ghc --only-configure --no-terminal
+      working-directory: ./evie
+
+    - name: stack compile
+      timeout-minutes: 720
+      run: |
+        export PATH=/usr/local/opt/postgresql@11/bin:$PATH
+        export LDFLAGS="-L/usr/local/opt/postgresql@11/lib"
+        export CPPFLAGS="-I/usr/local/opt/postgresql@11/include"
+        stack build --no-terminal
+      working-directory: ./evie        
+
+    - name: create zip
+      run: |
+        export PATH=/usr/local/opt/postgresql@11/bin:$PATH
+        export LDFLAGS="-L/usr/local/opt/postgresql@11/lib"
+        export CPPFLAGS="-I/usr/local/opt/postgresql@11/include"
+        stack install --local-bin-path .
+        zip -r evie.zip ./evie ./migrate
+      working-directory: ./evie
+
+    - name: Upload zip of binary
+      uses: actions/upload-artifact@v1
+      with:
+        name: evie-macos
+        path: ./evie/evie.zip
+
+  release:
+    runs-on: ubuntu-latest    
+    needs: [build_linux, build_windows, build_macos]
+    steps:
+    - name: Download build artifacts
+      uses: actions/download-artifact@v1
+      with:
+        name: evie-linux
+        path: ./evie/evie-linux.zip
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v1
+      with:
+        name: evie-windows
+        path: ./evie/evie-windows.zip
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v1
+      with:
+        name: evie-macos
+        path: ./evie/evie-macos.zip
+
+    - name: Generate Changelog
+      run: echo "# Good things have arrived" > ${{ github.workflow }}-CHANGELOG.txt
+
+    - name: Upload Release Assets
+      id: upload-release-assets
+      uses: softprops/action-gh-release@v1
+      with:
+        body_path: ${{ github.workflow }}-CHANGELOG.txt
+        files: |
+         ./evie/evie-linux.zip
+         ./evie/evie-windows.zip
+         ./evie/evie-macos.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
