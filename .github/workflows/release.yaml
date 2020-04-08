@@ -33,7 +33,7 @@ jobs:
       with:
         path: /home/runner/.stack/
         key: stack-download-${{ runner.os }}-${{ hashFiles('**/stack.yaml.lock') }}
-        restore-keys: stack-download-${{ runner.os }}
+        restore-keys: stack-download-${{ runner.os }}-
 
     - name: Cache Stack Build
       uses: actions/cache@v1
@@ -66,129 +66,129 @@ jobs:
         name: evie-linux
         path: ./evie/evie.zip
   
-  build_windows:
-    runs-on: windows-latest
+  # build_windows:
+  #   runs-on: windows-latest
 
-    steps:
+  #   steps:
 
-    - name: Install Postgresql 11 Client
-      run: |
-        choco install postgresql11
-        echo "::add-path::C:\Program Files\PostgreSQL\11\bin"
+  #   - name: Install Postgresql 11 Client
+  #     run: |
+  #       choco install postgresql11
+  #       echo "::add-path::C:\Program Files\PostgreSQL\11\bin"
 
-    - name: Get code
-      uses: actions/checkout@v2
-      with:
-        path: ./evie
+  #   - name: Get code
+  #     uses: actions/checkout@v2
+  #     with:
+  #       path: ./evie
 
-    - name: Setup Stack
-      uses: mstksg/setup-stack@v2
+  #   - name: Setup Stack
+  #     uses: mstksg/setup-stack@v2
     
-    - name: Cache Stack downloads
-      uses: actions/cache@v1
-      with:
-        path: C:\Users\runneradmin\AppData\Roaming\stack
-        key: stack-download-${{ runner.os }}-${{ hashFiles('**/stack.yaml.lock') }}
-        restore-keys: stack-download-${{ runner.os }}
+  #   - name: Cache Stack downloads
+  #     uses: actions/cache@v1
+  #     with:
+  #       path: C:\Users\runneradmin\AppData\Roaming\stack
+  #       key: stack-download-${{ runner.os }}-${{ hashFiles('**/stack.yaml.lock') }}
+  #       restore-keys: stack-download-${{ runner.os }}-
 
-    - name: Cache Stack Build
-      uses: actions/cache@v1
-      with:
-        path: ./evie/.stack-work/
-        key: stack-work-${{ runner.os }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
-        restore-keys: stack-work-${{ runner.os }}-
+  #   - name: Cache Stack Build
+  #     uses: actions/cache@v1
+  #     with:
+  #       path: ./evie/.stack-work/
+  #       key: stack-work-${{ runner.os }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
+  #       restore-keys: stack-work-${{ runner.os }}-
       
-    - name: stack pre (setup, configure)
-      run: |
-        echo "::add-path::C:\Program Files\PostgreSQL\11\bin"
-        stack setup --no-terminal -j2
-        stack build --no-system-ghc --only-configure --no-terminal -j2
-      working-directory: ./evie
+  #   - name: stack pre (setup, configure)
+  #     run: |
+  #       echo "::add-path::C:\Program Files\PostgreSQL\11\bin"
+  #       stack setup --no-terminal -j2
+  #       stack build --no-system-ghc --only-configure --no-terminal -j2
+  #     working-directory: ./evie
 
-    - name: stack compile
-      run: |
-        echo "::add-path::C:\Program Files\PostgreSQL\11\bin"
-        stack build --no-terminal -j2
-      working-directory: ./evie        
+  #   - name: stack compile
+  #     run: |
+  #       echo "::add-path::C:\Program Files\PostgreSQL\11\bin"
+  #       stack build --no-terminal -j2
+  #     working-directory: ./evie        
 
-    - name: create zip
-      shell: powershell -Command "& '{0}'"
-      run: |
-        echo "::add-path::C:\Program Files\PostgreSQL\11\bin"
-        stack install --local-bin-path .
-        7z a evie.zip ./evie.exe ./migrate.exe
-      working-directory: ./evie
+  #   - name: create zip
+  #     shell: powershell -Command "& '{0}'"
+  #     run: |
+  #       echo "::add-path::C:\Program Files\PostgreSQL\11\bin"
+  #       stack install --local-bin-path .
+  #       7z a evie.zip ./evie.exe ./migrate.exe
+  #     working-directory: ./evie
 
-    - name: Upload zip of binary
-      uses: actions/upload-artifact@v1
-      with:
-        name: evie-windows
-        path: ./evie/evie.zip
+  #   - name: Upload zip of binary
+  #     uses: actions/upload-artifact@v1
+  #     with:
+  #       name: evie-windows
+  #       path: ./evie/evie.zip
   
-  build_macos:
-    runs-on: macos-latest
+  # build_macos:
+  #   runs-on: macos-latest
 
-    steps:
+  #   steps:
 
-    - name: Install Postgresql 11 Client
-      run: |
-        brew install postgresql@11
+  #   - name: Install Postgresql 11 Client
+  #     run: |
+  #       brew install postgresql@11
 
-    - name: Get code
-      uses: actions/checkout@v2
-      with:
-        path: ./evie
+  #   - name: Get code
+  #     uses: actions/checkout@v2
+  #     with:
+  #       path: ./evie
 
-    - name: Setup Stack
-      uses: mstksg/setup-stack@v2
+  #   - name: Setup Stack
+  #     uses: mstksg/setup-stack@v2
     
-    - name: Cache Stack downloads
-      uses: actions/cache@v1
-      with:
-        path: /Users/runner/.stack/
-        key: stack-download-${{ runner.os }}-${{ hashFiles('**/stack.yaml.lock') }}
-        restor-keys: stack-download-${{ runner.os }}
+  #   - name: Cache Stack downloads
+  #     uses: actions/cache@v1
+  #     with:
+  #       path: /Users/runner/.stack/
+  #       key: stack-download-${{ runner.os }}-${{ hashFiles('**/stack.yaml.lock') }}
+  #       restore-keys: stack-download-${{ runner.os }}-
 
-    - name: Cache Stack Build
-      uses: actions/cache@v1
-      with:
-        path: ./evie/.stack-work/
-        key: stack-work-${{ runner.os }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
-        restore-keys: stack-work-${{ runner.os }}-
+  #   - name: Cache Stack Build
+  #     uses: actions/cache@v1
+  #     with:
+  #       path: ./evie/.stack-work/
+  #       key: stack-work-${{ runner.os }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
+  #       restore-keys: stack-work-${{ runner.os }}-
       
-    - name: stack pre (setup, configure)
-      timeout-minutes: 720
-      run: |
-        export PATH=/usr/local/opt/postgresql@11/bin:$PATH
-        export LDFLAGS="-L/usr/local/opt/postgresql@11/lib"
-        export CPPFLAGS="-I/usr/local/opt/postgresql@11/include"
-        stack setup --no-terminal
-        stack build --no-system-ghc --only-configure --no-terminal
-      working-directory: ./evie
+  #   - name: stack pre (setup, configure)
+  #     timeout-minutes: 720
+  #     run: |
+  #       export PATH=/usr/local/opt/postgresql@11/bin:$PATH
+  #       export LDFLAGS="-L/usr/local/opt/postgresql@11/lib"
+  #       export CPPFLAGS="-I/usr/local/opt/postgresql@11/include"
+  #       stack setup --no-terminal
+  #       stack build --no-system-ghc --only-configure --no-terminal
+  #     working-directory: ./evie
 
-    - name: stack compile
-      timeout-minutes: 720
-      run: |
-        export PATH=/usr/local/opt/postgresql@11/bin:$PATH
-        export LDFLAGS="-L/usr/local/opt/postgresql@11/lib"
-        export CPPFLAGS="-I/usr/local/opt/postgresql@11/include"
-        stack build --no-terminal
-      working-directory: ./evie        
+  #   - name: stack compile
+  #     timeout-minutes: 720
+  #     run: |
+  #       export PATH=/usr/local/opt/postgresql@11/bin:$PATH
+  #       export LDFLAGS="-L/usr/local/opt/postgresql@11/lib"
+  #       export CPPFLAGS="-I/usr/local/opt/postgresql@11/include"
+  #       stack build --no-terminal
+  #     working-directory: ./evie        
 
-    - name: create zip
-      run: |
-        export PATH=/usr/local/opt/postgresql@11/bin:$PATH
-        export LDFLAGS="-L/usr/local/opt/postgresql@11/lib"
-        export CPPFLAGS="-I/usr/local/opt/postgresql@11/include"
-        stack install --local-bin-path .
-        zip -r evie.zip ./evie ./migrate
-      working-directory: ./evie
+  #   - name: create zip
+  #     run: |
+  #       export PATH=/usr/local/opt/postgresql@11/bin:$PATH
+  #       export LDFLAGS="-L/usr/local/opt/postgresql@11/lib"
+  #       export CPPFLAGS="-I/usr/local/opt/postgresql@11/include"
+  #       stack install --local-bin-path .
+  #       zip -r evie.zip ./evie ./migrate
+  #     working-directory: ./evie
 
-    - name: Upload zip of binary
-      uses: actions/upload-artifact@v1
-      with:
-        name: evie-macos
-        path: ./evie/evie.zip
+  #   - name: Upload zip of binary
+  #     uses: actions/upload-artifact@v1
+  #     with:
+  #       name: evie-macos
+  #       path: ./evie/evie.zip
 
   release:
     runs-on: ubuntu-latest    
@@ -198,16 +198,17 @@ jobs:
       uses: actions/download-artifact@v1
       with:
         name: evie-linux
+        path: ./evie
 
-    - name: Download build artifacts
-      uses: actions/download-artifact@v1
-      with:
-        name: evie-windows
+    # - name: Download build artifacts
+    #   uses: actions/download-artifact@v1
+    #   with:
+    #     name: evie-windows
 
-    - name: Download build artifacts
-      uses: actions/download-artifact@v1
-      with:
-        name: evie-macos
+    # - name: Download build artifacts
+    #   uses: actions/download-artifact@v1
+    #   with:
+    #     name: evie-macos
 
     - name: Create Release
       id: create_release
@@ -231,28 +232,28 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: evie-linux.zip
+        asset_path: ./evie/evie-linux.zip
         asset_name: evie-linux.zip
         asset_content_type: application/zip
 
-    - name: Upload Release Asset Windows
-      id: upload-release-asset-windows
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: evie-windows.zip
-        asset_name: evie-windows.zip
-        asset_content_type: application/zip
+    # - name: Upload Release Asset Windows
+    #   id: upload-release-asset-windows
+    #   uses: actions/upload-release-asset@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+    #     asset_path: evie-windows.zip
+    #     asset_name: evie-windows.zip
+    #     asset_content_type: application/zip
 
-    - name: Upload Release Asset MacOS
-      id: upload-release-asset-macos
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: evie-macos.zip
-        asset_name: evie-macos.zip
-        asset_content_type: application/zip
+    # - name: Upload Release Asset MacOS
+    #   id: upload-release-asset-macos
+    #   uses: actions/upload-release-asset@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+    #     asset_path: evie-macos.zip
+    #     asset_name: evie-macos.zip
+    #     asset_content_type: application/zip
