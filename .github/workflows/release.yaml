@@ -198,19 +198,16 @@ jobs:
       uses: actions/download-artifact@v1
       with:
         name: evie-linux
-        path: ./evie/evie-linux.zip
 
     - name: Download build artifacts
       uses: actions/download-artifact@v1
       with:
         name: evie-windows
-        path: ./evie/evie-windows.zip
 
     - name: Download build artifacts
       uses: actions/download-artifact@v1
       with:
         name: evie-macos
-        path: ./evie/evie-macos.zip
 
     - name: Create Release
       id: create_release
@@ -234,7 +231,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./evie/evie-linux.zip
+        asset_path: evie-linux.zip
         asset_name: evie-linux.zip
         asset_content_type: application/zip
 
@@ -245,7 +242,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./evie/evie-windows.zip
+        asset_path: evie-windows.zip
         asset_name: evie-windows.zip
         asset_content_type: application/zip
 
@@ -256,6 +253,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./evie/evie-macos.zip
+        asset_path: evie-macos.zip
         asset_name: evie-macos.zip
         asset_content_type: application/zip
