@@ -190,7 +190,6 @@ jobs:
       uses: actions/download-artifact@v1
       with:
         name: evie-linux
-        path: evie-linux.zip
 
     # - name: Download build artifacts
     #   uses: actions/download-artifact@v1
