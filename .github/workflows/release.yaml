@@ -13,8 +13,6 @@ jobs:
     steps:
     - name: Get code
       uses: actions/checkout@v2
-      with:
-        path: ./evie
     
     - name: Setup Stack
       uses: mstksg/setup-stack@v2
@@ -29,7 +27,7 @@ jobs:
     - name: Cache Stack Build
       uses: actions/cache@v1
       with:
-        path: ./evie/.stack-work/
+        path: ./.stack-work/
         key: stack-work-${{ runner.os }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
         restore-keys: stack-work-${{ runner.os }}-2-
     
@@ -37,24 +35,16 @@ jobs:
       run: |
         stack setup --no-terminal -j2
         stack build --no-system-ghc --only-configure --no-terminal -j2
-      working-directory: ./evie
 
     - name: stack compile and install
       run: |
         stack build --no-terminal -j2
         stack install --no-terminal -j2
-      working-directory: ./evie
-
-    - name: dummy-file
-      run: |
-        echo "hello" > evie-exe.txt
         
-
     - name: create zip
       run: |
         stack install --local-bin-path .
         zip -r evie-linux.zip ./evie
-      working-directory: ./evie
 
     - name: Upload zip of binary
       uses: actions/upload-artifact@v1
@@ -132,8 +122,6 @@ jobs:
 
     - name: Get code
       uses: actions/checkout@v2
-      with:
-        path: ./evie
 
     - name: Setup Stack
       uses: mstksg/setup-stack@v2
@@ -148,7 +136,7 @@ jobs:
     - name: Cache Stack Build
       uses: actions/cache@v1
       with:
-        path: ./evie/.stack-work/
+        path: ./.stack-work/
         key: stack-work-${{ runner.os }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
         restore-keys: stack-work-${{ runner.os }}-
       
@@ -160,7 +148,6 @@ jobs:
         export CPPFLAGS="-I/usr/local/opt/postgresql@11/include"
         stack setup --no-terminal
         stack build --no-system-ghc --only-configure --no-terminal
-      working-directory: ./evie
 
     - name: stack compile
       timeout-minutes: 720
@@ -169,7 +156,6 @@ jobs:
         export LDFLAGS="-L/usr/local/opt/postgresql@11/lib"
         export CPPFLAGS="-I/usr/local/opt/postgresql@11/include"
         stack build --no-terminal
-      working-directory: ./evie        
 
     - name: create zip
       run: |
@@ -178,7 +164,6 @@ jobs:
         export CPPFLAGS="-I/usr/local/opt/postgresql@11/include"
         stack install --local-bin-path .
         zip -r evie-macos.zip ./evie
-      working-directory: ./evie
 
     - name: Upload zip of binary
       uses: actions/upload-artifact@v1
