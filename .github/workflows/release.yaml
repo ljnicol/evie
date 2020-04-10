@@ -19,17 +19,21 @@ jobs:
     
     - name: Cache Stack downloads
       uses: actions/cache@v1
+      env:
+        cache-name: stack-download
       with:
         path: /home/runner/.stack/
-        key: stack-download-${{ runner.os }}-${{ hashFiles('**/stack.yaml.lock') }}
-        restore-keys: stack-download-${{ runner.os }}-
+        key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/stack.yaml.lock') }}
+        restore-keys: ${{ runner.os }}-${{ env.cache-name }}-
 
     - name: Cache Stack Build
       uses: actions/cache@v1
+      env:
+        cache-name: stack-work
       with:
-        path: ./.stack-work/
-        key: stack-work-${{ runner.os }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
-        restore-keys: stack-work-${{ runner.os }}-
+        path: .stack-work/
+        key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/stack.yaml.lock') }}
+        restore-keys: ${{ runner.os }}-${{ env.cache-name }}-
     
     - name: stack pre (setup, configure)
       run: |
@@ -67,20 +71,24 @@ jobs:
 
     - name: Setup Stack
       uses: mstksg/setup-stack@v2
-    
+
     - name: Cache Stack downloads
       uses: actions/cache@v1
+      env:
+        cache-name: stack-download
       with:
         path: C:\Users\runneradmin\AppData\Roaming\stack
-        key: stack-download-${{ runner.os }}-${{ hashFiles('**/stack.yaml.lock') }}
-        restore-keys: stack-download-${{ runner.os }}-
+        key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/stack.yaml.lock') }}
+        restore-keys: ${{ runner.os }}-${{ env.cache-name }}-
 
     - name: Cache Stack Build
       uses: actions/cache@v1
+      env:
+        cache-name: stack-work
       with:
-        path: ./.stack-work/
-        key: stack-work-${{ runner.os }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
-        restore-keys: stack-work-${{ runner.os }}-
+        path: .stack-work/
+        key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/stack.yaml.lock') }}
+        restore-keys: ${{ runner.os }}-${{ env.cache-name }}-
       
     - name: stack pre (setup, configure)
       run: |
@@ -120,20 +128,24 @@ jobs:
 
     - name: Setup Stack
       uses: mstksg/setup-stack@v2
-    
+
     - name: Cache Stack downloads
       uses: actions/cache@v1
+      env:
+        cache-name: stack-download
       with:
         path: /Users/runner/.stack/
-        key: stack-download-${{ runner.os }}-${{ hashFiles('**/stack.yaml.lock') }}
-        restore-keys: stack-download-${{ runner.os }}-
+        key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/stack.yaml.lock') }}
+        restore-keys: ${{ runner.os }}-${{ env.cache-name }}-
 
     - name: Cache Stack Build
       uses: actions/cache@v1
+      env:
+        cache-name: stack-work
       with:
-        path: ./.stack-work/
-        key: stack-work-${{ runner.os }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
-        restore-keys: stack-work-${{ runner.os }}-
+        path: .stack-work/
+        key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/stack.yaml.lock') }}
+        restore-keys: ${{ runner.os }}-${{ env.cache-name }}-
       
     - name: stack pre (setup, configure)
       timeout-minutes: 720
