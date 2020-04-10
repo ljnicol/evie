@@ -44,7 +44,7 @@ jobs:
     - name: dummy-file
       run: |
         touch evie-exe
-        zip -r evie.zip evie-exe
+        zip -r evie-linux.zip evie-exe
 
     # - name: create zip
     #   run: |
@@ -56,7 +56,7 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: evie-linux
-        path: evie.zip
+        path: evie-linux.zip
   
   # build_windows:
   #   runs-on: windows-latest
