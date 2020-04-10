@@ -192,12 +192,17 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
       with:
         tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        release_name: ${{ github.ref }}
         body: |
-          Changes in this Release
-          - First Change
-          - Second Change
-        draft: false
+          ## ✨ Features
+          * Nothing this time, but please raise an issue if you would like a particular feature.
+
+          ## 🍏 Improvements
+          * It's already perfect, so what more do you want? But seriously, raise an issue if something could be improved.
+
+          ## 🐞 Bug Fixes
+          * Bugs, what bugs? Please raise an issue if you find anything that doesn't work as expected.
+        draft: true
         prerelease: false
 
     - name: Upload Release Asset Linux
