@@ -47,8 +47,8 @@ jobs:
 
     - name: dummy-file
       run: |
-        touch evie-exe
-        zip -r evie-linux.zip evie-exe
+        echo "hello" > evie-exe.txt
+        zip -r evie-linux.zip evie-exe.txt
 
     # - name: create zip
     #   run: |
@@ -182,8 +182,8 @@ jobs:
 
     - name: dummy-file
       run: |
-        touch evie-exe
-        zip -r evie-macos.zip evie-exe
+        echo "hello" > evie-exe.txt
+        zip -r evie-macos.zip evie-exe.txt
 
     - name: Upload zip of binary
       uses: actions/upload-artifact@v1
@@ -193,7 +193,7 @@ jobs:
 
   release:
     runs-on: ubuntu-latest    
-    needs: [build_linux]
+    needs: [build_linux, build_macos]
     steps:
     - name: Download build artifacts
       uses: actions/download-artifact@v1
@@ -233,7 +233,7 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
         asset_path: ./evie-linux/evie-linux.zip
-        asset_name: evie-linux
+        asset_name: evie-linux.zip
         asset_content_type: application/zip
 
     # - name: Upload Release Asset Windows
@@ -255,5 +255,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
         asset_path: ./evie-macos/evie-macos.zip
-        asset_name: evie-macos
+        asset_name: evie-macos.zip
         asset_content_type: application/zip
