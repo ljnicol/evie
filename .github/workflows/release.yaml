@@ -32,7 +32,7 @@ jobs:
         cache-name: stack-work
       with:
         path: .stack-work/
-        key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/stack.yaml.lock') }}
+        key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
         restore-keys: ${{ runner.os }}-${{ env.cache-name }}-
     
     - name: stack pre (setup, configure)
@@ -87,7 +87,7 @@ jobs:
         cache-name: stack-work
       with:
         path: .stack-work/
-        key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/stack.yaml.lock') }}
+        key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
         restore-keys: ${{ runner.os }}-${{ env.cache-name }}-
       
     - name: stack pre (setup, configure)
@@ -144,7 +144,7 @@ jobs:
         cache-name: stack-work
       with:
         path: .stack-work/
-        key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/stack.yaml.lock') }}
+        key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
         restore-keys: ${{ runner.os }}-${{ env.cache-name }}-
       
     - name: stack pre (setup, configure)
