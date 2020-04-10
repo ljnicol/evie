@@ -201,6 +201,9 @@ jobs:
     #   with:
     #     name: evie-macos
 
+    - name: LS
+      run: ls -al
+
     - name: Create Release
       id: create_release
       uses: actions/create-release@latest
