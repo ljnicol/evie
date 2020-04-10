@@ -22,14 +22,14 @@ jobs:
       with:
         path: /home/runner/.stack/
         key: stack-download-${{ runner.os }}-${{ hashFiles('**/stack.yaml.lock') }}
-        restore-keys: stack-download-${{ runner.os }}-2-
+        restore-keys: stack-download-${{ runner.os }}-
 
     - name: Cache Stack Build
       uses: actions/cache@v1
       with:
         path: ./.stack-work/
         key: stack-work-${{ runner.os }}-${{ hashFiles('**/evie.cabal') }}${{ hashFiles('**/stack.yaml.lock') }}
-        restore-keys: stack-work-${{ runner.os }}-2-
+        restore-keys: stack-work-${{ runner.os }}-
     
     - name: stack pre (setup, configure)
       run: |
@@ -219,7 +219,7 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
         asset_path: ./evie-windows/evie-windows.zip
-        asset_name: evie-windows
+        asset_name: evie-windows.zip
         asset_content_type: application/zip
 
     - name: Upload Release Asset MacOS
